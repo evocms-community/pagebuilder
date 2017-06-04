@@ -1,0 +1,44 @@
+.content-blocks input[type="button"] { border: 1px solid rgba(0,0,0,0.15); }
+.content-blocks .blocks { padding: 0 0 40px; }
+.content-blocks .block { border: 2px solid #ccc; padding: 20px; border-radius: 2px; position: relative; margin: 0 0 40px; }
+.content-blocks .block:last-child { margin-bottom: 0 !important; }
+.content-blocks .block .field { margin: 0 0 10px; }
+.content-blocks .block .field input,
+.content-blocks .block .field textarea { width: 100%; margin: 0; }
+.content-blocks .block .field textarea { resize: vertical; }
+.content-blocks .block .field .field-name { margin: 0 0 2px; }
+.content-blocks .block .field.type-image input[type="text"] { width: 83%; }
+.content-blocks .block .field.type-image input[type="button"] { width: 15% !important; margin-right: 2%; }
+.content-blocks .block .fields-list > :last-child { margin-bottom: 0 !important; }
+.content-blocks .block .fields-group { border: 2px dashed #ccc; padding: 15px; margin-top: 10px; }
+.content-blocks .block .fields-group .group-title { margin: 0 0 10px; }
+.content-blocks .block .fields-group .field { margin-bottom: 5px; }
+.content-blocks .block .change-type { position: absolute; right: 20px; top: -14px; }
+.content-blocks .block .change-type select { width: 150px !important; }
+
+.content-blocks .block .controls { position: absolute; height: 28px; line-height: 28px; right: 190px; top: -14px; cursor: default; background: #fff; padding: 0 10px; border-radius: 3px; }
+.content-blocks .block .controls a { display: inline-block; padding: 0 5px; color: #555; }
+.content-blocks .block .controls-bottom { right: 20px; top: auto; bottom: -16px; }
+.content-blocks .block .fields-group .controls { right: 0; top: 0; }
+.content-blocks .block .controls .insert { color: #449d44; }
+.content-blocks .block .controls .remove { color: #c9302c; }
+.content-blocks .add-block + .block .controls .moveup { display: none; }
+.content-blocks .block:last-child .controls .movedown { display: none; }
+
+.ui-sortable-handle { -ms-touch-action: none; touch-action: none; }
+
+.content-blocks .block .sortable-list { position: relative; }
+.content-blocks .block .sortable-list > .sortable-item { padding: 10px 0 10px 25px; position: relative; border-top: 2px dashed #e2e2e2; background: #fff; }
+.content-blocks .block .sortable-list > .hidden + .sortable-item { border-top-color: transparent; }
+.content-blocks .block .sortable-list > .sortable-item > .handle { position: absolute; left: 0; top: 5px; bottom: 5px; width: 15px; background: rgba(0,0,0,0.1); cursor: url(openhand.cur) 4 4, move; }
+.content-blocks .block .sortable-list > .ui-sortable-helper > .handle { cursor: url(closedhand.cur) 4 4, move !important; }
+.content-blocks .block .sortable-list > .sortable-item.hidden { display: none; }
+.content-blocks .block .sortable-list > .sortable-item.hidden > .controls .remove { display: none; }
+.content-blocks .block .sortable-list > .sortable-item.hidden:last-child { display: block; border-top: 0; padding: 0; }
+.content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .handle { display: none; }
+.content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .fields-list { display: none; }
+.content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .controls { top: -28px; }
+
+.content-blocks-configs { display: none; }
+
+.content-blocks .add-block { margin: 0 0 20px; }
