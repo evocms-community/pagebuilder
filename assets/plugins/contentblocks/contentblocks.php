@@ -7,6 +7,7 @@
 		private $conf   = [];
 		private $themes = [];
 		private $path;
+		private $params;
 
 		public function __construct( $modx ) {
 			$this->modx = $modx;
@@ -15,6 +16,7 @@
 			$this->browser    = $modx->getConfig( 'which_browser' );
 			$this->table      = $modx->getFullTableName( 'contentblocks' );
 			$this->path       = MODX_BASE_PATH . 'assets/plugins/contentblocks/config/';
+			$this->params     = $modx->event->params;
 		}
 
 		private function renderFieldsList( $templates, $template, $fieldname, $config, $values ) {
@@ -266,7 +268,7 @@
 				' . implode( "\n", $this->themes ) . '
 
 				<div class="tab-page" style="width:100%;-moz-box-sizing: border-box; box-sizing: border-box;">
-					<h2 class="tab" id="contentblockstab">Content Blocks</h2>
+					<h2 class="tab" id="contentblockstab">' . ( !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks' ) . '</h2>
 
 					<div class="content-blocks-configs">
 						' . $configs . '
