@@ -171,13 +171,13 @@
 						if ( document.images ) {
 							var image = new Image();
 
-							( function( source, $preview ) {
+							( function( source, thumb, $preview ) {
 								image.onload = function() {
 									if ( this.width + this.height == 0 ) {
 										return this.onerror();
 									}
 
-									$preview.css( 'background-image', 'url(' + this.src + ')' );
+									$preview.css( 'background-image', 'url("' + thumb + '")' );
 								}
 
 								image.onerror = function() {
@@ -185,14 +185,14 @@
 										this.thumbChecked = true;
 										this.src = source.replace( 'assets/images', '../assets/images' );
 									} else {
-										$preview.css( 'background-image', 'url(../assets/images/noimage.jpg)' );
+										$preview.css( 'background-image', 'url("../assets/images/noimage.jpg")' );
 									}
 								}
-							} )( source, $preview );
+							} )( source, thumb, $preview );
 
 							image.src = thumb;
 	    				} else {
-							$preview.css( 'background-image', 'url(' + thumb + ')' );
+							$preview.css( 'background-image', 'url("' + thumb + '")' );
 	    				}
 					}
 				},
@@ -399,7 +399,11 @@
 					};
 
 					if ( multipleCallback !== undefined ) {
-						window.KCFinder.callBackMultiple = function( files ) {
+						window.KCFinder.callBackMultiple = window.KCFinder.callBack = function( files ) {
+							if ( typeof files !== 'object' ) {
+								files = [ files ];
+							}
+							
 							window.KCFinder = null;
 							multipleCallback( files );
 						};
