@@ -384,11 +384,11 @@
 				},
 
 				openBrowser: function( $element, type, multipleCallback ) {
-					var width  = screen.width * .8,
-						height = screen.height * .8,
-						left   = ( screen.width  - width ) * .5,
-						top    = ( screen.height - height ) * .5,
-						params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
+					var wnd    = window.parent || window,
+						margin = parseInt( wnd.innerHeight * .1 ),
+						width  = wnd.innerWidth - margin * 2,
+						height = wnd.innerHeight - margin * 2,
+						params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + ( margin + ( wnd._startY ? wnd._startY * .5 : 0 ) );
 
 					window.KCFinder = {
 						callBack: function( url ) {
