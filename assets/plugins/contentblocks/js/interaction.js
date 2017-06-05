@@ -1,46 +1,4 @@
 
-	if ( typeof lastImageCtrl === 'undefined' ) {
-		var lastImageCtrl;
-	}
-
-	if ( typeof lastFileCtrl === 'undefined' ) {
-		var lastFileCtrl;
-	}
-
-	if ( !window['SetUrlChange'] ) {
-		function SetUrlChange(el) {
-			if ('createEvent' in document) {
-				var evt = document.createEvent('HTMLEvents');
-				evt.initEvent('change', false, true);
-				el.dispatchEvent(evt);
-			} else {
-				el.fireEvent('onchange');
-			}
-		}
-	}
-
-	if ( !window['SetUrl'] ) {
-		function SetUrl( url, width, height, alt ) {
-			if ( lastFileCtrl ) {
-				var c = document.getElementById(lastFileCtrl);
-				if(c && c.value != url) {
-				    c.value = url;
-					SetUrlChange(c);
-				}
-				lastFileCtrl = '';
-			} else if(lastImageCtrl) {
-				var c = document.getElementById(lastImageCtrl);
-				if(c && c.value != url) {
-				    c.value = url;
-					SetUrlChange(c);
-				}
-				lastImageCtrl = '';
-			} else {
-				return;
-			}
-		}
-	}
-
 	var initcontentblocks = function( opts ) {
 		return ( function( $ ) {
 
@@ -57,6 +15,13 @@
 
 						// set block type
 						$block.children('.change-type').children('select').val( confName );
+
+						// add button for mass upload
+						$block.find('.sortable-list').each( function() {
+							if ( $(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length ) {
+								$(this).prev('.group-title').append( '<input type="button" class="fill-with-images" value="Заполнить изображениями">' );
+							}
+						} );
 
 						// add controls handlers
 						( function( $block ) {
@@ -81,9 +46,7 @@
 
 						$block.on( 'click', '.open-browser', function( e ) {
 							e.preventDefault();
-							var input = $(this).next('input').get(0);
-							input.id = 'input' + ( ( ( 1 + Math.random() ) * 0x100000 ) | 0 ).toString( 16 );
-							ContentBlock.openBrowser( input.id, 'images' );
+							ContentBlock.openBrowser( $(this).next('input'), 'images' );
 						} );
 
 						$block.on( 'click', '.sortable-item > .controls > .insert', function( e ) {
@@ -102,6 +65,25 @@
 
 						$block.on( 'change', '> .change-type select', function( e ) {
 							ContentBlock.changeType( $(this).closest('.block'), $(this).val() );
+						} );
+
+						$block.on( 'click', '.fill-with-images', function( e ) {
+							e.preventDefault();
+							var $list = $(this).parent().next('.sortable-list');
+
+							( function( $list ) {
+								ContentBlock.openBrowser( $list, 'images', function( files ) {
+									var $item = $list.children(':last-child');
+
+									for ( var i = 0; i < files.length; i++ ) {
+										$item = ContentBlock.insertItem( $item );
+
+										var $input = $item.children('.fields-list').children('.type-image').eq(0).children('input[type="text"]');
+										$input.val( files[i] );
+										ContentBlock.setThumb( $input.parent() );
+									}
+								} );
+							} )( $list );
 						} );
 
 						ContentBlock.initializeFieldsList( conf.fields, $list );
@@ -172,6 +154,46 @@
 								$field.children('input[type="text"], textarea').val( values[field] );
 							}
 						}
+					}
+				},
+
+				setThumb: function( $field ) {
+					var source   = $.trim( $field.children('input[type="text"]').val() );
+						$preview = $field.children('.preview'),
+						thumb    = source.replace( 'assets/images/', '../assets/.thumbs/images/' );
+
+					if ( source == '' ) {
+						$field.removeClass( 'with-thumb' );
+						$field.children('.preview').removeAttr( 'style' );
+					} else {
+						$field.addClass( 'with-thumb' );
+
+						if ( document.images ) {
+							var image = new Image();
+
+							( function( source, $preview ) {
+								image.onload = function() {
+									if ( this.width + this.height == 0 ) {
+										return this.onerror();
+									}
+
+									$preview.css( 'background-image', 'url(' + this.src + ')' );
+								}
+
+								image.onerror = function() {
+									if ( this.thumbChecked == undefined ) {
+										this.thumbChecked = true;
+										this.src = source.replace( 'assets/images', '../assets/images' );
+									} else {
+										$preview.css( 'background-image', 'url(../assets/images/noimage.jpg)' );
+									}
+								}
+							} )( source, $preview );
+
+							image.src = thumb;
+	    				} else {
+							$preview.css( 'background-image', 'url(' + thumb + ')' );
+	    				}
 					}
 				},
 
@@ -249,6 +271,8 @@
 					ContentBlock.initializeFieldsList( $after.children('.fields-list').data( 'fields' ), $clone.children('.fields-list') );
 
 					$clone.slideDown( 200 );
+
+					return $clone;
 				},
 
 				initializeFieldsList: function( conf, $list ) {
@@ -272,6 +296,11 @@
 								
 								ContentBlock.initializeRichField( $textarea );
 
+								break;
+							}
+
+							case 'image': {
+								ContentBlock.setThumb( $field );
 								break;
 							}
 
@@ -354,20 +383,29 @@
 					}
 				},
 
-				openBrowser: function( ctrl, type ) {
-					if ( type == 'images' ) {
-						lastImageCtrl = ctrl;
-					} else {
-						lastFileCtrl = ctrl;
-					}
-
+				openBrowser: function( $element, type, multipleCallback ) {
 					var width  = screen.width * .8,
 						height = screen.height * .8,
 						left   = ( screen.width  - width ) * .5,
 						top    = ( screen.height - height ) * .5,
 						params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
 
-					window.open( opts.browser + '?Type=' + type, 'FCKBrowseWindow', params ) ;
+					window.KCFinder = {
+						callBack: function( url ) {
+							window.KCFinder = null;
+							$element.val( url );
+							ContentBlock.setThumb( $element.parent() );
+						}
+					};
+
+					if ( multipleCallback !== undefined ) {
+						window.KCFinder.callBackMultiple = function( files ) {
+							window.KCFinder = null;
+							multipleCallback( files );
+						};
+					}
+
+					var wnd = window.open( opts.browser + '?type=' + type, 'FileManager', params );
 				}
 
 			}

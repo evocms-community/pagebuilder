@@ -2,6 +2,8 @@
 
 	class ContentBlocks {
 
+		const version = 'alpha.2';
+
 		private $modx;
 		private $data;
 		private $conf   = [];
@@ -261,9 +263,9 @@
 			}
 
 			return '
-				<link rel="stylesheet" href="/assets/plugins/contentblocks/styles/styles.css">
+				<link rel="stylesheet" href="/assets/plugins/contentblocks/styles/styles.css?' . self::version . '">
 				<script src="/assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
-				<script src="/assets/plugins/contentblocks/js/interaction.js"></script>
+				<script src="/assets/plugins/contentblocks/js/interaction.js?' . self::version . '"></script>
 
 				' . implode( "\n", $this->themes ) . '
 
@@ -291,7 +293,7 @@
 							container: document.getElementById( "content-blocks" ), 
 							values: ' . json_encode( $this->data, JSON_UNESCAPED_UNICODE ) . ', 
 							config: ' . json_encode( $this->conf, JSON_UNESCAPED_UNICODE ) . ',
-							browser: "' . MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browser.php"
+							browser: "' . MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php"
 						} );
 					} );
 				</script>

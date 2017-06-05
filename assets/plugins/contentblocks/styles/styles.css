@@ -7,11 +7,14 @@
 .content-blocks .block .field textarea { width: 100%; margin: 0; }
 .content-blocks .block .field textarea { resize: vertical; }
 .content-blocks .block .field .field-name { margin: 0 0 2px; }
-.content-blocks .block .field.type-image input[type="text"] { width: 83%; }
-.content-blocks .block .field.type-image input[type="button"] { width: 15% !important; margin-right: 2%; }
+.content-blocks .block .field.type-image input[type="text"] { width: 91%; }
+.content-blocks .block .field.type-image input[type="button"] { width: 8% !important; margin-right: 1%; }
+.content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 112px; }
+.content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 58px; background-color: #f2f2f2; border: 1px solid #ddd; left: 0; top: -5px; background-position: center; background-size: contain; background-repeat: no-repeat; }
 .content-blocks .block .fields-list > :last-child { margin-bottom: 0 !important; }
 .content-blocks .block .fields-group { border: 2px dashed #ccc; padding: 15px; margin-top: 10px; }
 .content-blocks .block .fields-group .group-title { margin: 0 0 10px; }
+.content-blocks .block .fields-group .group-title input { margin-left: 20px; }
 .content-blocks .block .fields-group .field { margin-bottom: 5px; }
 .content-blocks .block .change-type { position: absolute; right: 20px; top: -14px; }
 .content-blocks .block .change-type select { width: 150px !important; }
@@ -42,3 +45,14 @@
 .content-blocks-configs { display: none; }
 
 .content-blocks .add-block { margin: 0 0 20px; }
+
+@media ( max-width: 1100px ) {
+    .content-blocks .block .field.type-image input[type="text"] { width: 86%; }
+    .content-blocks .block .field.type-image input[type="button"] { width: 12% !important; }
+}
+
+@media ( max-width: 850px ) {
+    .content-blocks .block .field.type-image input[type="text"] { width: 78%; }
+    .content-blocks .block .field.type-image input[type="button"] { width: 20% !important; margin-right: 2%; }
+}
+
