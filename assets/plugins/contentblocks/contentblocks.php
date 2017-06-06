@@ -121,8 +121,6 @@
 						], $this->table );
 					}
 				}
-
-				file_put_contents( $_SERVER['DOCUMENT_ROOT'] . '/test.txt', print_r($_POST,1));
 			}
 		}
 
