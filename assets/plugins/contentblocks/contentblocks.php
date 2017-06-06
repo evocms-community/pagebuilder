@@ -68,6 +68,31 @@
 			return $out;
 		}
 
+		public function renderTpl( $template, $data ) {
+			$data['instance'] = $this;
+			extract( $data );
+
+			ob_start();
+			include( __DIR__ . '/' . $template );
+			$output = ob_get_contents();
+			ob_end_clean();
+			
+			return $output;
+		}
+
+		public function renderForm() {
+			$this->fetch( $this->modx->event->params['id'] );
+
+			return $this->renderTpl( 'tpl/form.tpl', [
+				'version'   => self::version,
+				'themes'    => $this->themes,
+				'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks',
+				'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
+				'configs'   => $this->conf,
+				'blocks'    => $this->data,
+			] );
+		}
+
 		private function fetch( $docid, $notpl = true ) {
 			if ( $docid ) {
 				$query = $this->modx->db->select( '*', $this->table, "`document_id` = '$docid'", "`index` ASC" );
@@ -128,33 +153,28 @@
 			$out = '';
 
 			switch ( $field['type'] ) {
-				case 'text': {
-					$out = '<input type="text" name="contentblocks_' . $name . '" value="' . htmlentities( $value ) . '">';
-					break;
-				}
-
 				case 'richtext': {
-					$out = '<textarea name="contentblocks_' . $name . '" class="richtext">' . htmlentities( $value ) . '</textarea>';
-
 					if ( isset( $field['theme'] ) && !isset( $this->themes[ $field['theme'] ] ) && in_array( $this->richeditor, [ 'TinyMCE4' ] ) ) {
-                        $result = $this->modx->invokeEvent( 'OnRichTextEditorInit', [
-                            'editor'  => $this->richeditor,
-                            'options' => [ 'theme' => $field['theme'] ],
-                        ] );
+						$result = $this->modx->invokeEvent( 'OnRichTextEditorInit', [
+							'editor'  => $this->richeditor,
+							'options' => [ 'theme' => $field['theme'] ],
+						] );
 
-                        if ( is_array( $result ) ) {
-                            $result = implode( '', $result );
-                        }
+						if ( is_array( $result ) ) {
+							$result = implode( '', $result );
+						}
 
-                        $this->themes[ $field['theme'] ] = $result;
+						$this->themes[ $field['theme'] ] = $result;
 					}
-
-					break;
 				}
 
+				case 'text':
 				case 'image': {
-					$out = '<div class="preview"></div><input type="button" class="open-browser" value="Выбрать"><input type="text" name="contentblocks_' . $name . '" value="' . htmlentities( $value ) . '">';
-					break;
+					return $this->renderTpl( 'tpl/field_' . $field['type'] . '.tpl', [
+						'name'  => $name,
+						'field' => $field,
+						'value' => $value,
+					] );
 				}
 
 				case 'group': {
@@ -164,138 +184,15 @@
 						array_unshift( $value, [] );
 					}
 
-					foreach ( $value as $i => $row ) {
-						$item = '';
-	
-						foreach ( $field['fields'] as $child => $childfield ) {
-							$item .= $this->renderField( $childfield, $child, isset( $row[$child] ) ? $row[$child] : '' );
-						}
-
-						$out .= '
-							<div class="sortable-item' . ( !$i ? ' hidden' : '' ) . '">
-								<div class="handle"></div>
-
-								<div class="fields-list' . ( !$i ? ' hidden' : '' ) . '">
-									' . $item . '
-								</div>
-
-								<div class="controls">
-									<a href="#" class="remove" title="Удалить элемент"><i class="fa fa-minus-circle"></i></a>
-									<a href="#" class="insert" title="Вставить элемент"><i class="fa fa-plus-circle"></i></a>
-								</div>
-							</div>
-						';
-					}
-
-					return '
-						<div class="field fields-group" data-field="' . $name . '">
-							<div class="group-title">
-								' . $field['caption'] . '
-							</div>
-							<div class="sortable-list">
-								' . $out . '
-							</div>
-						</div>
-					';
+					return $this->renderTpl( 'tpl/field_group.tpl', [
+						'name'   => $name,
+						'field'  => $field,
+						'values' => $value,
+					] );
 				}
 			}
 
-			return '<div class="field type-' . $field['type'] . '" data-field="' . $name . '">' . ( !empty( $field['caption'] ) ? '<div class="field-name">' . $field['caption'] . '</div>' : '' ) . $out . '</div>';
-		}
-
-		public function renderBlockFields( $conf, $block = [] ) {
-			$out = '';
-
-			foreach ( $conf['fields'] as $name => $field ) {
-				$out .= $this->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : '' );
-			}
-
-			return $out;
-		}
-
-		public function renderBlock( $block ) {
-			return '
-				<div class="block" data-config="' . $block['config'] . '">
-					<div class="change-type">
-						<select name="available">
-							' . $this->available . '
-						</select>
-					</div>
-
-					' . ( !empty( $block['id'] ) ? '<input type="hidden" name="contentblocks_id" value="' . $block['id'] . '">' : '' ) . '
-
-					<div class="controls">
-						<a href="#" class="remove" title="Удалить блок"><i class="fa fa-minus-circle"></i></a>
-						<a href="#" class="moveup" title="Переместить наверх"><i class="fa fa-arrow-up"></i></a>
-						<a href="#" class="movedown" title="Переместить вниз"><i class="fa fa-arrow-down"></i></a>
-					</div>
-
-					<div class="fields-list">
-						' . $this->renderBlockFields( $this->conf[ $block['config'] ], $block ) . '
-					</div>
-
-					<div class="controls controls-bottom">
-						<a href="#" class="insert" title="Вставить блок"><i class="fa fa-plus-circle"></i></a>
-					</div>
-				</div>
-			';
-		}
-
-		public function renderForm() {
-			$this->fetch( $this->modx->event->params['id'] );
-
-			$this->available = '<option value="">-- Выберите тип блока --</option>';
-
-			$blocks = $configs = '';
-
-			foreach ( $this->conf as $fn => $conf ) {
-				$this->available .= '<option value="' . $fn . '">' . $conf['title'] . '</option>';
-			}
-
-			foreach ( $this->conf as $fn => $conf ) {
-				$configs .= $this->renderBlock( [ 'config' => $fn ] );
-			}
-
-			foreach ( $this->data as $block ) {
-				$blocks .= $this->renderBlock( $block );
-			}
-
-			return '
-				<link rel="stylesheet" href="/assets/plugins/contentblocks/styles/styles.css?' . self::version . '">
-				<script src="/assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
-				<script src="/assets/plugins/contentblocks/js/interaction.js?' . self::version . '"></script>
-
-				' . implode( "\n", $this->themes ) . '
-
-				<div class="tab-page" style="width:100%;-moz-box-sizing: border-box; box-sizing: border-box;">
-					<h2 class="tab" id="contentblockstab">' . ( !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks' ) . '</h2>
-
-					<div class="content-blocks-configs">
-						' . $configs . '
-					</div>
-					
-					<div class="content-blocks" id="content-blocks">
-						<div class="add-block">
-							<select name="available">
-								' . $this->available . '
-							</select>
-							<input type="button" value="Добавить блок">
-						</div>
-						' . $blocks . '
-					</div>
-				</div>
-				
-				<script>
-					jQuery( function() {
-						initcontentblocks( {
-							container: document.getElementById( "content-blocks" ), 
-							values: ' . json_encode( $this->data, JSON_UNESCAPED_UNICODE ) . ', 
-							config: ' . json_encode( $this->conf, JSON_UNESCAPED_UNICODE ) . ',
-							browser: "' . MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php"
-						} );
-					} );
-				</script>
-			';
+			return '';
 		}
 
 	}
