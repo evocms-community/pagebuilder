@@ -390,9 +390,19 @@
 						height = wnd.innerHeight - margin * 2,
 						params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + ( margin + ( wnd._startY ? wnd._startY * .5 : 0 ) );
 
+					if ( window['SetUrl'] ) {
+						window['SetUrl_disabled'] = window['SetUrl'];
+						window['SetUrl'] = null;
+					}
+
 					window.KCFinder = {
 						callBack: function( url ) {
+							if ( window['SetUrl_disabled'] ) {
+								window['SetUrl'] = window['SetUrl_disabled']
+							}
+
 							window.KCFinder = null;
+
 							$element.val( url );
 							ContentBlock.setThumb( $element.parent() );
 						}
@@ -404,6 +414,10 @@
 								files = [ files ];
 							}
 							
+							if ( window['SetUrl_disabled'] ) {
+								window['SetUrl'] = window['SetUrl_disabled']
+							}
+
 							window.KCFinder = null;
 							multipleCallback( files );
 						};
