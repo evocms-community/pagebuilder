@@ -398,7 +398,7 @@
 					window.KCFinder = {
 						callBack: function( url ) {
 							if ( window['SetUrl_disabled'] ) {
-								window['SetUrl'] = window['SetUrl_disabled']
+								window['SetUrl'] = window['SetUrl_disabled'];
 							}
 
 							window.KCFinder = null;
@@ -415,7 +415,7 @@
 							}
 							
 							if ( window['SetUrl_disabled'] ) {
-								window['SetUrl'] = window['SetUrl_disabled']
+								window['SetUrl'] = window['SetUrl_disabled'];
 							}
 
 							window.KCFinder = null;
