@@ -2,7 +2,7 @@
 
 	class ContentBlocks {
 
-		const version = 'alpha.3';
+		const version = 'alpha.4';
 
 		private $modx;
 		private $data;
@@ -99,7 +99,7 @@
 		 * @return string Output
 		 */
 		public function renderForm() {
-			$this->fetch( $this->modx->event->params['id'] );
+			$this->fetch( $this->params['id'] );
 
 			return $this->renderTpl( 'tpl/form.tpl', [
 				'version'   => self::version,
@@ -153,7 +153,7 @@
 		public function save() {
 			if ( isset( $_POST['contentblocks'] ) && is_array( $_POST['contentblocks'] ) ) {
 				$exists = array_column( $_POST['contentblocks'], 'id' );
-				$docid  = $this->modx->event->params['id'];
+				$docid  = $this->params['id'];
 
 				$this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
 
@@ -228,6 +228,33 @@
 			}
 
 			return '';
+		}
+
+		/**
+		 * Called at OnDocDuplicate event
+		 */
+		public function duplicate() {
+			if ( $this->params['id'] && $this->params['new_id'] ) {
+				$query = $this->modx->db->select( '*', $this->table, "`document_id` = '" . $this->params['id'] . "'", "`index` ASC" );
+
+				while ( $row = $this->modx->db->getRow( $query ) ) {
+					$this->modx->db->insert( [
+						'document_id' => $this->params['new_id'],
+						'config'      => $this->modx->db->escape( $row['config'] ),
+						'values'      => $this->modx->db->escape( $row['values'] ),
+						'index'       => $row['index'],
+					], $this->table );
+				}
+			}
+		}
+
+		/**
+		 * Called at OnBeforeEmptyTrash event
+		 */
+		public function delete() { 
+			if ( !empty( $this->params['ids'] ) ) {
+				$this->modx->db->delete( $this->table, "`document_id` IN ('" . implode( "','", $this->params['ids'] ) . "')" );
+			}
 		}
 
 	}

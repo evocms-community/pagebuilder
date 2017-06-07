@@ -2,13 +2,13 @@
 /**
  * ContentBlocks
  * 
- * creates form for manage contenet blocks
+ * Creates form for manage content blocks
  *
  * @category    plugin
  * @version     alpha
  * @author      sunhaim
  * @internal    @properties &tabName=Tab name;text;Content Blocks &templates=Templates;text; &documents=Documents;text; &ignore=Ignore Documents;text;
- * @internal    @events OnDocFormRender,OnDocFormSave 
+ * @internal    @events OnDocFormRender,OnDocFormSave,OnBeforeEmptyTrash,OnDocDuplicate 
  * @internal    @modx_category Manager and Admin
  * @internal    @installset base,sample
  */
@@ -45,6 +45,16 @@ switch ( $e->name ) {
 
 	case 'OnDocFormSave': {
 		( new ContentBlocks( $modx ) )->save();
+		return;
+	}
+		
+	case 'OnBeforeEmptyTrash': {
+		( new ContentBlocks( $modx ) )->delete();
+		return;
+	}
+		
+	case 'OnDocDuplicate': {
+		( new ContentBlocks( $modx ) )->duplicate();
 		return;
 	}
 }
