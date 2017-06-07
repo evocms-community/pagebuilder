@@ -55,6 +55,12 @@
 			return $this->modx->parseText( $template, $data );
 		}
 
+		/**
+		 * Shows all content blocks for document
+		 * 
+		 * @param  int $docid Document identificator
+		 * @return string Output
+		 */
 		public function render( $docid ) {
 			$out = '';
 
@@ -68,6 +74,13 @@
 			return $out;
 		}
 
+		/**
+		 * Renders template in admin panel
+		 * 
+		 * @param  string $template Template
+		 * @param  array $data Values for binding to template
+		 * @return string Output
+		 */
 		public function renderTpl( $template, $data ) {
 			$data['instance'] = $this;
 			extract( $data );
@@ -80,6 +93,11 @@
 			return $output;
 		}
 
+		/**
+		 * Renders form in new tab on document editing page, called at OnDocFormRender event
+		 * 
+		 * @return string Output
+		 */
 		public function renderForm() {
 			$this->fetch( $this->modx->event->params['id'] );
 
@@ -93,6 +111,12 @@
 			] );
 		}
 
+		/**
+		 * Loads saved content blocks and configuration files
+		 * 
+		 * @param  int $docid Document identificator
+		 * @param  boolean $notpl If true, template will be cut from configuration array
+		 */
 		private function fetch( $docid, $notpl = true ) {
 			if ( $docid ) {
 				$query = $this->modx->db->select( '*', $this->table, "`document_id` = '$docid'", "`index` ASC" );
@@ -123,6 +147,9 @@
 			$this->data = $data;
 		}
 
+		/**
+		 * Called at OnDocFormSave event for saving content blocks
+		 */
 		public function save() {
 			if ( isset( $_POST['contentblocks'] ) && is_array( $_POST['contentblocks'] ) ) {
 				$exists = array_column( $_POST['contentblocks'], 'id' );
@@ -149,6 +176,14 @@
 			}
 		}
 
+		/**
+		 * Renders field control
+		 * 
+		 * @param  array $field Array with field options
+		 * @param  string $name Symbolic identificator of field
+		 * @param  mixed $value Value of field
+		 * @return string Output
+		 */
 		public function renderField( $field, $name, $value ) {
 			$out = '';
 
