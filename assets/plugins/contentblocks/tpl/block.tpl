@@ -8,9 +8,9 @@
 	<? } ?>
 
 	<div class="controls">
-		<a href="#" class="remove" title="Удалить блок"><i class="fa fa-minus-circle"></i></a>
-		<a href="#" class="moveup" title="Переместить наверх"><i class="fa fa-arrow-up"></i></a>
-		<a href="#" class="movedown" title="Переместить вниз"><i class="fa fa-arrow-down"></i></a>
+		<a href="#" class="remove" title="<?= $l['Delete block'] ?>"><i class="fa fa-minus-circle"></i></a>
+		<a href="#" class="moveup" title="<?= $l['Move up'] ?>"><i class="fa fa-arrow-up"></i></a>
+		<a href="#" class="movedown" title="<?= $l['Move down'] ?>"><i class="fa fa-arrow-down"></i></a>
 	</div>
 
 	<div class="fields-list">
@@ -20,6 +20,6 @@
 	</div>
 
 	<div class="controls controls-bottom">
-		<a href="#" class="insert" title="Вставить блок"><i class="fa fa-plus-circle"></i></a>
+		<a href="#" class="insert" title="<?= $l['Insert block'] ?>"><i class="fa fa-plus-circle"></i></a>
 	</div>
 </div>

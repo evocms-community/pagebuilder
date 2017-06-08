@@ -19,7 +19,7 @@
 						// add button for mass upload
 						$block.find('.sortable-list').each( function() {
 							if ( $(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length ) {
-								$(this).prev('.group-title').append( '<input type="button" class="fill-with-images" value="Заполнить изображениями">' );
+								$(this).prev('.group-title').append( '<input type="button" class="fill-with-images" value="' + opts.lang['Fill with images'] + '">' );
 							}
 						} );
 

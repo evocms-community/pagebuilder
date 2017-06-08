@@ -15,8 +15,8 @@
 				</div>
 
 				<div class="controls">
-					<a href="#" class="remove" title="Удалить элемент"><i class="fa fa-minus-circle"></i></a>
-					<a href="#" class="insert" title="Вставить элемент"><i class="fa fa-plus-circle"></i></a>
+					<a href="#" class="remove" title="<?= $l['Delete element'] ?>"><i class="fa fa-minus-circle"></i></a>
+					<a href="#" class="insert" title="<?= $l['Insert element'] ?>"><i class="fa fa-plus-circle"></i></a>
 				</div>
 			</div>
 		<? } ?> 

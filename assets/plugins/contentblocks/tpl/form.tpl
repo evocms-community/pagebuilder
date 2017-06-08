@@ -21,7 +21,7 @@
 	<div class="content-blocks" id="content-blocks">
 		<div class="add-block">
 			<?= $instance->renderTpl( 'tpl/configs_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
-			<input type="button" value="Добавить блок">
+			<input type="button" value="<?= $l['Add block'] ?>">
 		</div>
 		<? foreach ( $blocks as $block ) { ?> 
 			<?= $instance->renderTpl( 'tpl/block.tpl', [ 
@@ -38,6 +38,7 @@
 			container: document.getElementById( "content-blocks" ), 
 			values: <?= json_encode( $block, JSON_UNESCAPED_UNICODE ) ?>, 
 			config: <?= json_encode( $configs, JSON_UNESCAPED_UNICODE ) ?>,
+			lang: <?= json_encode( $l, JSON_UNESCAPED_UNICODE ) ?>,
 			browser: "<?= $browseurl ?>"
 		} );
 	} );

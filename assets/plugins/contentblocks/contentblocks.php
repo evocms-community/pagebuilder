@@ -2,7 +2,7 @@
 
 	class ContentBlocks {
 
-		const version = 'alpha.4';
+		const version = 'alpha.5';
 
 		private $modx;
 		private $data;
@@ -10,6 +10,7 @@
 		private $themes = [];
 		private $path;
 		private $params;
+		private $lang;
 
 		public function __construct( $modx ) {
 			$this->modx = $modx;
@@ -19,6 +20,15 @@
 			$this->table      = $modx->getFullTableName( 'contentblocks' );
 			$this->path       = MODX_BASE_PATH . 'assets/plugins/contentblocks/config/';
 			$this->params     = $modx->event->params;
+
+			$lang = $modx->getConfig( 'manager_language' );
+			$lang = __DIR__ . '/lang/' . $lang . '.php';
+
+			if ( !is_readable( $lang ) ) {
+				$lang = __DIR__ . '/lang/english.php';
+			}
+
+			$this->lang = include $lang;
 		}
 
 		private function renderFieldsList( $templates, $template, $fieldname, $config, $values ) {
@@ -83,6 +93,7 @@
 		 */
 		public function renderTpl( $template, $data ) {
 			$data['instance'] = $this;
+			$data['l'] = $this->lang;
 			extract( $data );
 
 			ob_start();

@@ -1,5 +1,5 @@
 <select name="available">
-	<option value="">-- Выберите тип блока --</option>
+	<option value="">-- <?= $l['Select type of block'] ?> --</option>
 	<? foreach ( $configs as $filename => $config ) { ?>
 		<option value="<?= $filename ?>"><?= $config['title'] ?></option>
 	<? } ?>
