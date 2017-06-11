@@ -46,7 +46,7 @@
 
 						$block.on( 'click', '.open-browser', function( e ) {
 							e.preventDefault();
-							ContentBlock.openBrowser( $(this).next('input'), 'images' );
+							ContentBlock.openBrowser( $(this).next('input'), $(this).parent().hasClass( 'type-image' ) ? 'images' : 'files' );
 						} );
 
 						$block.on( 'click', '.sortable-item > .controls > .insert', function( e ) {
@@ -122,8 +122,32 @@
 								break;
 							}
 
+							case 'checkbox': {
+								values[field] = [];
+								
+								$field.children('.check-list').children('.check-row').each( function() {
+									var $input = $(this).children('label').children(':checked');
+
+									if ( $input.length ) {
+										values[field].push( $input.val() );
+									}
+								} );
+								
+								break;
+							}
+
+							case 'radio': {
+								var $input = $field.children('.check-list').children('.check-row').children('label').children(':checked');
+
+								if ( $input.length ) {
+									values[field] = $input.val();
+								}
+								
+								break;
+							}
+
 							default: {
-								values[field] = $field.children('input[type="text"], textarea').val();
+								values[field] = $field.children('input[type="text"], textarea, select').val();
 							}
 						}
 					}
@@ -135,23 +159,59 @@
 					for ( var field in conf ) {
 						var $field = $list.children('.field[data-field="' + field + '"]');
 
-						if ( conf[field].type == 'group' ) {
-							if ( typeof values[field] === 'object' && values[field].length ) {
-								var $sortable = $field.children('.sortable-list'),
-									$element  = $sortable.children('.sortable-item.hidden');
+						switch ( conf[field].type ) {
+							case 'group': {
+								if ( typeof values[field] === 'object' && values[field].length ) {
+									var $sortable = $field.children('.sortable-list'),
+										$element  = $sortable.children('.sortable-item.hidden');
 
-								for ( var i = 0; i < values[field].length; i++ ) {
-									var $clone = $element.clone( true );
-									
-									$clone.children('.fields-list').removeClass( 'hidden' );
-									$clone.removeClass( 'hidden' ).appendTo( $sortable );
+									for ( var i = 0; i < values[field].length; i++ ) {
+										var $clone = $element.clone( true );
+										
+										$clone.children('.fields-list').removeClass( 'hidden' );
+										$clone.removeClass( 'hidden' ).appendTo( $sortable );
 
-									ContentBlock.setValues( conf[field].fields, $clone.children('.fields-list'), values[field][i] );
+										ContentBlock.setValues( conf[field].fields, $clone.children('.fields-list'), values[field][i] );
+									}
+								}
+
+								break;
+							} 
+
+							case 'checkbox': {
+								if ( typeof values[field] !== 'undefined' ) {
+									if ( typeof values[field] != 'object' ) {
+										values[field] = [ values[field] ];
+									}
+
+									if ( typeof values[field].length == 'undefined' ) {
+										values[field] = [];
+									}
+
+									for ( var i = 0; i < values[field].length; i++ ) {
+										var $input = $field.children('.check-list').children('.check-row').children('label').children('[value="' + values[field][i] + '"]');
+
+										if ( $input.length ) {
+											$input.attr( 'checked', true );
+										}
+									}
 								}
 							}
-						} else {
-							if ( typeof values[field] !== 'undefined' && typeof values[field] != 'object' ) {
-								$field.children('input[type="text"], textarea').val( values[field] );
+
+							case 'radio': {
+								if ( typeof values[field] !== 'undefined' && typeof values[field] != 'object' ) {
+									var $input = $field.children('.check-list').children('.check-row').children('label').children('[value="' + values[field] + '"]');
+
+									if ( $input.length ) {
+										$input.attr( 'checked', true );
+									}
+								}
+							}
+
+							default: {
+								if ( typeof values[field] !== 'undefined' && typeof values[field] != 'object' ) {
+									$field.children('input[type="text"], textarea, select').val( values[field] );
+								}
 							}
 						}
 					}
@@ -404,7 +464,10 @@
 							window.KCFinder = null;
 
 							$element.val( url );
-							ContentBlock.setThumb( $element.parent() );
+
+							if ( type == 'images' ) {
+								ContentBlock.setThumb( $element.parent() );
+							}
 						}
 					};
 

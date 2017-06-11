@@ -198,7 +198,30 @@
 		public function renderField( $field, $name, $value ) {
 			$out = '';
 
+			$default = !empty( $field['default'] ) ? $field['default'] : '';
+
+			$params = [
+				'name'     => $name,
+				'field'    => $field,
+				'value'    => is_null( $value ) ? $default : $value,
+				'elements' => [ 
+					'' => $this->lang['No variants provided'],
+				],
+			];
+
 			switch ( $field['type'] ) {
+				case 'group': {
+					if ( !is_array( $value ) ) {
+						$value = [ [] ];
+					} else {
+						array_unshift( $value, [] );
+					}
+
+					return $this->renderTpl( 'tpl/field_group.tpl', array_merge( $params, [
+						'values' => $value,
+					] ) );
+				}
+
 				case 'richtext': {
 					if ( isset( $field['theme'] ) && !isset( $this->themes[ $field['theme'] ] ) && in_array( $this->richeditor, [ 'TinyMCE4' ] ) ) {
 						$result = $this->modx->invokeEvent( 'OnRichTextEditorInit', [
@@ -212,29 +235,59 @@
 
 						$this->themes[ $field['theme'] ] = $result;
 					}
+
+					return $this->renderTpl( 'tpl/field_richtext.tpl', $params );
 				}
 
-				case 'text':
-				case 'image': {
-					return $this->renderTpl( 'tpl/field_' . $field['type'] . '.tpl', [
-						'name'  => $name,
-						'field' => $field,
-						'value' => $value,
-					] );
+				case 'date': {
+					if ( !isset( $this->themes['datepicker'] ) && !class_exists( 'DATEPICKER' ) ) {
+						include_once( $this->modx->getConfig( 'mgr_date_picker_path' ) );
+        				$this->themes['datepicker'] = ( new DATEPICKER() )->getDP();
+        			}
+
+        			return $this->renderTpl( 'tpl/field_date.tpl', $params );
 				}
 
-				case 'group': {
+				case 'checkbox': {
 					if ( !is_array( $value ) ) {
-						$value = [ [] ];
-					} else {
-						array_unshift( $value, [] );
+						$value = [ $value ];
 					}
+				}
 
-					return $this->renderTpl( 'tpl/field_group.tpl', [
-						'name'   => $name,
-						'field'  => $field,
-						'values' => $value,
-					] );
+				case 'radio': {
+					$params['layout'] = 'vertical';
+
+					if ( isset( $field['layout'] ) && in_array( $field['layout'], [ 'horizontal', 'vertical' ] ) ) {
+						$params['layout'] = $field['layout'];
+					}
+				}
+
+				case 'dropdown': {
+					if ( !empty( $field['elements'] ) ) {
+						if ( is_array( $field['elements'] ) ) {
+							$params['elements'] = $field['elements'];
+						} else {
+							$elements = ParseIntputOptions( ProcessTVCommand( $field['elements'], $name, '', 'tvform', $tv = [] ) );
+
+							if ( !empty( $elements ) ) {
+								$params['elements'] = [];
+
+								while ( list( $key, $val ) = each( $elements ) ) {
+									list( $key, $val ) = is_array( $val ) ? $val : explode( '==', $val );
+
+									if ( strlen( $val ) == 0 ) {
+										$val = $key;
+									}
+
+									$params['elements'][$key] = $val;
+								}
+							}
+						}
+					}
+				}
+
+				default: {
+					return $this->renderTpl( 'tpl/field_' . $field['type'] . '.tpl', $params );
 				}
 			}
 

@@ -23,27 +23,67 @@
 					</div>
 				</div>
 			',
-
-			'images' => [
-				'main'  => '<img src="[+image+]" class="slide">',
-				'pager' => '<img src="[[phpthumb? &input=`[+image+]` &options=`w=100,h=60,zc=1`]]" class="slide">',
-			],
 		],
 
 		'fields' => [
-			'title' => [
-				'caption' => 'Заголовок',
-				'type'    => 'text',
+			'dropdown1' => [
+				'caption'  => 'dropdown1',
+				'type'     => 'dropdown',
+				'elements' => '0==Не выбрано||1==Первый',
+			],
+			
+			'checkbox' => [
+				'caption'  => 'checkbox',
+				'type'     => 'checkbox',
+				'elements' => [
+					0 => 'Не выбрано',
+					1 => 'Первый',
+					2 => 'Второй',
+				],
+				'default' => [ 1, 2 ],
 			],
 
-			'images' => [
-				'caption' => 'Изображения в слайдере',
-				'type'    => 'group',
-				'fields'  => [
-					'image' => [
-						'caption' => 'Изображение',
-						'type'    => 'image',
-					],
+			'radio' => [
+				'caption'  => 'radio',
+				'type'     => 'radio',
+				'layout'   => 'horizontal',
+				'elements' => [
+					0 => 'Не выбрано',
+					1 => 'Первый',
+					2 => 'Второй',
+				],
+				'default' => 1,
+			],
+
+			'textarea' => [
+				'caption' => 'textarea',
+				'type'    => 'textarea',
+				'default' => 'asd',
+				'height'  => '40px',
+			],
+
+			'image' => [
+				'caption' => 'image',
+				'type'    => 'image',
+			],
+
+			'file' => [
+				'caption' => 'file',
+				'type'    => 'file',
+			],
+
+			'date' => [
+				'caption' => 'date',
+				'type'    => 'date',
+			],
+
+			'dropdown' => [
+				'caption'  => 'dropdown',
+				'type'     => 'dropdown',
+				'elements' => [
+					0 => 'Не выбрано',
+					1 => 'Первый',
+					2 => 'Второй',
 				],
 			],
 		],

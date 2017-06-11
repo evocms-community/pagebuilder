@@ -11,5 +11,6 @@
 		'Move up' => 'Move up',
 		'Move down' => 'Move down',
 		'Fill with images' => 'Fill with images',
+		'No variants provided' => 'No variants provided',
 	];
 
