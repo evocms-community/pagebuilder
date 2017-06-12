@@ -188,8 +188,10 @@
                                         values[field] = [];
                                     }
 
+                                    var $inputs = $field.children('.check-list').children('.check-row').children('label').children('input').removeAttr( 'checked' );
+
                                     for ( var i = 0; i < values[field].length; i++ ) {
-                                        var $input = $field.children('.check-list').children('.check-row').children('label').children('[value="' + values[field][i] + '"]');
+                                        var $input = $inputs.filter('[value="' + values[field][i] + '"]');
 
                                         if ( $input.length ) {
                                             $input.attr( 'checked', true );
