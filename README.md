@@ -44,7 +44,7 @@
 
 <table>
 <tr><th>Ключ</th><th>Значение</th></tr>
-<tr><td>caption</td><td>Название поля, которое видит менеджер</td></tr>
+<tr><td>caption</td><td>Название поля, которое видит менеджер. Необязательно</td></tr>
 <tr><td>type</td><td>Тип поля, см. ниже</td></tr>
 <tr><td>theme</td><td>Тема редактора для поля "richtext", доступные значения можно посмотреть в конфигурации Evolution CMS, на вкладке "Интерфейс"</td></tr>
 <tr><td>options</td><td>Дополнительные опции для поля "richtext", значения можно посмотреть <a href="https://www.tinymce.com/docs/configure/" target="_blank">здесь</a></td></tr>
