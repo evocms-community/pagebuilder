@@ -166,10 +166,9 @@
                                         $element  = $sortable.children('.sortable-item.hidden');
 
                                     for ( var i = 0; i < values[field].length; i++ ) {
-                                        var $clone = $element.clone( true );
+                                        var $clone = ContentBlock.createSortableItem( $sortable );
                                         
-                                        $clone.children('.fields-list').removeClass( 'hidden' );
-                                        $clone.removeClass( 'hidden' ).appendTo( $sortable );
+                                        $clone.appendTo( $sortable ).show();
 
                                         ContentBlock.setValues( conf[field].fields, $clone.children('.fields-list'), values[field][i] );
                                     }
@@ -194,10 +193,12 @@
                                         var $input = $inputs.filter('[value="' + values[field][i] + '"]');
 
                                         if ( $input.length ) {
-                                            $input.attr( 'checked', true );
+                                            $input.get(0).checked = true;
                                         }
                                     }
                                 }
+
+                                break;
                             }
 
                             case 'radio': {
@@ -205,9 +206,11 @@
                                     var $input = $field.children('.check-list').children('.check-row').children('label').children('[value="' + values[field] + '"]');
 
                                     if ( $input.length ) {
-                                        $input.attr( 'checked', true );
+                                        $input.get(0).checked = true;
                                     }
                                 }
+
+                                break;
                             }
 
                             default: {
@@ -277,6 +280,11 @@
 
                     if ( $block.length ) {
                         $block = $block.clone();
+
+                        $block.find('.type-radio').each( function() {
+                            $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
+                        } );
+
                         $block.hide().insertAfter( $after ).slideDown( 200 );
                         ContentBlock.initialize( $block );
                     }
@@ -316,18 +324,25 @@
                     } );
                 },
 
-                insertItem: function( $after ) {
-                    if ( $after.hasClass( 'hidden' ) ) {
-                        var $clone = $after.clone( true );
-                    } else {
-                        var $clone = $after.parent().children('.hidden').eq(0).clone( true );
-                    }
+                createSortableItem: function( $list ) {
+                    var $clone = $list.children('.hidden').eq(0).clone( true );
 
-                    $clone.removeClass( 'hidden' ).hide().insertAfter( $after );
+                    $clone.removeClass( 'hidden' ).hide();
                     $clone.children('.fields-list').removeClass( 'hidden' );
 
+                    $clone.children('.fields-list').children('.type-radio').find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
+
+                    return $clone;
+                },
+
+                insertItem: function( $after ) {
+                    var $list  = $after.parent(),
+                        $clone = ContentBlock.createSortableItem( $list );
+
+                    $clone.insertAfter( $after );
+
                     if ( $after.hasClass( 'hidden' ) ) {
-                        ContentBlock.initializeSortableList( $after.parent() );
+                        ContentBlock.initializeSortableList( $list );
                     }
 
                     ContentBlock.initializeFieldsList( $after.children('.fields-list').data( 'fields' ), $clone.children('.fields-list') );
@@ -420,7 +435,7 @@
                     var theme   = $textarea.data( 'theme' ),
                         options = $textarea.data( 'options' );
 
-                    $textarea.get(0).id = 'rich' + ( ( ( 1 + Math.random() ) * 0x100000 ) | 0 ).toString( 16 );
+                    $textarea.get(0).id = 'rich' + ContentBlock.randomString();
                                 
                     if ( typeof tinymce !== 'undefined' ) {
                         var conf = theme != undefined ? window['config_tinymce4_' + theme] : window[ modxRTEbridge_tinymce4.default ];
@@ -495,6 +510,10 @@
                     }
 
                     var wnd = window.open( opts.browser + '?type=' + type, 'FileManager', params );
+                },
+
+                randomString: function() {
+                    return ( ( ( 1 + Math.random() ) * 0x100000 ) | 0 ).toString( 16 );
                 }
 
             }
@@ -529,6 +548,11 @@
 
                     if ( $block.length ) {
                         $block = $block.clone();
+                        
+                        $block.find('.type-radio').each( function() {
+                            $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
+                        } );
+
                         $block.hide().insertAfter( $(this).parent() ).slideDown( 200 );
                         ContentBlock.initialize( $block );
                     }
