@@ -31,7 +31,7 @@
             $this->lang = include $lang;
         }
 
-        private function renderFieldsList( $templates, $template, $fieldname, $config, $values ) {
+        private function renderFieldsList( $templates, $template, $config, $values ) {
             $out = '';
             $data = [];
 
@@ -41,20 +41,18 @@
                         return "NO TEMPLATE FOR FIELDGROUP '$field'";
                     }
 
-                    if ( is_array( $templates[$field] ) ) {
-                        foreach ( $templates[$field] as $tplname => $tpl ) {
-                            $key = $field . '.' . $tplname;
-                            $data[$key] = '';
+                    $fieldTemplates = $templates[$field];
 
-                            foreach ( $values[$field] as $row ) {
-                                $data[$key] .= $this->renderFieldsList( $templates, $tpl, $field, $options, $row );
-                            }
-                        }
-                    } else {
-                        $data[$field] = '';
+                    if ( !is_array( $fieldTemplates ) ) {
+                        $fieldTemplates = [ $fieldTemplates ];
+                    }
+
+                    foreach ( $fieldTemplates as $name => $tpl ) {
+                        $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                        $data[$key] = '';
 
                         foreach ( $values[$field] as $row ) {
-                            $data[$field] .= $this->renderFieldsList( $templates, $templates[$field], $field, $options, $row );
+                            $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $row );
                         }
                     }
                 } else {
@@ -78,7 +76,7 @@
 
             foreach ( $this->data as $row ) {
                 $conf = $this->conf[ $row['config'] ];
-                $out .= $this->renderFieldsList( $conf['templates'], $conf['templates']['owner'], 'owner', $conf, $row['values'] );
+                $out .= $this->renderFieldsList( $conf['templates'], $conf['templates']['owner'], $conf, $row['values'] );
             }
 
             return $out;
