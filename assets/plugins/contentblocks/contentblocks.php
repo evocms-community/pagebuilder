@@ -36,27 +36,59 @@
             $data = [];
 
             foreach ( $config['fields'] as $field => $options ) {
-                if ( $options['type'] == 'group' ) {
+                if ( isset( $options['elements'] ) ) {
                     if ( !isset( $templates[$field] ) ) {
-                        return "NO TEMPLATE FOR FIELDGROUP '$field'";
-                    }
+                        $data[$field] = $values[$field];
 
-                    $fieldTemplates = $templates[$field];
+                        if ( is_array( $data[$field] ) ) {
+                            $data[$field] = implode( '||', $data[$field] );
+                        }
+                    } else {
+                        $fieldTemplates = $templates[$field];
 
-                    if ( !is_array( $fieldTemplates ) ) {
-                        $fieldTemplates = [ $fieldTemplates ];
-                    }
+                        if ( !is_array( $fieldTemplates ) ) {
+                            $fieldTemplates = [ $fieldTemplates ];
+                        }
 
-                    foreach ( $fieldTemplates as $name => $tpl ) {
-                        $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
-                        $data[$key] = '';
+                        foreach ( $fieldTemplates as $name => $tpl ) {
+                            $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                            $data[$key] = '';
 
-                        foreach ( $values[$field] as $row ) {
-                            $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $row );
+                            foreach ( $values[$field] as $value ) {
+                                $data[$key] .= $this->modx->parseText( $tpl, [
+                                    'value' => $value,
+                                    'title' => $options['elements'][$value],
+                                ] );
+                            }
                         }
                     }
-                } else {
+
+                    continue;
+                }
+
+                if ( $options['type'] != 'group' ) {
                     $data[$field] = $values[$field];
+                    continue;
+                }
+
+                if ( !isset( $templates[$field] ) ) {
+                    $data[$field] = "NO TEMPLATE FOR FIELDGROUP '$field'";
+                    continue;
+                }
+
+                $fieldTemplates = $templates[$field];
+
+                if ( !is_array( $fieldTemplates ) ) {
+                    $fieldTemplates = [ $fieldTemplates ];
+                }
+
+                foreach ( $fieldTemplates as $name => $tpl ) {
+                    $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                    $data[$key] = '';
+
+                    foreach ( $values[$field] as $value ) {
+                        $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
+                    }
                 }
             }
 
