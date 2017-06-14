@@ -39,7 +39,14 @@
 			values: <?= json_encode( $block, JSON_UNESCAPED_UNICODE ) ?>, 
 			config: <?= json_encode( $configs, JSON_UNESCAPED_UNICODE ) ?>,
 			lang: <?= json_encode( $l, JSON_UNESCAPED_UNICODE ) ?>,
-			browser: "<?= $browseurl ?>"
+			browser: "<?= $browseurl ?>",
+			picker: {
+				yearOffset: <?= $picker['yearOffset'] ?>,
+				format: '<?= $picker['format'] ?>',
+				dayNames: <?= $adminlang['dp_dayNames'] ?>,
+				monthNames: <?= $adminlang['dp_monthNames'] ?>,
+				startDay: <?= $adminlang['dp_startDay'] ?>,
+			}
 		} );
 	} );
 </script>

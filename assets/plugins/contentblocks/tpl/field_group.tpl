@@ -10,7 +10,7 @@
 
 				<div class="fields-list<?= !$i ? ' hidden' : '' ?>">
 					<? foreach ( $field['fields'] as $child => $childfield ) { ?> 
-						<?= $instance->renderField( $childfield, $child, isset( $value[$child] ) ? $value[$child] : '' ) ?> 
+						<?= $instance->renderField( $childfield, $child, isset( $value[$child] ) ? $value[$child] : null ) ?> 
 					<? } ?> 
 				</div>
 
