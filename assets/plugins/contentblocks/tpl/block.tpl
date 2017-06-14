@@ -15,7 +15,7 @@
 
 	<div class="fields-list">
 		<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ) { ?>
-			<?= $instance->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : '' ); ?> 
+			<?= $instance->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?> 
 		<? } ?> 
 	</div>
 
