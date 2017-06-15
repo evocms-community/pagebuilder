@@ -1,5 +1,7 @@
 ## Content Blocks for Evolution CMS
 
+Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.en.md">English</a>
+
 Конфигурация для блоков берется из папки config. Для создания нового блока нужно создать в этой папке файл .php, который должен вернуть ассоциативный массив. Структура массива следующая:
 
 <table>
