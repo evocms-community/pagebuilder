@@ -301,8 +301,8 @@
                             if ( !empty( $elements ) ) {
                                 $params['elements'] = [];
 
-                                while ( list( $key, $val ) = each( $elements ) ) {
-                                    list( $key, $val ) = is_array( $val ) ? $val : explode( '==', $val );
+                                foreach ( $elements as $element ) {
+                                    list( $val, $key ) = is_array( $element ) ? $element : explode( '==', $element );
 
                                     if ( strlen( $val ) == 0 ) {
                                         $val = $key;

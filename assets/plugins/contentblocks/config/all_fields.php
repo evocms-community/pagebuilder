@@ -28,7 +28,7 @@
             'dropdown' => [
                 'caption'  => 'Dropdown',
                 'type'     => 'dropdown',
-                'elements' => '@SELECT id, pagetitle FROM modx_site_content',
+                'elements' => '@SELECT pagetitle, id FROM modx_site_content',
             ],
 
             'textarea' => [
@@ -79,7 +79,7 @@
                 'caption'  => 'Radio',
                 'type'     => 'radio',
                 'layout'   => 'horizontal',
-                'elements' => '0==No||1==First||2==Second',
+                'elements' => 'No==0||First==1||Second==2',
                 'default'  => 1,
             ],
         ],
