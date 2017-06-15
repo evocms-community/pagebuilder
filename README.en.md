@@ -1,6 +1,8 @@
 
 ## Content Blocks for Evolution CMS
 
+Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.md">Russian</a>
+
 The configuration for the blocks is taken from the config folder. To create a new block, you need to create a .php file in this folder, which should return an associative array. The structure of the array is as follows:
 
 <table>
