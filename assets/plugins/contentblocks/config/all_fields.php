@@ -3,6 +3,12 @@
     return [
         'title' => 'All fields',
 
+//        'show_in_templates' => [ 4 ],
+
+//        'show_in_docs' => [ 2 ],
+
+//        'hide_in_docs' => [ 5 ],
+
         'templates' => [
             'owner' => '
                 <div>Text:<br> [+text+]</div>

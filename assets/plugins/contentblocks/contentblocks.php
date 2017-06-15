@@ -176,11 +176,42 @@
 
             $this->conf = [];
 
+            $templateid = isset( $this->params['template'] ) ? $this->params['template'] : $this->modx->documentObject['template'];
+
             foreach ( scandir( $this->path ) as $entry ) {
                 if ( pathinfo( $entry, PATHINFO_EXTENSION ) == 'php' ) {
-                    $this->conf[$entry] = include( $this->path . $entry );
-                    if ( $notpl ) {
-                        unset( $this->conf[$entry]['templates'] );
+                    $config = include( $this->path . $entry );
+
+                    foreach ( [ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt ) {
+                        if ( isset( $config[$opt] ) && !is_array( $config[$opt] ) ) {
+                            $config[$opt] = [ $config[$opt] ];
+                        }
+                    }
+
+                    $add = true;
+
+                    if ( isset( $config['show_in_templates'] ) && !in_array( $templateid, $config['show_in_templates'] ) ) {
+                        $add = false;
+                    }
+
+                    if ( $add && isset( $config['hide_in_docs'] ) && in_array( $docid, $config['hide_in_docs'] ) ) {
+                        $add = false;
+                    }
+
+                    if ( isset( $config['show_in_docs'] ) ) {
+                        if ( in_array( $docid, $config['show_in_docs'] ) ) {
+                            $add = true;
+                        } else if ( !isset( $config['show_in_templates'] ) ) {
+                            $add = false;
+                        }
+                    }
+
+                    if ( $add ) {
+                        $this->conf[$entry] = $config;
+
+                        if ( $notpl ) {
+                            unset( $this->conf[$entry]['templates'] );
+                        }
                     }
                 }
             }
