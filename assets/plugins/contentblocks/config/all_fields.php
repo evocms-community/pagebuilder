@@ -42,8 +42,10 @@
                 'caption' => 'Richtext',
                 'type'    => 'richtext',
                 'default' => 'Default content for richtext',
-                'height'  => '80px',
                 'theme'   => 'mini',
+                'options' => [
+                    'height' => '80px',
+                ],
             ],
 
             'image' => [
