@@ -232,8 +232,11 @@
          */
         public function save() {
             if ( isset( $_POST['contentblocks'] ) && is_array( $_POST['contentblocks'] ) ) {
-                $exists = array_column( $_POST['contentblocks'], 'id' );
                 $docid  = $this->params['id'];
+
+                $exists = array_map( function( $element ) { 
+                    return $element['id'];
+                }, $_POST['contentblocks'] );
 
                 $this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
 
