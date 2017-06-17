@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.2.0';
+        const version = '0.3.0';
 
         private $modx;
         private $data;
@@ -31,6 +31,39 @@
             $this->lang = include $lang;
         }
 
+        /**
+         * Load and parse template
+         *
+         * @param  string $template String that contains template or binding with name of template
+         * @param  array $data Values
+         * @return string Result of parsing
+         */
+        private function parseTemplate( $template, $data ) {
+            if ( !function_exists( 'ParseCommand' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php' );
+            }
+
+            $binding = ParseCommand( $template );
+
+            if ( !empty( $binding ) ) {
+                list( $command, $source ) = $binding;
+
+                switch ( $command ) {
+                    case 'CHUNK': {
+                        $template = $this->modx->getChunk( trim( $source ) );
+                        break;
+                    }
+
+                    case 'FILE': {
+                        $template = $this->modx->atBindFileContent( $template );
+                        break;
+                    }
+                }
+            }
+
+            return $this->modx->parseText( $template, $data );
+        }
+
         private function renderFieldsList( $templates, $template, $config, $values ) {
             $out = '';
             $data = [];
@@ -55,7 +88,7 @@
                             $data[$key] = '';
 
                             foreach ( $values[$field] as $value ) {
-                                $data[$key] .= $this->modx->parseText( $tpl, [
+                                $data[$key] .= $this->parseTemplate( $tpl, [
                                     'value' => $value,
                                     'title' => $options['elements'][$value],
                                 ] );
@@ -92,7 +125,7 @@
                 }
             }
 
-            return $this->modx->parseText( $template, $data );
+            return $this->parseTemplate( $template, $data );
         }
 
         /**
