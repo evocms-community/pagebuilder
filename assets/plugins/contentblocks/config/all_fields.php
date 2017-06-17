@@ -35,6 +35,7 @@
                 'caption'  => 'Dropdown',
                 'type'     => 'dropdown',
                 'elements' => '@SELECT pagetitle, id FROM modx_site_content',
+                'default'  => '@SELECT id FROM modx_site_content WHERE alias = "sitemap.xml" LIMIT 1',
             ],
 
             'textarea' => [

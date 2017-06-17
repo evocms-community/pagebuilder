@@ -5,7 +5,7 @@
  * Creates form for manage content blocks
  *
  * @category    plugin
- * @version     alpha
+ * @version     0.2.0
  * @author      sunhaim
  * @internal    @properties &tabName=Tab name;text;Content Blocks
  * @internal    @events OnDocFormRender,OnDocFormSave,OnBeforeEmptyTrash,OnDocDuplicate 

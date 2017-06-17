@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.1.0';
+        const version = '0.2.0';
 
         private $modx;
         private $data;
@@ -260,6 +260,42 @@
         }
 
         /**
+         * Parse values from modx-style string, 
+         * e.g. 1||2,
+         * or @EVAL ...,
+         * or @SELECT
+         *
+         * @param  mixed $input
+         * @return mixed
+         */
+        private function parseValues( $input ) {
+            if ( !is_string( $input ) ) {
+                return $input;
+            } else {
+                $values   = [];
+                $elements = ParseIntputOptions( ProcessTVCommand( $input, '', '', 'tvform', $tv = [] ) );
+
+                if ( !empty( $elements ) ) {
+                    foreach ( $elements as $element ) {
+                        list( $val, $key ) = is_array( $element ) ? $element : explode( '==', $element );
+
+                        if ( strlen( $val ) == 0 ) {
+                            $val = $key;
+                        }
+
+                        if ( strlen( $key ) == 0 ) {
+                            $key = $val;
+                        }
+
+                        $values[$key] = $val;
+                    }
+                }
+            }
+
+            return $values;
+        }
+
+        /**
          * Renders field control
          * 
          * @param  array $field Array with field options
@@ -270,7 +306,15 @@
         public function renderField( $field, $name, $value ) {
             $out = '';
 
-            $default = !empty( $field['default'] ) ? $field['default'] : '';
+            $default = '';
+
+            if ( !empty( $field['default'] ) ) {
+                $default = $this->parseValues( $field['default'] );
+                
+                if ( $field['type'] != 'checkbox' && is_array( $default ) ) {
+                    $default = reset( $default );
+                }
+            }
 
             $params = [
                 'name'     => $name,
@@ -327,25 +371,7 @@
 
                 case 'dropdown': {
                     if ( !empty( $field['elements'] ) ) {
-                        if ( is_array( $field['elements'] ) ) {
-                            $params['elements'] = $field['elements'];
-                        } else {
-                            $elements = ParseIntputOptions( ProcessTVCommand( $field['elements'], $name, '', 'tvform', $tv = [] ) );
-
-                            if ( !empty( $elements ) ) {
-                                $params['elements'] = [];
-
-                                foreach ( $elements as $element ) {
-                                    list( $val, $key ) = is_array( $element ) ? $element : explode( '==', $element );
-
-                                    if ( strlen( $val ) == 0 ) {
-                                        $val = $key;
-                                    }
-
-                                    $params['elements'][$key] = $val;
-                                }
-                            }
-                        }
+                        $params['elements'] = $this->parseValues( $field['elements'] );
                     }
                 }
 

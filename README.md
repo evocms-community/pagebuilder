@@ -63,7 +63,9 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 Для полей "richtext" указывается в составе опций редактора, в ключе "options"</td></tr>
 <tr><td>elements</td><td>Возможные значения для поля выбора. Доступны для полей "dropdown", "radio", "checkbox". Могут быть представлены в виде массива "ключ" => "значение", или в виде строки в доступном формате Evolution CMS (@SELECT и пр. работают).</td></tr>
 <tr><td>layout</td><td>Вид расположения вариантов для полей "radio" и "checkbox". Возможные значения - "vertical" (по умолчанию) и "horizontal"</td></tr>
-<tr><td>default</td><td>Значение по умолчанию. Для типа поля "checkbox" может быть массивом значений</td></tr>
+<tr><td>default</td><td>Значение по умолчанию. Для типа поля "checkbox" может быть массивом значений.
+
+Возможно указание в формате "1||2||3", и использование привязок @SELECT, @EVAL и пр.</td></tr>
 </table>
 
 #### Типы полей
