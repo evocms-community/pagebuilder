@@ -45,6 +45,28 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 ```
 
 Во втором случае вывод этих элементов в родительском шаблоне можно использовать как "[+images.item+]" и "[+images.thumb+]".
+
+Возможно указание имени чанка, в котором находится нужный шаблон. Для этого нужно использовать привязку @CHUNK, например:
+
+```
+'checkbox' => '@CHUNK all_fields_checkboxes',
+```
+
+Также возможна подгрузка шаблона из файла, например:
+
+```
+'owner' => '@FILE contentblocks/all_fields.tpl',
+```
+
+В этом примере файл шаблона будем загружен из MODX_BASE_PATH . "assets/templates/contentblocks/all_fields.tpl". Вообще файл  ищется в следующих директориях:
+
+```
+assets/tvs/
+assets/chunks/
+assets/templates/
+```
+
+Либо можно указать полный путь от корня сайта. Первый слеш не указывается.
 </td>
 </tr>
 </table>
