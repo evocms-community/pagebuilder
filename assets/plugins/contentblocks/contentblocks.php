@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.3.0';
+        const version = '0.3.2';
 
         private $modx;
         private $data;
