@@ -1,5 +1,7 @@
 ## Content Blocks for Evolution CMS
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/673e4bef-b780-4f5c-8d67-8f9193434b1a/mini.png)](https://insight.sensiolabs.com/projects/673e4bef-b780-4f5c-8d67-8f9193434b1a)
+
 Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.en.md">English</a>
 
 Конфигурация для блоков берется из папки config. Для создания нового блока нужно создать в этой папке файл .php, который должен вернуть ассоциативный массив. Структура массива следующая:
