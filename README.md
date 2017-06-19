@@ -4,6 +4,10 @@
 
 Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.en.md">English</a>
 
+Плагин позволяет разработчику определить набор блоков с определенной разметкой и списком полей, чтобы контент-менеджер использовал те блоки, которые считает нужным, со своим наполнением.
+
+[![Youtube review](https://i.ytimg.com/vi/yov7y-OXubo/hqdefault.jpg)](https://youtu.be/yov7y-OXubo)
+
 Конфигурация для блоков берется из папки config. Для создания нового блока нужно создать в этой папке файл .php, который должен вернуть ассоциативный массив. Структура массива следующая:
 
 <table>
