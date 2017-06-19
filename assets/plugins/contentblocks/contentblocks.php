@@ -175,6 +175,10 @@
         public function renderForm() {
             $this->fetch( $this->params['id'] );
 
+            if ( empty( $this->conf ) ) {
+                return '';
+            }
+
             // load manager lang file for date settings
             include MODX_MANAGER_PATH . 'includes/lang/' . $this->modx->getConfig( 'manager_language' ) . '.inc.php';
 
@@ -302,6 +306,14 @@
          * @return mixed
          */
         private function parseValues( $input ) {
+            if ( !function_exists( 'ParseIntputOptions' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.inc.php' );
+            }
+
+            if ( !function_exists( 'ProcessTVCommand' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php' );
+            }
+
             if ( !is_string( $input ) ) {
                 return $input;
             } else {
