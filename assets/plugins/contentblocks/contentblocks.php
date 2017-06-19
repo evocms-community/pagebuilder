@@ -61,7 +61,7 @@
                 }
             }
 
-            return $this->modx->parseText( $template, $data );
+            return $this->modx->parseText( $this->modx->mergeSettingsContent( $template ) , $data );
         }
 
         private function renderFieldsList( $templates, $template, $config, $values ) {
