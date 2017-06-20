@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.1.0';
+        const version = '0.3.2';
 
         private $modx;
         private $data;
@@ -31,6 +31,39 @@
             $this->lang = include $lang;
         }
 
+        /**
+         * Load and parse template
+         *
+         * @param  string $template String that contains template or binding with name of template
+         * @param  array $data Values
+         * @return string Result of parsing
+         */
+        private function parseTemplate( $template, $data ) {
+            if ( !function_exists( 'ParseCommand' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php' );
+            }
+
+            $binding = ParseCommand( $template );
+
+            if ( !empty( $binding ) ) {
+                list( $command, $source ) = $binding;
+
+                switch ( $command ) {
+                    case 'CHUNK': {
+                        $template = $this->modx->getChunk( trim( $source ) );
+                        break;
+                    }
+
+                    case 'FILE': {
+                        $template = $this->modx->atBindFileContent( $template );
+                        break;
+                    }
+                }
+            }
+
+            return $this->modx->parseText( $this->modx->mergeSettingsContent( $template ) , $data );
+        }
+
         private function renderFieldsList( $templates, $template, $config, $values ) {
             $out = '';
             $data = [];
@@ -55,7 +88,7 @@
                             $data[$key] = '';
 
                             foreach ( $values[$field] as $value ) {
-                                $data[$key] .= $this->modx->parseText( $tpl, [
+                                $data[$key] .= $this->parseTemplate( $tpl, [
                                     'value' => $value,
                                     'title' => $options['elements'][$value],
                                 ] );
@@ -92,7 +125,7 @@
                 }
             }
 
-            return $this->modx->parseText( $template, $data );
+            return $this->parseTemplate( $template, $data );
         }
 
         /**
@@ -141,6 +174,10 @@
          */
         public function renderForm() {
             $this->fetch( $this->params['id'] );
+
+            if ( empty( $this->conf ) ) {
+                return '';
+            }
 
             // load manager lang file for date settings
             include MODX_MANAGER_PATH . 'includes/lang/' . $this->modx->getConfig( 'manager_language' ) . '.inc.php';
@@ -232,8 +269,11 @@
          */
         public function save() {
             if ( isset( $_POST['contentblocks'] ) && is_array( $_POST['contentblocks'] ) ) {
-                $exists = array_column( $_POST['contentblocks'], 'id' );
                 $docid  = $this->params['id'];
+
+                $exists = array_map( function( $element ) { 
+                    return $element['id'];
+                }, $_POST['contentblocks'] );
 
                 $this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
 
@@ -257,6 +297,50 @@
         }
 
         /**
+         * Parse values from modx-style string, 
+         * e.g. 1||2,
+         * or @EVAL ...,
+         * or @SELECT
+         *
+         * @param  mixed $input
+         * @return mixed
+         */
+        private function parseValues( $input ) {
+            if ( !function_exists( 'ParseIntputOptions' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.inc.php' );
+            }
+
+            if ( !function_exists( 'ProcessTVCommand' ) ) {
+                require_once( MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php' );
+            }
+
+            if ( !is_string( $input ) ) {
+                return $input;
+            } else {
+                $values   = [];
+                $elements = ParseIntputOptions( ProcessTVCommand( $input, '', '', 'tvform', $tv = [] ) );
+
+                if ( !empty( $elements ) ) {
+                    foreach ( $elements as $element ) {
+                        list( $val, $key ) = is_array( $element ) ? $element : explode( '==', $element );
+
+                        if ( strlen( $val ) == 0 ) {
+                            $val = $key;
+                        }
+
+                        if ( strlen( $key ) == 0 ) {
+                            $key = $val;
+                        }
+
+                        $values[$key] = $val;
+                    }
+                }
+            }
+
+            return $values;
+        }
+
+        /**
          * Renders field control
          * 
          * @param  array $field Array with field options
@@ -267,7 +351,15 @@
         public function renderField( $field, $name, $value ) {
             $out = '';
 
-            $default = !empty( $field['default'] ) ? $field['default'] : '';
+            $default = '';
+
+            if ( !empty( $field['default'] ) ) {
+                $default = $this->parseValues( $field['default'] );
+                
+                if ( $field['type'] != 'checkbox' && is_array( $default ) ) {
+                    $default = reset( $default );
+                }
+            }
 
             $params = [
                 'name'     => $name,
@@ -324,25 +416,7 @@
 
                 case 'dropdown': {
                     if ( !empty( $field['elements'] ) ) {
-                        if ( is_array( $field['elements'] ) ) {
-                            $params['elements'] = $field['elements'];
-                        } else {
-                            $elements = ParseIntputOptions( ProcessTVCommand( $field['elements'], $name, '', 'tvform', $tv = [] ) );
-
-                            if ( !empty( $elements ) ) {
-                                $params['elements'] = [];
-
-                                foreach ( $elements as $element ) {
-                                    list( $val, $key ) = is_array( $element ) ? $element : explode( '==', $element );
-
-                                    if ( strlen( $val ) == 0 ) {
-                                        $val = $key;
-                                    }
-
-                                    $params['elements'][$key] = $val;
-                                }
-                            }
-                        }
+                        $params['elements'] = $this->parseValues( $field['elements'] );
                     }
                 }
 

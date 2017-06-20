@@ -1,6 +1,12 @@
 ## Content Blocks for Evolution CMS
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/673e4bef-b780-4f5c-8d67-8f9193434b1a/mini.png)](https://insight.sensiolabs.com/projects/673e4bef-b780-4f5c-8d67-8f9193434b1a)
+
 Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.en.md">English</a>
+
+Плагин позволяет разработчику определить набор блоков с определенной разметкой и списком полей, чтобы контент-менеджер использовал те блоки, которые считает нужным, со своим наполнением.
+
+[![Youtube review](https://i.ytimg.com/vi/yov7y-OXubo/hqdefault.jpg)](https://youtu.be/yov7y-OXubo)
 
 Конфигурация для блоков берется из папки config. Для создания нового блока нужно создать в этой папке файл .php, который должен вернуть ассоциативный массив. Структура массива следующая:
 
@@ -45,6 +51,28 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 ```
 
 Во втором случае вывод этих элементов в родительском шаблоне можно использовать как "[+images.item+]" и "[+images.thumb+]".
+
+Возможно указание имени чанка, в котором находится нужный шаблон. Для этого нужно использовать привязку @CHUNK, например:
+
+```
+'checkbox' => '@CHUNK all_fields_checkboxes',
+```
+
+Также возможна подгрузка шаблона из файла, например:
+
+```
+'owner' => '@FILE contentblocks/all_fields.tpl',
+```
+
+В этом примере файл шаблона будем загружен из MODX_BASE_PATH . "assets/templates/contentblocks/all_fields.tpl". Вообще файл  ищется в следующих директориях:
+
+```
+assets/tvs/
+assets/chunks/
+assets/templates/
+```
+
+Либо можно указать полный путь от корня сайта. Первый слеш не указывается.
 </td>
 </tr>
 </table>
@@ -63,7 +91,9 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 Для полей "richtext" указывается в составе опций редактора, в ключе "options"</td></tr>
 <tr><td>elements</td><td>Возможные значения для поля выбора. Доступны для полей "dropdown", "radio", "checkbox". Могут быть представлены в виде массива "ключ" => "значение", или в виде строки в доступном формате Evolution CMS (@SELECT и пр. работают).</td></tr>
 <tr><td>layout</td><td>Вид расположения вариантов для полей "radio" и "checkbox". Возможные значения - "vertical" (по умолчанию) и "horizontal"</td></tr>
-<tr><td>default</td><td>Значение по умолчанию. Для типа поля "checkbox" может быть массивом значений</td></tr>
+<tr><td>default</td><td>Значение по умолчанию. Для типа поля "checkbox" может быть массивом значений.
+
+Возможно указание в формате "1||2||3", и использование привязок @SELECT, @EVAL и пр.</td></tr>
 </table>
 
 #### Типы полей

@@ -63,7 +63,7 @@
                                     1 => 'First',
                                     2 => 'Second',
                                 ],
-                                'default' => [ 1, 2 ],
+                                'default' => '1||2',
                             ],
                         ],
                     ],
