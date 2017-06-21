@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.3.2';
+        const version = '0.3.3';
 
         private $modx;
         private $data;
@@ -268,29 +268,35 @@
          * Called at OnDocFormSave event for saving content blocks
          */
         public function save() {
-            if ( isset( $_POST['contentblocks'] ) && is_array( $_POST['contentblocks'] ) ) {
-                $docid  = $this->params['id'];
+            if ( isset( $_POST['contentblocks'] ) ) {
+                if ( is_array( $_POST['contentblocks'] ) ) {
+                    $docid  = $this->params['id'];
 
-                $exists = array_map( function( $element ) { 
-                    return $element['id'];
-                }, $_POST['contentblocks'] );
+                    $exists = array_map( function( $element ) { 
+                        return $element['id'];
+                    }, $_POST['contentblocks'] );
 
-                $this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
+                    $this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
 
-                foreach ( $_POST['contentblocks'] as $index => $row ) {
-                    if ( !empty( $row['id'] ) ) {
-                        $this->modx->db->update( [
-                            'config' => $this->modx->db->escape( $row['config'] ),
-                            'values' => $this->modx->db->escape( $row['values'] ),
-                            'index'  => $index,
-                        ], $this->table, "`id` = '{$row[id]}'" );
-                    } else {
-                        $this->modx->db->insert( [
-                            'document_id' => $docid,
-                            'config'      => $this->modx->db->escape( $row['config'] ),
-                            'values'      => $this->modx->db->escape( $row['values'] ),
-                            'index'       => $index,
-                        ], $this->table );
+                    foreach ( $_POST['contentblocks'] as $index => $row ) {
+                        if ( !empty( $row['id'] ) ) {
+                            $this->modx->db->update( [
+                                'config' => $this->modx->db->escape( $row['config'] ),
+                                'values' => $this->modx->db->escape( $row['values'] ),
+                                'index'  => $index,
+                            ], $this->table, "`id` = '{$row[id]}'" );
+                        } else {
+                            $this->modx->db->insert( [
+                                'document_id' => $docid,
+                                'config'      => $this->modx->db->escape( $row['config'] ),
+                                'values'      => $this->modx->db->escape( $row['values'] ),
+                                'index'       => $index,
+                            ], $this->table );
+                        }
+                    }
+                } else {
+                    if ( $_POST['contentblocks'] == 0 ) {
+                        $this->modx->db->delete( $this->table, "`document_id` = '" . $this->params['id'] . "'" );
                     }
                 }
             }
