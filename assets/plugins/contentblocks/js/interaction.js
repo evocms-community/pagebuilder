@@ -521,11 +521,16 @@
             ContentBlock.initialize( $container.children('.block') );
 
             $container.closest('form').submit( function() {
-                var $form = $(this);
+                var $form   = $(this),
+                    $blocks = $container.children('.block');
 
                 $form.children('input[name^="contentblocks"]').remove();
 
-                $container.children('.block').each( function( i ) {
+                if ( !$blocks.length ) {
+                    $('<input type="hidden"/>').attr( 'name', 'contentblocks' ).val( '0' ).appendTo( $form );
+                }
+
+                $blocks.each( function( i ) {
                     var $block = $(this),
                         $id = $block.children('[name="contentblocks_id"]');
 
