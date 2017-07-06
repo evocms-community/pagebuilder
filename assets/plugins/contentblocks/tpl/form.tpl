@@ -1,6 +1,6 @@
-<link rel="stylesheet" href="/assets/plugins/contentblocks/styles/styles.css?<?= $version ?>">
-<script src="/assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
-<script src="/assets/plugins/contentblocks/js/interaction.js?<?= $version ?>"></script>
+<link rel="stylesheet" href="../assets/plugins/contentblocks/styles/styles.css?<?= $version ?>">
+<script src="../assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
+<script src="../assets/plugins/contentblocks/js/interaction.js?<?= $version ?>"></script>
 
 <div class="tab-page" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
 	<h2 class="tab" id="contentblockstab"><?= $tabname ?></h2>
