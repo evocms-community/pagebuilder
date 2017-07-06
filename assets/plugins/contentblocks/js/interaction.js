@@ -377,6 +377,12 @@
                             }
 
                             case 'image': {
+                                $field.children('input[type="text"]').on( 'input change', function() {
+                                    if ( this.value == '' ) {
+                                        ContentBlock.setThumb( $(this).parent() );
+                                    }
+                                } );
+
                                 ContentBlock.setThumb( $field );
                                 break;
                             }
