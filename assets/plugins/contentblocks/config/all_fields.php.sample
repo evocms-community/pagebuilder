@@ -1,0 +1,94 @@
+<?php
+
+    return [
+        'title' => 'All fields',
+
+//        'show_in_templates' => [ 4 ],
+
+//        'show_in_docs' => [ 2 ],
+
+//        'hide_in_docs' => [ 5 ],
+
+        'templates' => [
+            'owner' => '
+                <div>Text:<br> [+text+]</div>
+                <div>Dropdown:<br> [+dropdown+]</div>
+                <div>Rextarea:<br> [+textarea+]</div>
+                <div>Richtext:<br> [+richtext+]</div>
+                <div>Image:<br> [+image+]</div>
+                <div>File:<br> [+file+]</div>
+                <div>Date:<br> [+date+]</div>
+                <div>Checkbox:<br> [+checkbox+]</div>
+                <div>Radio:<br> [+radio+]</div>
+            ',
+
+            'checkbox' => '<span>[+title+] ([+value+])</span> ',
+        ],
+
+        'fields' => [
+            'text' => [
+                'caption' => 'Text',
+                'type'    => 'text',
+            ],
+
+            'dropdown' => [
+                'caption'  => 'Dropdown',
+                'type'     => 'dropdown',
+                'elements' => '@SELECT pagetitle, id FROM [+PREFIX+]site_content WHERE parent = 0 ORDER BY pagetitle LIMIT 10',
+                'default'  => '@SELECT id FROM [+PREFIX+]site_content WHERE parent = 0 ORDER BY pagetitle LIMIT 1',
+            ],
+
+            'textarea' => [
+                'caption' => 'Textarea',
+                'type'    => 'textarea',
+                'default' => 'Default content for textarea',
+                'height'  => '80px',
+            ],
+
+            'richtext' => [
+                'caption' => 'Richtext',
+                'type'    => 'richtext',
+                'default' => 'Default content for richtext',
+                'theme'   => 'mini',
+                'options' => [
+                    'height' => '80px',
+                ],
+            ],
+
+            'image' => [
+                'caption' => 'Image',
+                'type'    => 'image',
+            ],
+
+            'file' => [
+                'caption' => 'File',
+                'type'    => 'file',
+            ],
+
+            'date' => [
+                'caption' => 'Date',
+                'type'    => 'date',
+            ],
+
+            'checkbox' => [
+                'caption'  => 'Checkbox',
+                'type'     => 'checkbox',
+                'layout'   => 'horizontal',
+                'elements' => [
+                    0 => 'No',
+                    1 => 'First',
+                    2 => 'Second',
+                ],
+                'default' => [ 1, 2 ],
+            ],
+
+            'radio' => [
+                'caption'  => 'Radio',
+                'type'     => 'radio',
+                'layout'   => 'horizontal',
+                'elements' => 'No==0||First==1||Second==2',
+                'default'  => 1,
+            ],
+        ],
+    ];
+
