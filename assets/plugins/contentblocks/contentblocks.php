@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.3.3';
+        const version = '0.3.6';
 
         private $modx;
         private $data;
@@ -184,7 +184,6 @@
 
             return $this->renderTpl( 'tpl/form.tpl', [
                 'version'   => self::version,
-                'themes'    => $this->themes,
                 'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks',
                 'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
                 'configs'   => $this->conf,

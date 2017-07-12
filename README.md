@@ -113,4 +113,4 @@ assets/templates/
 
 #### Примеры конфигурации
 
-Примеры конфигурации можно найти <a href="https://github.com/sunhaim/contentblocks/tree/master/assets/plugins/contentblocks/config" target="_blank">здесь</a>
+Примеры конфигурации можно найти <a href="https://github.com/sunhaim/contentblocks/tree/master/assets/plugins/contentblocks/config" target="_blank">здесь</a>. (Чтобы примеры блоков стали доступны для выбора, нужно переименовать файлы *.php.sample в *.php)
