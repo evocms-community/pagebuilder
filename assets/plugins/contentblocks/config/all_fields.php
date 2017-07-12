@@ -34,8 +34,8 @@
             'dropdown' => [
                 'caption'  => 'Dropdown',
                 'type'     => 'dropdown',
-                'elements' => '@SELECT pagetitle, id FROM modx_site_content',
-                'default'  => '@SELECT id FROM modx_site_content WHERE alias = "sitemap.xml" LIMIT 1',
+                'elements' => '@SELECT pagetitle, id FROM [+PREFIX+]site_content WHERE parent = 0 ORDER BY pagetitle LIMIT 10',
+                'default'  => '@SELECT id FROM [+PREFIX+]site_content WHERE parent = 0 ORDER BY pagetitle LIMIT 1',
             ],
 
             'textarea' => [
