@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.3.6';
+        const version = '0.4.0';
 
         private $modx;
         private $data;
@@ -61,7 +61,9 @@
                 }
             }
 
-            return $this->modx->parseText( $this->modx->mergeSettingsContent( $template ) , $data );
+            $template = $this->modx->mergeSettingsContent( $template );
+
+            return $this->modx->parseText( $template , $data );
         }
 
         private function renderFieldsList( $templates, $template, $config, $values ) {
@@ -131,15 +133,45 @@
         /**
          * Shows all content blocks for document
          * 
-         * @param  int $docid Document identificator
+         * @param  int $params Snippet parameters
          * @return string Output
          */
-        public function render( $docid ) {
-            $out = '';
+        public function render( $params ) {
+            $params = array_merge( [
+                'docid'  => $this->modx->documentIdentifier,
+                'blocks' => '*',
+                'offset' => 0,
+                'limit'  => 0,
+            ], $params );
 
-            $this->fetch( $docid, false );
+            if ( $params['blocks'] != '*' ) {
+                $params['blocks'] = explode( ',', $params['blocks'] );
+            }
+
+            $out = '';
+            $idx = -1;
+
+            $this->fetch( $params['docid'], false );
 
             foreach ( $this->data as $row ) {
+                $idx++;
+
+                if ( $params['blocks'] != '*' ) {
+                    $config = pathinfo( $row['config'], PATHINFO_FILENAME );
+
+                    if ( !in_array( $config, $params['blocks'] ) ) {
+                        continue;
+                    }
+                }
+
+                if ( $idx < $params['offset'] ) {
+                    continue;
+                }
+
+                if ( $params['limit'] > 0 && $idx >= $params['limit'] ) {
+                    break;
+                }
+
                 $conf = $this->conf[ $row['config'] ];
                 $out .= $this->renderFieldsList( $conf['templates'], $conf['templates']['owner'], $conf, $row['values'] );
             }
