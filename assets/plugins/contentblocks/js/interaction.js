@@ -103,10 +103,10 @@
                             case 'richtext': {
                                 var f = $field.children('textarea').get(0);
 
-                                if ( f.id && tinymce.editors[f.id] ) {
+                                if ( typeof tinymce != 'undefined' && f.id && tinymce.editors[f.id] ) {
                                     values[field] = tinymce.editors[f.id].getContent();
                                 } else {
-                                    values[field] = '';
+                                    values[field] = $(f).val();
                                 }
 
                                 break;
@@ -308,7 +308,7 @@
                     var $rich = $block.find('textarea.richtext');
 
                     $rich.each( function() {
-                        if ( this.id && tinymce.editors[this.id] ) {
+                        if ( typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id] ) {
                             tinymce.editors[this.id].destroy();
                         }
                     } );
@@ -417,14 +417,14 @@
                         handle: '> .handle',
                         start: function( e, ui ) {
                             ui.item.find('textarea.richtext').each( function() {
-                                if ( this.id && tinymce.editors[this.id] ) {
+                                if ( typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id] ) {
                                     tinymce.editors[this.id].save();
                                 }
                             } );
                         },
                         stop: function( e, ui ) {
                             ui.item.find('textarea.richtext').each( function() {
-                                if ( this.id && tinymce.editors[this.id] ) {
+                                if ( typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id] ) {
                                     tinymce.editors[this.id].destroy();
                                 }
                                 ContentBlock.initializeRichField( $(this) );
