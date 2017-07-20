@@ -37,13 +37,13 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 
 Например, если в массиве полей используется группа "images", то в шаблонах должен быть определен элемент с ключом "images", который будет содержать либо строку шаблона:
 
-```
+```php
 'images' => '<img src="[+image+]" alt="[+title+]" class="slide">'
 ```
 
 либо ассоциативный массив шаблонов:
 
-```
+```php
 'images' => [
   'item'  => '<img src="[+image+]" alt="[+title+]" class="slide">',
   'thumb' => '<div class="thumb" style="background-image: url([+image+])"></div>',
@@ -54,13 +54,13 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 
 Возможно указание имени чанка, в котором находится нужный шаблон. Для этого нужно использовать привязку @CHUNK, например:
 
-```
+```php
 'checkbox' => '@CHUNK all_fields_checkboxes',
 ```
 
 Также возможна подгрузка шаблона из файла, например:
 
-```
+```php
 'owner' => '@FILE contentblocks/all_fields.tpl',
 ```
 
