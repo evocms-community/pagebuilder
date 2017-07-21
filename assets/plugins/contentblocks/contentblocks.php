@@ -11,6 +11,7 @@
         private $path;
         private $params;
         private $lang;
+        private $iterations = [];
 
         public function __construct( $modx ) {
             $this->modx = $modx;
@@ -89,11 +90,14 @@
                             $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
                             $data[$key] = '';
 
-                            foreach ( $values[$field] as $value ) {
-                                $data[$key] .= $this->parseTemplate( $tpl, [
+                            foreach ( $values[$field] as $index => $value ) {
+                                $this->iterations["{$field}_index"]     = $index;
+                                $this->iterations["{$field}_iteration"] = $index + 1;
+
+                                $data[$key] .= $this->parseTemplate( $tpl, array_merge( $this->iterations, [
                                     'value' => $value,
                                     'title' => $options['elements'][$value],
-                                ] );
+                                ] ) );
                             }
                         }
                     }
@@ -121,13 +125,16 @@
                     $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
                     $data[$key] = '';
 
-                    foreach ( $values[$field] as $value ) {
+                    foreach ( $values[$field] as $index => $value ) {
+                        $this->iterations["{$field}_index"]     = $index;
+                        $this->iterations["{$field}_iteration"] = $index + 1;
+                        
                         $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
                     }
                 }
             }
 
-            return $this->parseTemplate( $template, $data );
+            return $this->parseTemplate( $template, array_merge( $this->iterations, $data ) );
         }
 
         /**
@@ -155,6 +162,9 @@
 
             foreach ( $this->data as $row ) {
                 $idx++;
+
+                $this->iterations['index']     = $idx;
+                $this->iterations['iteration'] = $idx + 1;
 
                 if ( $params['blocks'] != '*' ) {
                     $config = pathinfo( $row['config'], PATHINFO_FILENAME );
