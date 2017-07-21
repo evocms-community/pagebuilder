@@ -90,8 +90,8 @@
                     } );
                 },
 
-                fetch: function( $block ) {
-                    var values = {},
+                fetch: function( $block, oldValues ) {
+                    var values = oldValues || {},
                         $list  = $block.children('.fields-list'),
                         conf   = $list.data( 'fields' );
 
@@ -113,23 +113,27 @@
                             }
 
                             case 'group': {
-                                values[field] = [];
+                                if ( typeof values[field] != 'object' ) {
+                                    values[field] = [];
+                                }
 
-                                $field.children('.sortable-list').children('.sortable-item:not(.hidden)').each( function() {
-                                    values[field].push( ContentBlock.fetch( $(this) ) );
+                                $field.children('.sortable-list').children('.sortable-item:not(.hidden)').each( function( i ) {
+                                    values[field][i] = ContentBlock.fetch( $(this) );
                                 } );
 
                                 break;
                             }
 
                             case 'checkbox': {
-                                values[field] = [];
+                                if ( typeof values[field] != 'object' ) {
+                                    values[field] = [];
+                                }
                                 
-                                $field.children('.check-list').children('.check-row').each( function() {
+                                $field.children('.check-list').children('.check-row').each( function( i ) {
                                     var $input = $(this).children('label').children(':checked');
 
                                     if ( $input.length ) {
-                                        values[field].push( $input.val() );
+                                        values[field][i] = $input.val();
                                     }
                                 } );
                                 
@@ -263,11 +267,11 @@
                 },
 
                 changeType: function( $block, type ) {
-                    var values = this.fetch( $block ),
+                    var values = this.fetch( $block, $block.data( 'values' ) ),
                         $newblock = $('.content-blocks-configs').children('[data-config="' + type + '"]');
 
                     if ( $newblock.length ) {
-                        $newblock = $newblock.clone();
+                        $newblock = $newblock.clone().data( 'values', values );
                         $block.replaceWith( $newblock );
 
                         ContentBlock.setValues( opts.config[type].fields, $newblock.children('.fields-list'), values );
