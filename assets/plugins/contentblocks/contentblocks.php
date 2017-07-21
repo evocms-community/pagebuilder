@@ -145,10 +145,11 @@
          */
         public function render( $params ) {
             $params = array_merge( [
-                'docid'  => $this->modx->documentIdentifier,
-                'blocks' => '*',
-                'offset' => 0,
-                'limit'  => 0,
+                'docid'     => $this->modx->documentIdentifier,
+                'blocks'    => '*',
+                'templates' => '',
+                'offset'    => 0,
+                'limit'     => 0,
             ], $params );
 
             if ( $params['blocks'] != '*' ) {
@@ -183,7 +184,13 @@
                 }
 
                 $conf = $this->conf[ $row['config'] ];
-                $out .= $this->renderFieldsList( $conf['templates'], $conf['templates']['owner'], $conf, $row['values'] );
+                $templates = $conf['templates'];
+
+                if ( !empty( $params['templates'] ) && isset( $templates[ $params['templates'] ] ) ) {
+                    $templates = $templates[ $params['templates'] ];
+                }
+
+                $out .= $this->renderFieldsList( $templates, $templates['owner'], $conf, $row['values'] );
             }
 
             return $out;
