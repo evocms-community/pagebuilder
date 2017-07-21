@@ -111,7 +111,7 @@
                 }
 
                 if ( !isset( $templates[$field] ) ) {
-                    $data[$field] = "NO TEMPLATE FOR FIELDGROUP '$field'";
+                    $data[$field] = "<div>Template for fieldgroup '$field' not defined</div>";
                     continue;
                 }
 
@@ -186,8 +186,18 @@
                 $conf = $this->conf[ $row['config'] ];
                 $templates = $conf['templates'];
 
-                if ( !empty( $params['templates'] ) && isset( $templates[ $params['templates'] ] ) ) {
+                if ( !empty( $params['templates'] ) ) {
+                    if ( !isset( $templates[ $params['templates'] ] ) ) {
+                        $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                        continue;
+                    }
+
                     $templates = $templates[ $params['templates'] ];
+                }
+
+                if ( !isset( $templates['owner'] ) ) {
+                    $out .= "<div>Template 'owner' not defined</div>";
+                    continue;
                 }
 
                 $out .= $this->renderFieldsList( $templates, $templates['owner'], $conf, $row['values'] );
