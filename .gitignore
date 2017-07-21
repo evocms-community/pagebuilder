@@ -1,6 +1,10 @@
 /*
 !/.gitignore
-!/assets/plugins/contentblocks/*
 !/install
 !/README*
+/assets/*
+/assets/plugins/*
+!/assets
+!/assets/plugins
+!/assets/plugins/contentblocks
 /assets/plugins/contentblocks/config/*.php
