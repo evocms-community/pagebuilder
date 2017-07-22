@@ -71,65 +71,67 @@
             $out = '';
             $data = [];
 
-            foreach ( $config['fields'] as $field => $options ) {
-                if ( isset( $options['elements'] ) ) {
-                    if ( !isset( $templates[$field] ) ) {
-                        $data[$field] = $values[$field];
+            if ( isset( $config['fields'] ) ) {
+                foreach ( $config['fields'] as $field => $options ) {
+                    if ( isset( $options['elements'] ) ) {
+                        if ( !isset( $templates[$field] ) ) {
+                            $data[$field] = $values[$field];
 
-                        if ( is_array( $data[$field] ) ) {
-                            $data[$field] = implode( '||', $data[$field] );
-                        }
-                    } else {
-                        $fieldTemplates = $templates[$field];
+                            if ( is_array( $data[$field] ) ) {
+                                $data[$field] = implode( '||', $data[$field] );
+                            }
+                        } else {
+                            $fieldTemplates = $templates[$field];
 
-                        if ( !is_array( $fieldTemplates ) ) {
-                            $fieldTemplates = [ $fieldTemplates ];
-                        }
+                            if ( !is_array( $fieldTemplates ) ) {
+                                $fieldTemplates = [ $fieldTemplates ];
+                            }
 
-                        foreach ( $fieldTemplates as $name => $tpl ) {
-                            $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
-                            $data[$key] = '';
+                            foreach ( $fieldTemplates as $name => $tpl ) {
+                                $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                                $data[$key] = '';
 
-                            foreach ( $values[$field] as $index => $value ) {
-                                $this->iterations["{$field}_index"]     = $index;
-                                $this->iterations["{$field}_iteration"] = $index + 1;
+                                foreach ( $values[$field] as $index => $value ) {
+                                    $this->iterations["{$field}_index"]     = $index;
+                                    $this->iterations["{$field}_iteration"] = $index + 1;
 
-                                $data[$key] .= $this->parseTemplate( $tpl, array_merge( $this->iterations, [
-                                    'value' => $value,
-                                    'title' => $options['elements'][$value],
-                                ] ) );
+                                    $data[$key] .= $this->parseTemplate( $tpl, array_merge( $this->iterations, [
+                                        'value' => $value,
+                                        'title' => $options['elements'][$value],
+                                    ] ) );
+                                }
                             }
                         }
+
+                        continue;
                     }
 
-                    continue;
-                }
+                    if ( $options['type'] != 'group' ) {
+                        $data[$field] = $values[$field];
+                        continue;
+                    }
 
-                if ( $options['type'] != 'group' ) {
-                    $data[$field] = $values[$field];
-                    continue;
-                }
+                    if ( !isset( $templates[$field] ) ) {
+                        $data[$field] = "<div>Template for fieldgroup '$field' not defined</div>";
+                        continue;
+                    }
 
-                if ( !isset( $templates[$field] ) ) {
-                    $data[$field] = "<div>Template for fieldgroup '$field' not defined</div>";
-                    continue;
-                }
+                    $fieldTemplates = $templates[$field];
 
-                $fieldTemplates = $templates[$field];
+                    if ( !is_array( $fieldTemplates ) ) {
+                        $fieldTemplates = [ $fieldTemplates ];
+                    }
 
-                if ( !is_array( $fieldTemplates ) ) {
-                    $fieldTemplates = [ $fieldTemplates ];
-                }
+                    foreach ( $fieldTemplates as $name => $tpl ) {
+                        $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                        $data[$key] = '';
 
-                foreach ( $fieldTemplates as $name => $tpl ) {
-                    $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
-                    $data[$key] = '';
+                        foreach ( $values[$field] as $index => $value ) {
+                            $this->iterations["{$field}_index"]     = $index;
+                            $this->iterations["{$field}_iteration"] = $index + 1;
 
-                    foreach ( $values[$field] as $index => $value ) {
-                        $this->iterations["{$field}_index"]     = $index;
-                        $this->iterations["{$field}_iteration"] = $index + 1;
-                        
-                        $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
+                            $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
+                        }
                     }
                 }
             }

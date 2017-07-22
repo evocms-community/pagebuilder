@@ -14,8 +14,13 @@
 	</div>
 
 	<div class="fields-list">
-		<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ) { ?>
-			<?= $instance->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?> 
+		<? if ( !isset( $configs[ $block['config'] ]['fields'] ) ) { ?>
+			<b><?= $configs[ $block['config'] ]['title'] ?></b><br>
+			<i><?= $l['No fields provided in this block'] ?></i>
+		<? } else { ?>
+			<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ) { ?>
+				<?= $instance->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?>
+			<? } ?>
 		<? } ?> 
 	</div>
 
