@@ -246,6 +246,7 @@
             return $this->renderTpl( 'tpl/form.tpl', [
                 'version'   => self::version,
                 'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks',
+                'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
                 'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
                 'configs'   => $this->conf,
                 'blocks'    => $this->data,
