@@ -4,7 +4,7 @@
  * 
  * output content blocks for current page
  * 
- * @version     0.4.0
+ * @version     0.6.0
  * @category    snippet
  * @internal    @properties
  * @internal    @modx_category Content

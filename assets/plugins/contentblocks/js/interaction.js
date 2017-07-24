@@ -8,8 +8,9 @@
 
                 initialize: function( blocks ) {
                     $(blocks).each( function() {
-                        var $block   = $(this),
-                            confName = $block.attr( 'data-config' ),
+                        var $wrap    = $(this),
+                            $block   = $wrap.children('.block-inner'),
+                            confName = $wrap.attr( 'data-config' ),
                             conf     = opts.config[ confName ],
                             $list    = $block.children('.fields-list');
 
@@ -24,25 +25,25 @@
                         } );
 
                         // add controls handlers
-                        ( function( $block ) {
+                        ( function( $wrap ) {
                             $block.children('.controls')
                                 .on( 'click', '.moveup, .movedown', function( e ) {
                                     e.preventDefault();
-                                    ContentBlock.move( $block, $(this).hasClass( 'moveup' ) ? 'up' : 'down' );
+                                    ContentBlock.move( $wrap, $(this).hasClass( 'moveup' ) ? 'up' : 'down' );
                                 } )
 
                                 .on( 'click', '.insert', function( e ) {
                                     e.preventDefault();
-                                    ContentBlock.append( $block );
+                                    ContentBlock.append( $wrap );
                                 } )
 
                                 .on( 'click', '.remove', function( e ) {
                                     e.preventDefault();
-                                    $block.slideUp( 200, function() {
-                                        $block.remove();
+                                    $wrap.slideUp( 200, function() {
+                                        $wrap.remove();
                                     } );
                                 } );
-                        } )( $block );
+                        } )( $wrap );
 
                         $block.on( 'click', '.open-browser', function( e ) {
                             e.preventDefault();
@@ -90,8 +91,12 @@
                     } );
                 },
 
-                fetch: function( $block ) {
-                    var values = {},
+                fetch: function( $block, oldValues ) {
+                    if ( $block.hasClass( 'block' ) ) {
+                        $block = $block.children('.block-inner');
+                    }
+
+                    var values = oldValues || {},
                         $list  = $block.children('.fields-list'),
                         conf   = $list.data( 'fields' );
 
@@ -113,23 +118,27 @@
                             }
 
                             case 'group': {
-                                values[field] = [];
+                                if ( typeof values[field] != 'object' ) {
+                                    values[field] = [];
+                                }
 
-                                $field.children('.sortable-list').children('.sortable-item:not(.hidden)').each( function() {
-                                    values[field].push( ContentBlock.fetch( $(this) ) );
+                                $field.children('.sortable-list').children('.sortable-item:not(.hidden)').each( function( i ) {
+                                    values[field][i] = ContentBlock.fetch( $(this) );
                                 } );
 
                                 break;
                             }
 
                             case 'checkbox': {
-                                values[field] = [];
+                                if ( typeof values[field] != 'object' ) {
+                                    values[field] = [];
+                                }
                                 
-                                $field.children('.check-list').children('.check-row').each( function() {
+                                $field.children('.check-list').children('.check-row').each( function( i ) {
                                     var $input = $(this).children('label').children(':checked');
 
                                     if ( $input.length ) {
-                                        values[field].push( $input.val() );
+                                        values[field][i] = $input.val();
                                     }
                                 } );
                                 
@@ -263,14 +272,14 @@
                 },
 
                 changeType: function( $block, type ) {
-                    var values = this.fetch( $block ),
+                    var values = this.fetch( $block, $block.data( 'values' ) ),
                         $newblock = $('.content-blocks-configs').children('[data-config="' + type + '"]');
 
                     if ( $newblock.length ) {
-                        $newblock = $newblock.clone();
+                        $newblock = $newblock.clone().data( 'values', values );
                         $block.replaceWith( $newblock );
 
-                        ContentBlock.setValues( opts.config[type].fields, $newblock.children('.fields-list'), values );
+                        ContentBlock.setValues( opts.config[type].fields, $newblock.children('.block-inner').children('.fields-list'), values );
                         ContentBlock.initialize( $newblock );
                     }
                 },
@@ -549,7 +558,7 @@
                 } );
             } );
 
-            $container.children('.add-block').children('[type="button"]').click( function( e ) {
+            $container.on( 'click', '.dropdown-add-block', function( e ) {
                 e.preventDefault();
 
                 var config = $(this).prev('select').val();
@@ -559,12 +568,44 @@
 
                     if ( $block.length ) {
                         $block = $block.clone();
-                        
+
                         $block.find('.type-radio').each( function() {
                             $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
                         } );
 
-                        $block.hide().insertAfter( $(this).parent() ).slideDown( 200 );
+                        var $current = $(this).closest('.block');
+
+                        $block.hide().insertAfter( $current.length ? $current : $(this).closest('.add-block') ).slideDown( 200 );
+                        ContentBlock.initialize( $block );
+                    }
+                }
+            } );
+
+            $container.on( 'click', '.add-block .trigger a', function( e ) {
+                e.preventDefault();
+                $(this).closest('.add-block').toggleClass( 'show' ).children('.add-block-icons').slideToggle( 200 );
+            } );
+
+            $container.on( 'click', '.add-block-icons a', function( e ) {
+                e.preventDefault();
+
+                $(this).parent().prev('.trigger').children('a').click();
+
+                var config = $(this).attr( 'data-config' );
+
+                if ( config != '' ) {
+                    var $block = $('.content-blocks-configs').children('[data-config="' + config + '"]');
+
+                    if ( $block.length ) {
+                        $block = $block.clone();
+
+                        $block.find('.type-radio').each( function() {
+                            $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
+                        } );
+
+                        var $current = $(this).closest('.block');
+
+                        $block.hide().insertAfter( $current.length ? $current : $(this).closest('.add-block') ).slideDown( 200 );
                         ContentBlock.initialize( $block );
                     }
                 }

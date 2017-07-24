@@ -12,5 +12,6 @@
 		'Move down' => 'Move down',
 		'Fill with images' => 'Fill with images',
 		'No variants provided' => 'No variants provided',
+		'No fields provided in this block' => 'No fields provided in this block',
 	];
 

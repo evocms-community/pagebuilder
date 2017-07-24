@@ -10,19 +10,22 @@
 			<?= $instance->renderTpl( 'tpl/block.tpl', [ 
 				'configs' => $configs, 
 				'block'   => [ 'config' => $filename ],
+				'type'    => $addType,
 			] ); ?> 
 		<? } ?>
 	</div>
 	
 	<div class="content-blocks" id="content-blocks">
-		<div class="add-block">
-			<?= $instance->renderTpl( 'tpl/configs_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
-			<input type="button" value="<?= $l['Add block'] ?>">
-		</div>
+		<?= $instance->renderTpl( 'tpl/add_block.tpl', [
+			'configs' => $configs,
+			'type'    => $addType,
+		] ) ?>
+
 		<? foreach ( $blocks as $block ) { ?> 
 			<?= $instance->renderTpl( 'tpl/block.tpl', [ 
 				'configs' => $configs, 
 				'block'   => $block,
+				'type'    => $addType,
 			] ); ?> 
 		<? } ?> 
 	</div>

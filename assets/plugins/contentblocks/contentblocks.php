@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.4.0';
+        const version = '0.6.0';
 
         private $modx;
         private $data;
@@ -11,6 +11,7 @@
         private $path;
         private $params;
         private $lang;
+        private $iterations = [];
 
         public function __construct( $modx ) {
             $this->modx = $modx;
@@ -70,64 +71,72 @@
             $out = '';
             $data = [];
 
-            foreach ( $config['fields'] as $field => $options ) {
-                if ( isset( $options['elements'] ) ) {
-                    if ( !isset( $templates[$field] ) ) {
-                        $data[$field] = $values[$field];
+            if ( isset( $config['fields'] ) ) {
+                foreach ( $config['fields'] as $field => $options ) {
+                    if ( isset( $options['elements'] ) ) {
+                        if ( !isset( $templates[$field] ) ) {
+                            $data[$field] = $values[$field];
 
-                        if ( is_array( $data[$field] ) ) {
-                            $data[$field] = implode( '||', $data[$field] );
-                        }
-                    } else {
-                        $fieldTemplates = $templates[$field];
+                            if ( is_array( $data[$field] ) ) {
+                                $data[$field] = implode( '||', $data[$field] );
+                            }
+                        } else {
+                            $fieldTemplates = $templates[$field];
 
-                        if ( !is_array( $fieldTemplates ) ) {
-                            $fieldTemplates = [ $fieldTemplates ];
-                        }
+                            if ( !is_array( $fieldTemplates ) ) {
+                                $fieldTemplates = [ $fieldTemplates ];
+                            }
 
-                        foreach ( $fieldTemplates as $name => $tpl ) {
-                            $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
-                            $data[$key] = '';
+                            foreach ( $fieldTemplates as $name => $tpl ) {
+                                $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                                $data[$key] = '';
 
-                            foreach ( $values[$field] as $value ) {
-                                $data[$key] .= $this->parseTemplate( $tpl, [
-                                    'value' => $value,
-                                    'title' => $options['elements'][$value],
-                                ] );
+                                foreach ( $values[$field] as $index => $value ) {
+                                    $this->iterations["{$field}_index"]     = $index;
+                                    $this->iterations["{$field}_iteration"] = $index + 1;
+
+                                    $data[$key] .= $this->parseTemplate( $tpl, array_merge( $this->iterations, [
+                                        'value' => $value,
+                                        'title' => $options['elements'][$value],
+                                    ] ) );
+                                }
                             }
                         }
+
+                        continue;
                     }
 
-                    continue;
-                }
+                    if ( $options['type'] != 'group' ) {
+                        $data[$field] = $values[$field];
+                        continue;
+                    }
 
-                if ( $options['type'] != 'group' ) {
-                    $data[$field] = $values[$field];
-                    continue;
-                }
+                    if ( !isset( $templates[$field] ) ) {
+                        $data[$field] = "<div>Template for fieldgroup '$field' not defined</div>";
+                        continue;
+                    }
 
-                if ( !isset( $templates[$field] ) ) {
-                    $data[$field] = "NO TEMPLATE FOR FIELDGROUP '$field'";
-                    continue;
-                }
+                    $fieldTemplates = $templates[$field];
 
-                $fieldTemplates = $templates[$field];
+                    if ( !is_array( $fieldTemplates ) ) {
+                        $fieldTemplates = [ $fieldTemplates ];
+                    }
 
-                if ( !is_array( $fieldTemplates ) ) {
-                    $fieldTemplates = [ $fieldTemplates ];
-                }
+                    foreach ( $fieldTemplates as $name => $tpl ) {
+                        $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
+                        $data[$key] = '';
 
-                foreach ( $fieldTemplates as $name => $tpl ) {
-                    $key = $field . ( !is_numeric( $name ) || $name > 0 ? '.' . $name : '' );
-                    $data[$key] = '';
+                        foreach ( $values[$field] as $index => $value ) {
+                            $this->iterations["{$field}_index"]     = $index;
+                            $this->iterations["{$field}_iteration"] = $index + 1;
 
-                    foreach ( $values[$field] as $value ) {
-                        $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
+                            $data[$key] .= $this->renderFieldsList( $templates, $tpl, $options, $value );
+                        }
                     }
                 }
             }
 
-            return $this->parseTemplate( $template, $data );
+            return $this->parseTemplate( $template, array_merge( $this->iterations, $data ) );
         }
 
         /**
@@ -138,10 +147,11 @@
          */
         public function render( $params ) {
             $params = array_merge( [
-                'docid'  => $this->modx->documentIdentifier,
-                'blocks' => '*',
-                'offset' => 0,
-                'limit'  => 0,
+                'docid'     => $this->modx->documentIdentifier,
+                'blocks'    => '*',
+                'templates' => '',
+                'offset'    => 0,
+                'limit'     => 0,
             ], $params );
 
             if ( $params['blocks'] != '*' ) {
@@ -155,6 +165,9 @@
 
             foreach ( $this->data as $row ) {
                 $idx++;
+
+                $this->iterations['index']     = $idx;
+                $this->iterations['iteration'] = $idx + 1;
 
                 if ( $params['blocks'] != '*' ) {
                     $config = pathinfo( $row['config'], PATHINFO_FILENAME );
@@ -173,7 +186,23 @@
                 }
 
                 $conf = $this->conf[ $row['config'] ];
-                $out .= $this->renderFieldsList( $conf['templates'], $conf['templates']['owner'], $conf, $row['values'] );
+                $templates = $conf['templates'];
+
+                if ( !empty( $params['templates'] ) ) {
+                    if ( !isset( $templates[ $params['templates'] ] ) ) {
+                        $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                        continue;
+                    }
+
+                    $templates = $templates[ $params['templates'] ];
+                }
+
+                if ( !isset( $templates['owner'] ) ) {
+                    $out .= "<div>Template 'owner' not defined</div>";
+                    continue;
+                }
+
+                $out .= $this->renderFieldsList( $templates, $templates['owner'], $conf, $row['values'] );
             }
 
             return $out;
@@ -217,6 +246,7 @@
             return $this->renderTpl( 'tpl/form.tpl', [
                 'version'   => self::version,
                 'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks',
+                'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
                 'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
                 'configs'   => $this->conf,
                 'blocks'    => $this->data,
