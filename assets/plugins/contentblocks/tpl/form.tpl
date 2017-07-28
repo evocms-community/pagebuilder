@@ -2,8 +2,10 @@
 <script src="../assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
 <script src="../assets/plugins/contentblocks/js/interaction.js?<?= $version ?>"></script>
 
-<div class="tab-page" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
-	<h2 class="tab" id="contentblockstab"><?= $tabname ?></h2>
+<? if ( $placement == 'tab' ) { ?>
+	<div class="tab-page content-blocks-tab" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
+		<h2 class="tab" id="contentblockstab"><?= $tabname ?></h2>
+<? } ?>
 
 	<div class="content-blocks-configs">
 		<? foreach ( $configs as $filename => $config ) { ?> 
@@ -29,13 +31,20 @@
 			] ); ?> 
 		<? } ?> 
 	</div>
-</div>
+
+<? if ( $placement == 'tab' ) { ?>
+	</div>
+<? } ?>
 
 <? foreach ( $instance->themes as $theme ) { ?> 
 	<?= $theme ?> 
 <? } ?> 
 
 <script>
+	<? if ( $placement == 'content' ) { ?>
+		jQuery('#content-blocks').insertAfter( jQuery('#content_body').closest('table') );
+	<? } ?>
+
 	jQuery( function() {
 		initcontentblocks( {
 			container: document.getElementById( "content-blocks" ), 

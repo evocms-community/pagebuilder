@@ -2,7 +2,7 @@
 
     class ContentBlocks {
 
-        const version = '0.6.0';
+        const version = '0.6.1';
 
         private $modx;
         private $data;
@@ -247,6 +247,7 @@
                 'version'   => self::version,
                 'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Content Blocks',
                 'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
+                'placement' => !empty( $this->params['placement'] ) ? $this->params['placement'] : 'content',
                 'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
                 'configs'   => $this->conf,
                 'blocks'    => $this->data,

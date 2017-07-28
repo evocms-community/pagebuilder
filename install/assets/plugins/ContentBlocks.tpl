@@ -5,9 +5,9 @@
  * Creates form for manage content blocks
  *
  * @category    plugin
- * @version     0.6.0
+ * @version     0.6.1
  * @author      sunhaim
- * @internal    @properties &tabName=Tab name;text;Content Blocks &addType=Add type;menu;dropdown,icons,images;dropdown
+ * @internal    @properties &tabName=Tab name;text;Content Blocks &addType=Add type;menu;dropdown,icons,images;dropdown &placement=Placement;menu;content,tab;tab
  * @internal    @events OnDocFormRender,OnDocFormSave,OnBeforeEmptyTrash,OnDocDuplicate 
  * @internal    @modx_category Manager and Admin
  * @internal    @installset base,sample
