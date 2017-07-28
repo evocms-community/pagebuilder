@@ -13,7 +13,8 @@
 .content-blocks .block .field.uploadable > input[type="text"] { width: 91%; }
 .content-blocks .block .field.uploadable > input[type="button"] { width: 8% !important; margin-right: 1%; }
 .content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 112px; }
-.content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 48px; background-color: #f2f2f2; border: 1px solid #ddd; left: 0; top: 0; background-position: center; background-size: contain; background-repeat: no-repeat; }
+.content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 31px; background-color: #f2f2f2; border: 1px solid #ddd; left: 0; top: 0; background-position: center; background-size: contain; background-repeat: no-repeat; }
+.content-blocks .block .field.type-image.with-thumb .field-name + .preview { height: 56px; }
 .content-blocks .block .field.type-date > i { position: absolute; left: 8px; bottom: 8px; }
 .content-blocks .block .field.type-date > input { padding-left: 28px; }
 .content-blocks .block .fields-list > :last-child { margin-bottom: 0 !important; }
