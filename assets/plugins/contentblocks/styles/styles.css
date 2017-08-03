@@ -33,7 +33,7 @@
 .content-blocks .block .controls { position: absolute; height: 28px; line-height: 26px; right: 20px; top: -20px; cursor: default; background: #fff; padding: 0 10px; border-radius: 0; border: 1px solid #ddd; font-size: 14px; }
 .content-blocks .block .controls a { display: inline-block; padding: 0 5px; color: #555; }
 .content-blocks .block .controls-bottom { right: 20px; top: auto; bottom: -16px; }
-.content-blocks .block .fields-group .controls { right: 0; top: 0; }
+.content-blocks .block .fields-group .controls { right: 0; top: 2px; }
 .content-blocks .block .controls .insert { /*color: #449d44;*/ }
 .content-blocks .block .controls .remove { /*color: #c9302c;*/ }
 .content-blocks .add-block + .block .controls .moveup { display: none; }
@@ -42,7 +42,7 @@
 .ui-sortable-handle { -ms-touch-action: none; touch-action: none; }
 
 .content-blocks .block .sortable-list { position: relative; }
-.content-blocks .block .sortable-list > .sortable-item { padding: 10px 0 10px 25px; position: relative; border-top: 2px dashed #e2e2e2; background: #fff; }
+.content-blocks .block .sortable-list > .sortable-item { padding: 10px 0 10px 25px; position: relative; border-top: 2px dashed #e2e2e2; background-color: #F8F8F8; }
 .content-blocks .block .sortable-list > .hidden + .sortable-item { border-top-color: transparent; }
 .content-blocks .block .sortable-list > .sortable-item > .handle { position: absolute; left: 0; top: 5px; bottom: 5px; width: 15px; background: rgba(0,0,0,0.1); cursor: url(openhand.cur) 4 4, move; }
 .content-blocks .block .sortable-list > .ui-sortable-helper > .handle { cursor: url(closedhand.cur) 4 4, move !important; }
