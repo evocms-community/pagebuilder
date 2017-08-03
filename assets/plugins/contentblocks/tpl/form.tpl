@@ -2,37 +2,49 @@
 <script src="../assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
 <script src="../assets/plugins/contentblocks/js/interaction.js?<?= $version ?>"></script>
 
-<div class="tab-page" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
-	<h2 class="tab" id="contentblockstab"><?= $tabname ?></h2>
+<? if ( $placement == 'tab' ) { ?>
+	<div class="tab-page content-blocks-tab" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
+		<h2 class="tab" id="contentblockstab"><?= $tabname ?></h2>
+<? } ?>
 
 	<div class="content-blocks-configs">
 		<? foreach ( $configs as $filename => $config ) { ?> 
 			<?= $instance->renderTpl( 'tpl/block.tpl', [ 
 				'configs' => $configs, 
 				'block'   => [ 'config' => $filename ],
+				'type'    => $addType,
 			] ); ?> 
 		<? } ?>
 	</div>
 	
 	<div class="content-blocks" id="content-blocks">
-		<div class="add-block">
-			<?= $instance->renderTpl( 'tpl/configs_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
-			<input type="button" value="<?= $l['Add block'] ?>">
-		</div>
+		<?= $instance->renderTpl( 'tpl/add_block.tpl', [
+			'configs' => $configs,
+			'type'    => $addType,
+		] ) ?>
+
 		<? foreach ( $blocks as $block ) { ?> 
 			<?= $instance->renderTpl( 'tpl/block.tpl', [ 
 				'configs' => $configs, 
 				'block'   => $block,
+				'type'    => $addType,
 			] ); ?> 
 		<? } ?> 
 	</div>
-</div>
+
+<? if ( $placement == 'tab' ) { ?>
+	</div>
+<? } ?>
 
 <? foreach ( $instance->themes as $theme ) { ?> 
 	<?= $theme ?> 
 <? } ?> 
 
 <script>
+	<? if ( $placement == 'content' ) { ?>
+		jQuery('#content-blocks').insertAfter( jQuery('#content_body').closest('table') );
+	<? } ?>
+
 	jQuery( function() {
 		initcontentblocks( {
 			container: document.getElementById( "content-blocks" ), 
