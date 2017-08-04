@@ -35,7 +35,9 @@
 .content-blocks .block .controls-bottom { right: 20px; top: auto; bottom: -16px; }
 .content-blocks .block .fields-group .controls { right: 0; top: 3px; border-width: 0; background-color: transparent; padding-right: 0; }
 .content-blocks .block .controls .insert { /*color: #449d44;*/ }
+.content-blocks .block .controls .insert:hover { color: #449d44; }
 .content-blocks .block .controls .remove { /*color: #c9302c;*/ }
+.content-blocks .block .controls .remove:hover { color: #c9302c; }
 .content-blocks .add-block + .block .controls .moveup { display: none; }
 .content-blocks .block:last-child .controls .movedown { display: none; }
 
@@ -63,6 +65,7 @@
 .content-blocks .add-block select + .dropdown-add-block i { color: #449d44; }
 .content-blocks .add-block .trigger { height: 0; margin: 20px 0; }
 .content-blocks .add-block .trigger a { display: inline-block; padding: 10px; background: #fff; font-size: 22px; color: #555; line-height: 40px; margin-top: -20px; height: 40px; text-decoration: none; transition: all 0.2s ease; }
+.content-blocks .add-block .trigger a:hover { color: #449d44; }
 .content-blocks .add-block .trigger a:before { vertical-align: top; line-height: 20px; }
 .content-blocks .add-block.show .trigger a { transform: rotate(45deg); color: #c9302c; }
 .content-blocks .add-block .add-block-icons { margin: 30px 0; display: none; }
