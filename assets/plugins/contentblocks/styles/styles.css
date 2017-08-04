@@ -30,10 +30,10 @@
 .content-blocks .block .change-type { position: absolute; left: 20px; top: -20px; }
 .content-blocks .block .change-type select { width: 150px !important; }
 
-.content-blocks .block .controls { position: absolute; height: 28px; line-height: 26px; right: 20px; top: -20px; cursor: default; background: #fff; padding: 0 10px; border-radius: 0; border: 1px solid #ddd; font-size: 14px; }
+.content-blocks .block .controls { position: absolute; height: 28px; line-height: 26px; right: 20px; top: -20px; cursor: default; background: #fff; padding: 0 10px; border-radius: 0; border: 1px solid #f8f8f8; font-size: 14px; }
 .content-blocks .block .controls a { display: inline-block; padding: 0 5px; color: #555; }
 .content-blocks .block .controls-bottom { right: 20px; top: auto; bottom: -16px; }
-.content-blocks .block .fields-group .controls { right: 0; top: 2px; }
+.content-blocks .block .fields-group .controls { right: 0; top: 3px; border-width: 0; background-color: transparent; padding-right: 0; }
 .content-blocks .block .controls .insert { /*color: #449d44;*/ }
 .content-blocks .block .controls .remove { /*color: #c9302c;*/ }
 .content-blocks .add-block + .block .controls .moveup { display: none; }
