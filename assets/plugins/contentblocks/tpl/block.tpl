@@ -9,7 +9,7 @@
 		<? } ?>
 
 		<div class="controls">
-			<a href="#" class="remove" title="<?= $l['Delete block'] ?>"><i class="fa fa-minus-circle"></i></a>
+			<a href="#" class="remove" title="<?= $l['Delete block'] ?>"><i class="fa fa-times-circle"></i></a>
 			<a href="#" class="moveup" title="<?= $l['Move up'] ?>"><i class="fa fa-chevron-up"></i></a>
 			<a href="#" class="movedown" title="<?= $l['Move down'] ?>"><i class="fa fa-chevron-down"></i></a>
 		</div>
