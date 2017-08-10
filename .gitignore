@@ -6,5 +6,5 @@
 /assets/plugins/*
 !/assets
 !/assets/plugins
-!/assets/plugins/contentblocks
-/assets/plugins/contentblocks/config/*.php
+!/assets/plugins/pagebuilder
+/assets/plugins/pagebuilder/config/*.php

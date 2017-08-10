@@ -1,8 +1,8 @@
 <?php
 
-    class ContentBlocks {
+    class PageBuilder {
 
-        const version = '0.6.3';
+        const version = '1.0.0';
 
         private $modx;
         private $data;
@@ -18,8 +18,8 @@
 
             $this->richeditor  = $modx->getConfig( 'which_editor' );
             $this->browser     = $modx->getConfig( 'which_browser' );
-            $this->table       = $modx->getFullTableName( 'contentblocks' );
-            $this->path        = MODX_BASE_PATH . 'assets/plugins/contentblocks/config/';
+            $this->table       = $modx->getFullTableName( 'pagebuilder' );
+            $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
             $this->params      = $modx->event->params;
 
             $lang = $modx->getConfig( 'manager_language' );
