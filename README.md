@@ -88,7 +88,7 @@ Other languages: <a href="https://github.com/sunhaim/pagebuilder/blob/master/REA
 Также возможна подгрузка шаблона из файла, например:
 
 ```php
-'owner' => '@FILE contentblocks/all_fields.tpl',
+'owner' => '@FILE pagebuilder/all_fields.tpl',
 ```
 
 В этом примере файл шаблона будем загружен из `MODX_BASE_PATH . "assets/templates/pagebuilder/all_fields.tpl"`. Вообще файл  ищется в следующих директориях:
