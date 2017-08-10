@@ -1,7 +1,7 @@
 
-## Content Blocks for Evolution CMS
+## Page Builder for Evolution CMS
 
-Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.md">Russian</a>
+Other languages: <a href="https://github.com/mnoskov/pagebuilder/blob/master/README.md">Russian</a>
 
 The configuration for the blocks is taken from the config folder. To create a new block, you need to create a .php file in this folder, which should return an associative array. The structure of the array is as follows:
 
@@ -64,4 +64,4 @@ In the second case, the output of these elements in the parent template can be u
 
 #### Configuration examples
 
-Examples of configuration can be found <a href="https://github.com/sunhaim/contentblocks/tree/master/assets/plugins/contentblocks/config" target="_blank">here</a>
+Examples of configuration can be found <a href="https://github.com/mnoskov/pagebuilder/tree/master/assets/plugins/pagebuilder/config" target="_blank">here</a>

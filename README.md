@@ -1,6 +1,6 @@
 ## Page Builder for Evolution CMS
 
-Other languages: <a href="https://github.com/sunhaim/pagebuilder/blob/master/README.en.md">English</a>
+Other languages: <a href="https://github.com/mnoskov/pagebuilder/blob/master/README.en.md">English</a>
 
 Плагин позволяет разработчику определить набор блоков с определенной разметкой и списком полей, чтобы контент-менеджер использовал те блоки, которые считает нужным, со своим наполнением.
 
@@ -159,7 +159,7 @@ assets/templates/
 
 ### Примеры конфигурации
 
-Примеры конфигурации можно найти <a href="https://github.com/mnoskov/pagebuilder/tree/master/assets/plugins/contentblocks/config" target="_blank">здесь</a>. (Чтобы примеры блоков стали доступны для выбора, нужно переименовать файлы *.php.sample в *.php)
+Примеры конфигурации можно найти <a href="https://github.com/mnoskov/pagebuilder/tree/master/assets/plugins/pagebuilder/config" target="_blank">здесь</a>. (Чтобы примеры блоков стали доступны для выбора, нужно переименовать файлы *.php.sample в *.php)
 
 ### Сниппет PageBuilder
 
@@ -178,7 +178,7 @@ assets/templates/
 Плагин отвечает за вывод формы редактирования блоков и имеет следующие параметры:
 <table>
 <tr><th>Имя параметра</th><th>Значение по умолчанию</th><th>Возможные значения</th></tr>
-<tr><td>tabName</td><td>Content Blocks</td><td>Название вкладки на странице редактирования ресурса, в которой будет выводиться форма</td></tr>
+<tr><td>tabName</td><td>Page Builder</td><td>Название вкладки на странице редактирования ресурса, в которой будет выводиться форма</td></tr>
 <tr><td>addType</td><td>dropdown</td><td>Вид секции для добавления новых блоков, может иметь значения "dropdown", "icons", "images".
   
 Для значения "icons" в конфигурации каждого блока должен быть определен ключ "icon", содержащий класс иконки.
