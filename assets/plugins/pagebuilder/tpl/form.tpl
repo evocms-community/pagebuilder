@@ -1,6 +1,6 @@
-<link rel="stylesheet" href="../assets/plugins/contentblocks/styles/styles.css?<?= $version ?>">
-<script src="../assets/plugins/contentblocks/js/jquery-ui.min.js"></script>
-<script src="../assets/plugins/contentblocks/js/interaction.js?<?= $version ?>"></script>
+<link rel="stylesheet" href="../assets/plugins/pagebuilder/styles/styles.css?<?= $version ?>">
+<script src="../assets/plugins/pagebuilder/js/jquery-ui.min.js"></script>
+<script src="../assets/plugins/pagebuilder/js/interaction.js?<?= $version ?>"></script>
 
 <? if ( $placement == 'tab' ) { ?>
 	<div class="tab-page content-blocks-tab" style="width: 100%; -moz-box-sizing: border-box; box-sizing: border-box;">
