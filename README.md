@@ -1,6 +1,6 @@
-## Content Blocks for Evolution CMS
+## Page Builder for Evolution CMS
 
-Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/README.en.md">English</a>
+Other languages: <a href="https://github.com/sunhaim/pagebuilder/blob/master/README.en.md">English</a>
 
 Плагин позволяет разработчику определить набор блоков с определенной разметкой и списком полей, чтобы контент-менеджер использовал те блоки, которые считает нужным, со своим наполнением.
 
@@ -91,7 +91,7 @@ Other languages: <a href="https://github.com/sunhaim/contentblocks/blob/master/R
 'owner' => '@FILE contentblocks/all_fields.tpl',
 ```
 
-В этом примере файл шаблона будем загружен из `MODX_BASE_PATH . "assets/templates/contentblocks/all_fields.tpl"`. Вообще файл  ищется в следующих директориях:
+В этом примере файл шаблона будем загружен из `MODX_BASE_PATH . "assets/templates/pagebuilder/all_fields.tpl"`. Вообще файл  ищется в следующих директориях:
 
 ```
 assets/tvs/
@@ -119,7 +119,7 @@ assets/templates/
 то вызов сниппета с параметром `&templates`, равным `anchors`, будет использовать для вывода шаблоны, которые определены в группе `anchors`:
 
 ```
-[[ContentBlocks? &templates=`anchors`]]
+[[PageBuilder? &templates=`anchors`]]
 ```
 ### Поля
 
@@ -159,11 +159,11 @@ assets/templates/
 
 ### Примеры конфигурации
 
-Примеры конфигурации можно найти <a href="https://github.com/mnoskov/contentblocks/tree/master/assets/plugins/contentblocks/config" target="_blank">здесь</a>. (Чтобы примеры блоков стали доступны для выбора, нужно переименовать файлы *.php.sample в *.php)
+Примеры конфигурации можно найти <a href="https://github.com/mnoskov/pagebuilder/tree/master/assets/plugins/contentblocks/config" target="_blank">здесь</a>. (Чтобы примеры блоков стали доступны для выбора, нужно переименовать файлы *.php.sample в *.php)
 
-### Сниппет ContentBlocks
+### Сниппет PageBuilder
 
-Для вывода заполненых блоков используется сниппет ContentBlocks с параметрами:
+Для вывода заполненых блоков используется сниппет PageBuilder с параметрами:
 <table>
 <tr><th>Имя параметра</th><th>Значение по умолчанию</th><th>Возможные значения</th></tr>
 <tr><td>docid</td><td>Текущий документ</td><td>Идентификатор любого существующего документа, целое число</td></tr>
@@ -173,7 +173,7 @@ assets/templates/
 <tr><td>limit</td><td>0</td><td>Число блоков для вывода, либо 0 - для вывода всех</td></tr>
 </table>
 
-### Плагин ContentBlocks
+### Плагин PageBuilder
 
 Плагин отвечает за вывод формы редактирования блоков и имеет следующие параметры:
 <table>
