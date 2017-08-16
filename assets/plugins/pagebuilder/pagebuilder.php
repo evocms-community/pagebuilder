@@ -8,6 +8,7 @@
         private $data;
         private $conf   = [];
         private $themes = [];
+        private $containers = [];
         private $path;
         private $params;
         private $lang;
@@ -245,9 +246,6 @@
 
             return $this->renderTpl( 'tpl/form.tpl', [
                 'version'   => self::version,
-                'tabname'   => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Page Builder',
-                'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
-                'placement' => !empty( $this->params['placement'] ) ? $this->params['placement'] : 'content',
                 'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
                 'configs'   => $this->conf,
                 'blocks'    => $this->data,
@@ -273,12 +271,19 @@
                 $data = [];
             }
 
+            $this->containers['default'] = [
+                'title'     => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Page Builder',
+                'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
+                'placement' => !empty( $this->params['placement'] ) ? $this->params['placement'] : 'content'
+            ];
+
             $this->conf = [];
 
             $templateid = isset( $this->params['template'] ) ? $this->params['template'] : $this->modx->documentObject['template'];
 
             foreach ( scandir( $this->path ) as $entry ) {
                 if ( pathinfo( $entry, PATHINFO_EXTENSION ) == 'php' ) {
+                    $name   = pathinfo($entry, PATHINFO_BASENAME);
                     $config = include( $this->path . $entry );
 
                     foreach ( [ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt ) {
@@ -306,10 +311,14 @@
                     }
 
                     if ( $add ) {
-                        $this->conf[$entry] = $config;
+                        if ( strpos($name, 'container.') === 0) {
+                            $this->containers[$name] = $config;
+                        } else {
+                            $this->conf[$name] = $config;
+                        }
 
                         if ( $notpl ) {
-                            unset( $this->conf[$entry]['templates'] );
+                            unset( $this->conf[$name]['templates'] );
                         }
                     }
                 }
