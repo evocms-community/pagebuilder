@@ -4,9 +4,9 @@
 			<?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
 		</div>
 
-		<? if ( !empty( $block['id'] ) ) { ?>
+		<? if ( !empty( $block['id'] ) ): ?>
 			<input type="hidden" name="contentblocks_id" value="<?= $block['id'] ?>">
-		<? } ?>
+		<? endif; ?>
 
 		<div class="controls">
 			<a href="#" class="moveup" title="<?= $l['Move up'] ?>"><i class="fa fa-chevron-up"></i></a>
@@ -15,14 +15,14 @@
 		</div>
 
 		<div class="fields-list">
-			<? if ( !isset( $configs[ $block['config'] ]['fields'] ) ) { ?>
+			<? if ( !isset( $configs[ $block['config'] ]['fields'] ) ): ?>
 				<b><?= $configs[ $block['config'] ]['title'] ?></b><br>
 				<i><?= $l['No fields provided in this block'] ?></i>
-			<? } else { ?>
-				<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ) { ?>
+			<? else: ?>
+				<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ): ?>
 					<?= $this->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?>
-				<? } ?>
-			<? } ?> 
+				<? endforeach; ?>
+			<? endif; ?> 
 		</div>
 
 		<div class="controls controls-bottom">

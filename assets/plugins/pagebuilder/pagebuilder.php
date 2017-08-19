@@ -303,7 +303,6 @@
          */
         private function fetch( $docid, $containerName = null, $notpl = true ) {
             $this->containers['default'] = [
-                'name'      => 'default',
                 'title'     => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
                 'placement' => !empty( $this->params['placement'] ) ? $this->params['placement'] : 'content'

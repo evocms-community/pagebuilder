@@ -2,7 +2,7 @@
     <div class="tab-page content-blocks-tab add-type-<?= $container['addType'] ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
-    <div class="content-blocks-container add-type-<?= $container['addType'] ?>" id="cb-<?= $name ?>">
+    <div class="content-blocks-container add-type-<?= !empty($container['addType']) ? $container['addType'] : 'dropdown' ?>" id="cb-<?= $name ?>">
         <h4 class="container-title"><?= $container['title'] ?></h4>
 <?php endif; ?>
 
