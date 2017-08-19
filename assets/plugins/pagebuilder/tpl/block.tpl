@@ -1,7 +1,7 @@
 <div class="block" data-config="<?= $block['config'] ?>">
 	<div class="block-inner">
 		<div class="change-type">
-			<?= $instance->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
+			<?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
 		</div>
 
 		<? if ( !empty( $block['id'] ) ) { ?>
@@ -20,7 +20,7 @@
 				<i><?= $l['No fields provided in this block'] ?></i>
 			<? } else { ?>
 				<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ) { ?>
-					<?= $instance->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?>
+					<?= $this->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?>
 				<? } ?>
 			<? } ?> 
 		</div>
@@ -30,7 +30,7 @@
 		</div>
 	</div>
 
-	<?= $instance->renderTpl( 'tpl/add_block.tpl', [
+	<?= $this->renderTpl( 'tpl/add_block.tpl', [
 		'configs' => $configs,
 		'type'    => $type,
 	] ) ?>

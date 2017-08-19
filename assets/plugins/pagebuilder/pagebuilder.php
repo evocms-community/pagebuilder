@@ -149,6 +149,7 @@
         public function render( $params ) {
             $params = array_merge( [
                 'docid'     => $this->modx->documentIdentifier,
+                'container' => 'default',
                 'blocks'    => '*',
                 'templates' => '',
                 'offset'    => 0,
@@ -162,7 +163,7 @@
             $out = '';
             $idx = -1;
 
-            $this->fetch( $params['docid'], false );
+            $this->fetch( $params['docid'], $params['container'], false );
 
             foreach ( $this->data as $row ) {
                 $idx++;
@@ -217,7 +218,6 @@
          * @return string Output
          */
         public function renderTpl( $template, $data ) {
-            $data['instance'] = $this;
             $data['l'] = $this->lang;
             extract( $data );
 
@@ -245,12 +245,13 @@
             include MODX_MANAGER_PATH . 'includes/lang/' . $this->modx->getConfig( 'manager_language' ) . '.inc.php';
 
             return $this->renderTpl( 'tpl/form.tpl', [
-                'version'   => self::version,
-                'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
-                'configs'   => $this->conf,
-                'blocks'    => $this->data,
-                'adminlang' => $_lang,
-                'picker'    => [
+                'version'    => self::version,
+                'browseurl'  => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
+                'containers' => $this->containers,
+                'configs'    => $this->conf,
+                'blocks'     => $this->data,
+                'adminlang'  => $_lang,
+                'picker'     => [
                     'yearOffset' => $this->modx->getConfig( 'datepicker_offset' ),
                     'format'     => $this->modx->getConfig( 'datetime_format' ) . ' hh:mm:00',
                 ],
@@ -258,20 +259,58 @@
         }
 
         /**
+         * Determines whether a block can be included and shown
+         * after filtering by parameters
+         * 
+         * @param  array   $block Block configuration
+         * @param  integer $docid Curent document identifier
+         * @return boolean
+         */
+        private function canIncludeBlock($block, $docid) {
+            $templateid = isset($this->params['template']) ? $this->params['template'] : $this->modx->documentObject['template'];
+
+            foreach ( [ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt ) {
+                if ( isset( $block[$opt] ) && !is_array( $block[$opt] ) ) {
+                    $block[$opt] = [ $block[$opt] ];
+                }
+            }
+
+            if (isset($block['show_in_templates']) && !in_array($templateid, $block['show_in_templates'])) {
+                return false;
+            }
+
+            if (isset($block['hide_in_docs']) && in_array($docid, $block['hide_in_docs'])) {
+                return false;
+            }
+
+            if (isset($block['show_in_docs'])) {
+                if (in_array($docid, $block['show_in_docs'])) {
+                    return true;
+                } else if (!isset($block['show_in_templates'])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /**
          * Loads saved content blocks and configuration files
          * 
          * @param  int $docid Document identificator
+         * @param  string $container Name of the container
          * @param  boolean $notpl If true, template will be cut from configuration array
          */
-        private function fetch( $docid, $notpl = true ) {
+        private function fetch( $docid, $container = null, $notpl = true ) {
             if ( $docid ) {
-                $query = $this->modx->db->select( '*', $this->table, "`document_id` = '$docid'", "`index` ASC" );
+                $query = $this->modx->db->select( '*', $this->table, "`document_id` = '$docid'" . ($container !== null ? " AND `container` = '$container'" : ''), "`index` ASC" );
                 $data  = $this->modx->db->makeArray( $query );
             } else {
                 $data = [];
             }
 
             $this->containers['default'] = [
+                'name'      => 'default',
                 'title'     => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty( $this->params['addType'] ) ? $this->params['addType'] : 'dropdown',
                 'placement' => !empty( $this->params['placement'] ) ? $this->params['placement'] : 'content'
@@ -279,46 +318,27 @@
 
             $this->conf = [];
 
-            $templateid = isset( $this->params['template'] ) ? $this->params['template'] : $this->modx->documentObject['template'];
-
+            // Loading all config files, that complied with filters
             foreach ( scandir( $this->path ) as $entry ) {
                 if ( pathinfo( $entry, PATHINFO_EXTENSION ) == 'php' ) {
-                    $name   = pathinfo($entry, PATHINFO_BASENAME);
-                    $config = include( $this->path . $entry );
+                    $name  = pathinfo($entry, PATHINFO_FILENAME);
+                    $block = include($this->path . $entry);
 
-                    foreach ( [ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt ) {
-                        if ( isset( $config[$opt] ) && !is_array( $config[$opt] ) ) {
-                            $config[$opt] = [ $config[$opt] ];
+                    if ($this->canIncludeBlock($block, $docid)) {
+                        if ($notpl) {
+                            unset($block['templates']);
                         }
-                    }
 
-                    $add = true;
-
-                    if ( isset( $config['show_in_templates'] ) && !in_array( $templateid, $config['show_in_templates'] ) ) {
-                        $add = false;
-                    }
-
-                    if ( $add && isset( $config['hide_in_docs'] ) && in_array( $docid, $config['hide_in_docs'] ) ) {
-                        $add = false;
-                    }
-
-                    if ( isset( $config['show_in_docs'] ) ) {
-                        if ( in_array( $docid, $config['show_in_docs'] ) ) {
-                            $add = true;
-                        } else if ( !isset( $config['show_in_templates'] ) ) {
-                            $add = false;
-                        }
-                    }
-
-                    if ( $add ) {
-                        if ( strpos($name, 'container.') === 0) {
-                            $this->containers[$name] = $config;
+                        if (strpos($name, 'container.') === 0) {
+                            $name = str_replace('container.', '', $name);
+                            $block['sections'] = [];
+                            $this->containers[$name] = $block;
                         } else {
-                            $this->conf[$name] = $config;
-                        }
-
-                        if ( $notpl ) {
-                            unset( $this->conf[$name]['templates'] );
+                            if (!isset($block['container'])) {
+                                $block['container'] = 'default';
+                            }
+                            $block['name'] = $name;
+                            $this->conf[$name] = $block;
                         }
                     }
                 }
@@ -333,6 +353,20 @@
             }
 
             $this->data = $data;
+
+            foreach ($this->conf as $name => $block) {
+                $container = $block['container'];
+
+                if (!isset($this->containers[$container])) {
+                    $container = 'default';
+                }
+
+                $this->containers[$container]['sections'][] = $name;
+            }
+
+            $this->containers = array_filter($this->containers, function($container) {
+                return !empty($container['sections']);
+            });
         }
 
         /**
