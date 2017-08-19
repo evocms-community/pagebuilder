@@ -301,14 +301,7 @@
          * @param  string $container Name of the container
          * @param  boolean $notpl If true, template will be cut from configuration array
          */
-        private function fetch( $docid, $container = null, $notpl = true ) {
-            if ( $docid ) {
-                $query = $this->modx->db->select( '*', $this->table, "`document_id` = '$docid'" . ($container !== null ? " AND `container` = '$container'" : ''), "`index` ASC" );
-                $data  = $this->modx->db->makeArray( $query );
-            } else {
-                $data = [];
-            }
-
+        private function fetch( $docid, $containerName = null, $notpl = true ) {
             $this->containers['default'] = [
                 'name'      => 'default',
                 'title'     => !empty( $this->params['tabName'] ) ? $this->params['tabName'] : 'Page Builder',
@@ -344,16 +337,6 @@
                 }
             }
 
-            foreach ( $data as $i => $row ) {
-                if ( isset( $this->conf[ $row['config'] ] ) ) {
-                    $data[$i]['values'] = json_decode( $data[$i]['values'], true );
-                } else {
-                    unset( $data[$i] );
-                }
-            }
-
-            $this->data = $data;
-
             foreach ($this->conf as $name => $block) {
                 $container = $block['container'];
 
@@ -367,6 +350,21 @@
             $this->containers = array_filter($this->containers, function($container) {
                 return !empty($container['sections']);
             });
+
+            $this->data = [];
+
+            if ($docid) {
+                $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : ''), "`index` ASC");
+
+                while ($row = $this->modx->db->getRow($query)) {
+                    $row['config'] = str_replace('.php', '', $row['config']);
+
+                    if (isset($this->conf[ $row['config'] ])) {
+                        $row['values'] = json_decode($row['values'], true);
+                        $this->data[] = $row;
+                    }
+                }
+            }
         }
 
         /**

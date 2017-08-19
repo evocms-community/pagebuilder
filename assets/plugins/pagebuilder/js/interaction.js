@@ -36,7 +36,8 @@
 
                                     .on( 'click', '.insert', function( e ) {
                                         e.preventDefault();
-                                        ContentBlock.append( $wrap );
+                                        var config = $(this).closest('.block').attr('data-config');
+                                        ContentBlock.append(config, $wrap);
                                     } )
 
                                     .on( 'click', '.remove', function( e ) {
@@ -286,11 +287,14 @@
                         }
                     },
 
-                    append: function( $after ) {
-                        var $block = $('.content-blocks-configs').children().eq(0);
+                    append: function( config, $after ) {
+                        var $block = $('.content-blocks-configs').children('[data-config="' + config + '"]');
 
                         if ( $block.length ) {
                             $block = $block.clone();
+
+                            var $configs = $after.closest('.content-blocks').children('.add-block').children('select').children().clone().slice(1);
+                            $block.children('.block-inner').children('.change-type').children('select').empty().append($configs);
 
                             $block.find('.type-radio').each( function() {
                                 $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
@@ -566,20 +570,8 @@
                     var config = $(this).prev('select').val();
 
                     if ( config != '' ) {
-                        var $block = $('.content-blocks-configs').children('[data-config="' + config + '"]');
-
-                        if ( $block.length ) {
-                            $block = $block.clone();
-
-                            $block.find('.type-radio').each( function() {
-                                $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
-                            } );
-
-                            var $current = $(this).closest('.block');
-
-                            $block.hide().insertAfter( $current.length ? $current : $(this).closest('.add-block') ).slideDown( 200 );
-                            ContentBlock.initialize( $block );
-                        }
+                        var $current = $(this).closest('.block, .add-block');
+                        ContentBlock.append(config, $current);
                     }
                 } );
 
@@ -596,20 +588,8 @@
                     var config = $(this).attr( 'data-config' );
 
                     if ( config != '' ) {
-                        var $block = $('.content-blocks-configs').children('[data-config="' + config + '"]');
-
-                        if ( $block.length ) {
-                            $block = $block.clone();
-
-                            $block.find('.type-radio').each( function() {
-                                $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );
-                            } );
-
-                            var $current = $(this).closest('.block');
-
-                            $block.hide().insertAfter( $current.length ? $current : $(this).closest('.add-block') ).slideDown( 200 );
-                            ContentBlock.initialize( $block );
-                        }
+                        var $current = $(this).closest('.block, .add-block');
+                        ContentBlock.append(config, $current);
                     }
                 } );
             });

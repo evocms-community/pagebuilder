@@ -10,14 +10,17 @@
 		]) ?> 
 	<?php endforeach; ?>
 </div>
-	
+
 <?php foreach ($containers as $name => $container): ?>
 	<?= $this->renderTpl('tpl/container.tpl', [
 		'name'      => $name,
 		'container' => $container,
+		'blocks'    => array_filter($blocks, function($block) use ($container) {
+            return in_array($block['config'], $container['sections']);
+        }),
 		'configs'   => array_filter($configs, function($key) use ($container) {
             return in_array($key, $container['sections']);
-        }, ARRAY_FILTER_USE_KEY)
+        }, ARRAY_FILTER_USE_KEY),
 	]) ?>
 <?php endforeach; ?>
 
