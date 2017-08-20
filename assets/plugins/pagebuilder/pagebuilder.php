@@ -381,19 +381,18 @@
                     $this->modx->db->delete( $this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode( "','", $exists ) . "')" );
 
                     foreach ( $_POST['contentblocks'] as $index => $row ) {
+                        $data = [
+                            'container' => $this->modx->db->escape( $row['container'] ),
+                            'config'    => $this->modx->db->escape( $row['config'] ),
+                            'values'    => $this->modx->db->escape( $row['values'] ),
+                            'index'     => $index,
+                        ];
+
                         if ( !empty( $row['id'] ) ) {
-                            $this->modx->db->update( [
-                                'config' => $this->modx->db->escape( $row['config'] ),
-                                'values' => $this->modx->db->escape( $row['values'] ),
-                                'index'  => $index,
-                            ], $this->table, "`id` = '{$row[id]}'" );
+                            $this->modx->db->update($data, $this->table, "`id` = '{$row[id]}'");
                         } else {
-                            $this->modx->db->insert( [
-                                'document_id' => $docid,
-                                'config'      => $this->modx->db->escape( $row['config'] ),
-                                'values'      => $this->modx->db->escape( $row['values'] ),
-                                'index'       => $index,
-                            ], $this->table );
+                            $data['document_id'] = $docid;
+                            $this->modx->db->insert($data, $this->table);
                         }
                     }
                 } else {
