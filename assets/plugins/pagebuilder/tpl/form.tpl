@@ -7,6 +7,7 @@
 		<?= $this->renderTpl('tpl/block.tpl', [ 
 			'configs' => $configs, 
 			'block'   => ['config' => $filename],
+			'addType' => [],
 		]) ?> 
 	<?php endforeach; ?>
 </div>

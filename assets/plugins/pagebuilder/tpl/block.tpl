@@ -30,9 +30,11 @@
 		</div>
 	</div>
 
-	<?= $this->renderTpl( 'tpl/add_block.tpl', [
-		'configs' => $configs,
-		'type'    => $type,
-	] ) ?>
+	<?php foreach ($addType as $type): ?>
+		<?= $this->renderTpl( 'tpl/add_block.tpl', [
+			'configs' => $configs,
+			'type'    => $type,
+		] ) ?>
+	<?php endforeach; ?>
 </div>
 

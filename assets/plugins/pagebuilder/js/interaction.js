@@ -293,8 +293,15 @@
                         if ( $block.length ) {
                             $block = $block.clone();
 
-                            var $configs = $after.closest('.content-blocks').children('.add-block').children('select').children().clone().slice(1);
-                            $block.children('.block-inner').children('.change-type').children('select').empty().append($configs);
+                            // removing blocks from type-selector that not belongs to this container
+                            var $configs = $after.closest('.content-blocks').children('.change-type').clone().show();
+                            $block.children('.block-inner').children('.change-type').replaceWith($configs);
+
+                            // adding add-block-section to the bottom of block
+                            var $add = $after.closest('.content-blocks').children('.add-block').clone();
+                            $add.removeClass('show');
+                            $add.children('.add-block-icons').removeAttr('style');
+                            $block.append($add);
 
                             $block.find('.type-radio').each( function() {
                                 $(this).find('[type="radio"]').attr( 'name', 'contentblocks_radio_' + ContentBlock.randomString() );

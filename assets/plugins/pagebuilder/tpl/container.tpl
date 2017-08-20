@@ -1,24 +1,30 @@
 <?php if ($container['placement'] == 'tab'): ?>
-    <div class="tab-page content-blocks-tab add-type-<?= $container['addType'] ?>">
+    <div class="tab-page content-blocks-tab">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
-    <div class="content-blocks-container add-type-<?= !empty($container['addType']) ? $container['addType'] : 'dropdown' ?>" id="cb-<?= $name ?>">
+    <div class="content-blocks-container" id="cb-<?= $name ?>">
         <h4 class="container-title"><?= $container['title'] ?></h4>
 <?php endif; ?>
 
-    <div class="content-blocks">
+    <div class="content-blocks" data-add-type="<?= $container['addType'] ?>">
+        <div class="change-type" style="display: none;">
+            <?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?>
+        </div>
+
         <?= $this->renderTpl('tpl/add_block.tpl', [
             'configs' => $configs,
+            'type'    => $container['addType'],
         ]) ?>
 
-        <?php foreach ($blocks as $block): ?> 
+        <?php foreach ($blocks as $block): ?>
             <?php if ($block['container'] == $name): ?>
-                <?= $this->renderTpl( 'tpl/block.tpl', [ 
+                <?= $this->renderTpl( 'tpl/block.tpl', [
                     'configs' => $configs, 
                     'block'   => $block,
+                    'addType' => [$container['addType']],
                 ] ); ?> 
             <?php endif; ?>
-        <?php endforeach; ?> 
+        <?php endforeach; ?>
     </div>
 </div>
 

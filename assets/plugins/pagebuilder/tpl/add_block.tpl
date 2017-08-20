@@ -1,4 +1,4 @@
-<div class="add-block">
+<div class="add-block" data-type="<?= $type ?>">
     <? if ( $type == 'icons' || $type == 'images' ): ?>
         <?= $this->renderTpl( 'tpl/add_block_icons.tpl', [ 'configs' => $configs, 'type' => $type ] ); ?> 
     <? else: ?>
