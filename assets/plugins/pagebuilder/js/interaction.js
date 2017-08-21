@@ -547,7 +547,7 @@
 
                 $blocks.each( function( i ) {
                     var $block = $(this),
-                        $id = $block.children('[name="contentblocks_id"]');
+                        $id = $block.children('.block-inner').children('[name="contentblocks_id"]');
 
                     $('<input type="hidden"/>').attr( 'name', 'contentblocks[' + i + '][config]' ).val( $block.attr( 'data-config' ) ).appendTo( $form );
                     $('<input type="hidden"/>').attr( 'name', 'contentblocks[' + i + '][values]' ).val( JSON.stringify( ContentBlock.fetch( $block ) ) ).appendTo( $form );
