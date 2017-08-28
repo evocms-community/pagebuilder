@@ -207,7 +207,19 @@
                 $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $row['values']);
             }
 
-            return $out;
+            $wrapper = '[+wrap+]';
+
+            if (isset($params['wrapTpl'])) {
+                $wrapper = $params['wrapTpl'];
+            } else if (isset($this->containers[ $params['container'] ])) {
+                $container = $this->containers[ $params['container'] ];
+
+                if (!empty($container['templates']['owner'])) {
+                    $wrapper = $container['templates']['owner'];
+                }
+            }
+
+            return $this->parseTemplate($wrapper, ['wrap' => $out]);
         }
 
         /**
