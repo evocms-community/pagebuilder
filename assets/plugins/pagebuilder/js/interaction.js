@@ -572,7 +572,12 @@
                     var config = $(this).attr( 'data-config' );
 
                     if ( config != '' ) {
-                        var $current = $(this).closest('.block, .add-block');
+                        var $current = $(this).closest('.block');
+
+                        if (!$current.length) {
+                            $current = $(this).closest('.add-block');
+                        }
+
                         ContentBlock.append(config, $current);
                     }
                 } );
