@@ -383,33 +383,33 @@
          */
         public function save() {
             if (isset($_POST['contentblocks'])) {
-                if (is_array($_POST['contentblocks'])) {
-                    $docid  = $this->params['id'];
+                foreach ($_POST['contentblocks'] as $container => $blocks) {
+                    if (is_array($blocks)) {
+                        $docid  = $this->params['id'];
 
-                    $exists = array_map(function($element) { 
-                        return $element['id'];
-                    }, $_POST['contentblocks']);
+                        $exists = array_map(function($element) { 
+                            return $element['id'];
+                        }, $blocks);
 
-                    $this->modx->db->delete($this->table, "`document_id` = '$docid' AND `id` NOT IN ('" . implode("','", $exists) . "')");
+                        $this->modx->db->delete($this->table, "`document_id` = '$docid' AND `container` = '$container' AND `id` NOT IN ('" . implode("','", $exists) . "')");
 
-                    foreach ($_POST['contentblocks'] as $index => $row) {
-                        $data = [
-                            'container' => $this->modx->db->escape($row['container']),
-                            'config'    => $this->modx->db->escape($row['config']),
-                            'values'    => $this->modx->db->escape($row['values']),
-                            'index'     => $index,
-                        ];
+                        foreach ($blocks as $index => $row) {
+                            $data = [
+                                'container' => $this->modx->db->escape($container),
+                                'config'    => $this->modx->db->escape($row['config']),
+                                'values'    => $this->modx->db->escape($row['values']),
+                                'index'     => $index,
+                            ];
 
-                        if (!empty($row['id'])) {
-                            $this->modx->db->update($data, $this->table, "`id` = '{$row[id]}'");
-                        } else {
-                            $data['document_id'] = $docid;
-                            $this->modx->db->insert($data, $this->table);
+                            if (!empty($row['id'])) {
+                                $this->modx->db->update($data, $this->table, "`id` = '{$row[id]}'");
+                            } else {
+                                $data['document_id'] = $docid;
+                                $this->modx->db->insert($data, $this->table);
+                            }
                         }
-                    }
-                } else {
-                    if ($_POST['contentblocks'] == 0) {
-                        $this->modx->db->delete($this->table, "`document_id` = '" . $this->params['id'] . "'");
+                    } else {
+                        $this->modx->db->delete($this->table, "`document_id` = '" . $this->params['id'] . "' AND `container` = '$container'");
                     }
                 }
             }

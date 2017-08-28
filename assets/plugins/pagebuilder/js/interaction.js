@@ -584,21 +584,21 @@
             });
 
             opts.containers.eq(0).closest('form').submit(function() {
-                var $form   = $(this),
-                    $blocks = $('.content-blocks').children('.block'),
-                    length  = 0;
+                var $form = $(this);
 
                 $form.children('input[name^="contentblocks"]').remove();
 
                 $('.content-blocks').each(function() {
+                    var length    = 0,
+                        container = $(this).attr('data-container');
+
                     $(this).children('.block').each(function() {
                         var $block = $(this),
                             $inner = $block.children('.block-inner'),
                             $id    = $inner.children('[name="contentblocks_id"]'),
                             data   = {
-                                container: $block.closest('.content-blocks').attr('data-container'),
-                                config:    $block.attr('data-config'),
-                                values:    JSON.stringify(ContentBlock.fetch($inner))
+                                config: $block.attr('data-config'),
+                                values: JSON.stringify(ContentBlock.fetch($inner))
                             };
 
                         if ($id.length) {
@@ -606,16 +606,16 @@
                         }
 
                         for (var field in data) {
-                            $('<input type="hidden"/>').attr('name', 'contentblocks[' + length + '][' + field + ']').val(data[field]).appendTo($form);
+                            $('<input type="hidden"/>').attr('name', 'contentblocks[' + container + '][' + length + '][' + field + ']').val(data[field]).appendTo($form);
                         }
 
                         length++;
                     });
-                });
 
-                if (!length) {
-                    $('<input type="hidden"/>').attr('name', 'contentblocks').val('0').appendTo($form);
-                }
+                    if (!length) {
+                        $('<input type="hidden"/>').attr('name', 'contentblocks[' + container + ']').val('0').appendTo($form);
+                    }
+                });
             });
 
         })(jQuery);
