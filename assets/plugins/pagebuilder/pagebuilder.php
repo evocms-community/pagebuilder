@@ -341,6 +341,11 @@
                             if (!isset($block['container'])) {
                                 $block['container'] = 'default';
                             }
+
+                            if (!isset($block['order'])) {
+                                $block['order'] = PHP_INT_MAX;
+                            }
+
                             $block['name'] = $name;
                             $this->conf[$name] = $block;
                         }
@@ -363,6 +368,13 @@
                     $this->containers[$container]['sections'][] = $name;
                 }
             }
+
+            uasort($this->conf, function($a, $b) {
+                if ($a['order'] == $b['order']) {
+                    return $a['title'] < $b['title'] ? -1 : 1;
+                }
+                return ($a['order'] < $b['order']) ? -1 : 1;
+            });
 
             $this->containers = array_filter($this->containers, function($container) {
                 return !empty($container['sections']);

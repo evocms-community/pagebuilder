@@ -14,7 +14,7 @@
         'templates' => [
             'owner' => '
                 <div>
-                    Слайдер:
+                    Slider:
                     [+wrap+]
                 </div>
             ',
