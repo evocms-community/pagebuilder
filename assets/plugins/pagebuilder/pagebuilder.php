@@ -210,7 +210,7 @@
             $wrapper = '[+wrap+]';
 
             if (isset($params['wrapTpl'])) {
-                $wrapper = $params['wrapTpl'];
+                $wrapper = $this->modx->getChunk($params['wrapTpl']);
             } else if (isset($this->containers[ $params['container'] ])) {
                 $container = $this->containers[ $params['container'] ];
 
