@@ -130,7 +130,7 @@
 
                             case 'checkbox': {
                                 if (typeof values[field] != 'object') {
-                                    values[field] = [];
+                                    values[field] = {};
                                 }
                                 
                                 $field.children('.check-list').children('.check-row').each(function(i) {
@@ -192,7 +192,7 @@
                                     }
 
                                     if (typeof values[field].length == 'undefined') {
-                                        values[field] = [];
+                                        values[field] = {};
                                     }
 
                                     var $inputs = $field.children('.check-list').children('.check-row').children('label').children('input').removeAttr('checked');
