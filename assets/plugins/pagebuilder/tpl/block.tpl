@@ -2,6 +2,11 @@
 	<div class="block-inner">
 		<div class="change-type">
 			<?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
+
+			<label class="visible">
+				<input type="checkbox" name="visible[]" value="1"<?php if (!(isset($block['visible']) && $block['visible'] == 0)): ?> checked<?php endif; ?>>
+				<?= $l['Visible'] ?>
+			</label>
 		</div>
 
 		<? if ( !empty( $block['id'] ) ): ?>

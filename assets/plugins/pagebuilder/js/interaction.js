@@ -290,8 +290,8 @@
                         $block = $block.clone();
 
                         // removing blocks from type-selector that not belongs to this container
-                        var $configs = $after.closest('.content-blocks').children('.change-type').clone().show();
-                        $block.children('.block-inner').children('.change-type').replaceWith($configs);
+                        var $configs = $after.closest('.content-blocks').children('.change-type').children('select').clone().show();
+                        $block.children('.block-inner').children('.change-type').children('select').replaceWith($configs);
 
                         // adding add-block-section to the bottom of block
                         var $add = $after.closest('.content-blocks').children('.add-block').clone();
@@ -597,8 +597,9 @@
                             $inner = $block.children('.block-inner'),
                             $id    = $inner.children('[name="contentblocks_id"]'),
                             data   = {
-                                config: $block.attr('data-config'),
-                                values: JSON.stringify(ContentBlock.fetch($inner))
+                                visible: $inner.children('.change-type').children('.visible').children('input:checked').length,
+                                config:  $block.attr('data-config'),
+                                values:  JSON.stringify(ContentBlock.fetch($inner))
                             };
 
                         if ($id.length) {

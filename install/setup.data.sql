@@ -10,7 +10,13 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}pagebuilder` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 
-# Upgrading to v1.0.0 - adding column for sections container
+# Upgrading to v1.0.0
+
+# adding column for sections container
 
 ALTER TABLE {PREFIX}pagebuilder ADD COLUMN container varchar(255) DEFAULT NULL AFTER document_id;
+
+# Adding visibility option
+
+ALTER TABLE {PREFIX}pagebuilder ADD COLUMN visible tinyint(1) unsigned DEFAULT 1 AFTER `values`;
 

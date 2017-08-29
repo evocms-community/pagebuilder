@@ -365,7 +365,7 @@
             $this->data = [];
 
             if ($docid) {
-                $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : ''), "`index` ASC");
+                $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$notpl ? " AND `visible` = '1'" : ''), "`index` ASC");
 
                 while ($row = $this->modx->db->getRow($query)) {
                     $row['config'] = str_replace('.php', '', $row['config']);
@@ -398,6 +398,7 @@
                                 'container' => $this->modx->db->escape($container),
                                 'config'    => $this->modx->db->escape($row['config']),
                                 'values'    => $this->modx->db->escape($row['values']),
+                                'visible'   => $row['visible'] > 0 ? 1 : 0,
                                 'index'     => $index,
                             ];
 
@@ -557,8 +558,10 @@
                 while ($row = $this->modx->db->getRow($query)) {
                     $this->modx->db->insert([
                         'document_id' => $this->params['new_id'],
+                        'container'   => $this->modx->db->escape($row['container']),
                         'config'      => $this->modx->db->escape($row['config']),
                         'values'      => $this->modx->db->escape($row['values']),
+                        'visible'     => $row['visible'] > 0 ? 1 : 0,
                         'index'       => $row['index'],
                     ], $this->table);
                 }

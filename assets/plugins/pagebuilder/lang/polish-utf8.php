@@ -13,5 +13,6 @@
 		'Fill with images' => 'Wypełnij obrazami',
 		'No variants provided' => 'Brak wariantów',
 		'No fields provided in this block' => 'W tym bloku nie ma pól do wypełnienia',
+		'Visible' => 'Pokaż',
 	];
 

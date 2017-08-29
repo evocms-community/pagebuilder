@@ -30,6 +30,7 @@
 .content-blocks .block .field .check-list.layout-horizontal .check-row label { display: block; }
 .content-blocks .block .change-type { position: absolute; left: 20px; top: -20px; }
 .content-blocks .block .change-type select { width: 150px !important; }
+.content-blocks .block .change-type .visible { margin: 0 10px; vertical-align: middle; background: #fff; padding: 6px 10px; cursor: pointer; }
 
 .content-blocks .block .controls { position: absolute; height: 28px; line-height: 26px; right: 20px; top: -20px; cursor: default; background: #fff; padding: 0 10px; border-radius: 0; border: 1px solid #f8f8f8; font-size: 14px; }
 .content-blocks .block .controls a { display: inline-block; padding: 0 5px; color: #555; }
