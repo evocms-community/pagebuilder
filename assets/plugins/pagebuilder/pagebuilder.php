@@ -349,13 +349,19 @@
             }
 
             foreach ($this->conf as $name => $block) {
-                $container = $block['container'];
+                $containers = $block['container'];
 
-                if (!isset($this->containers[$container])) {
-                    $container = 'default';
+                if (!is_array($containers)) {
+                    $containers = [$containers];
                 }
 
-                $this->containers[$container]['sections'][] = $name;
+                foreach ($containers as $container) {
+                    if (!isset($this->containers[$container])) {
+                        $container = 'default';
+                    }
+
+                    $this->containers[$container]['sections'][] = $name;
+                }
             }
 
             $this->containers = array_filter($this->containers, function($container) {
