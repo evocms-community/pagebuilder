@@ -1,11 +1,11 @@
 <div class="field type-<?= $field['type'] ?>" data-field="<?= $name ?>">
-	<? if ( !empty( $field['caption'] ) ) { ?> 
+	<?php if (!empty($field['caption'])): ?> 
 		<div class="field-name"><?= $field['caption'] ?></div>
-	<? } ?> 
+	<?php endif; ?> 
 
 	<select name="contentblocks_<?= $name ?>">
-		<? foreach ( $elements as $val => $title ) { ?> 
-			<option value="<?= $val ?>" <? if ( $val == $value ) { ?> selected<? } ?>><?= htmlentities( $title ) ?></option>
-		<? } ?> 
+		<?php foreach ($elements as $val => $title): ?> 
+			<option value="<?= $val ?>" <?php if ($val == $value) { ?> selected<?php } ?>><?= htmlentities($title) ?></option>
+		<?php endforeach; ?> 
 	</select>
 </div>

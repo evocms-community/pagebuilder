@@ -1,7 +1,7 @@
 <div class="block" data-config="<?= $block['config'] ?>">
 	<div class="block-inner">
 		<div class="change-type">
-			<?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?> 
+			<?= $this->renderTpl('tpl/add_block_dropdown.tpl', ['configs' => $configs]); ?> 
 
 			<label class="visible">
 				<input type="checkbox" name="visible[]" value="1"<?php if (!(isset($block['visible']) && $block['visible'] == 0)): ?> checked<?php endif; ?>>
@@ -9,9 +9,9 @@
 			</label>
 		</div>
 
-		<? if ( !empty( $block['id'] ) ): ?>
+		<?php if (!empty($block['id'])): ?>
 			<input type="hidden" name="contentblocks_id" value="<?= $block['id'] ?>">
-		<? endif; ?>
+		<?php endif; ?>
 
 		<div class="controls">
 			<a href="#" class="moveup" title="<?= $l['Move up'] ?>"><i class="fa fa-chevron-up"></i></a>
@@ -20,14 +20,14 @@
 		</div>
 
 		<div class="fields-list">
-			<? if ( !isset( $configs[ $block['config'] ]['fields'] ) ): ?>
-				<b><?= $configs[ $block['config'] ]['title'] ?></b><br>
+			<?php if (!isset($configs[$block['config']]['fields'])): ?>
+				<b><?= $configs[$block['config']]['title'] ?></b><br>
 				<i><?= $l['No fields provided in this block'] ?></i>
-			<? else: ?>
-				<? foreach ( $configs[ $block['config'] ]['fields'] as $name => $field ): ?>
-					<?= $this->renderField( $field, $name, isset( $block['values'][$name] ) ? $block['values'][$name] : null ); ?>
-				<? endforeach; ?>
-			<? endif; ?> 
+			<?php else: ?>
+				<?php foreach ($configs[$block['config']]['fields'] as $name => $field): ?>
+					<?= $this->renderField($field, $name, isset($block['values'][$name]) ? $block['values'][$name] : null); ?>
+				<?php endforeach; ?>
+			<?php endif; ?> 
 		</div>
 
 		<div class="controls controls-bottom">
@@ -36,10 +36,10 @@
 	</div>
 
 	<?php foreach ($addType as $type): ?>
-		<?= $this->renderTpl( 'tpl/add_block.tpl', [
+		<?= $this->renderTpl('tpl/add_block.tpl', [
 			'configs' => $configs,
 			'type'    => $type,
-		] ) ?>
+		]) ?>
 	<?php endforeach; ?>
 </div>
 

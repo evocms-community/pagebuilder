@@ -8,7 +8,7 @@
 
     <div class="content-blocks" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>">
         <div class="change-type" style="display: none;">
-            <?= $this->renderTpl( 'tpl/add_block_dropdown.tpl', [ 'configs' => $configs ] ); ?>
+            <?= $this->renderTpl('tpl/add_block_dropdown.tpl', ['configs' => $configs]); ?>
         </div>
 
         <?= $this->renderTpl('tpl/add_block.tpl', [
@@ -18,11 +18,11 @@
 
         <?php foreach ($blocks as $block): ?>
             <?php if ($block['container'] == $name): ?>
-                <?= $this->renderTpl( 'tpl/block.tpl', [
+                <?= $this->renderTpl('tpl/block.tpl', [
                     'configs' => $configs, 
                     'block'   => $block,
                     'addType' => [$container['addType']],
-                ] ); ?> 
+                ]); ?> 
             <?php endif; ?>
         <?php endforeach; ?>
     </div>
