@@ -380,6 +380,11 @@
                 return !empty($container['sections']);
             });
 
+            $this->containers = array_map(function($item) {
+                $item['sections'] = array_unique($item['sections']);
+                return $item;
+            }, $this->containers);
+
             $this->data = [];
 
             if ($docid) {
