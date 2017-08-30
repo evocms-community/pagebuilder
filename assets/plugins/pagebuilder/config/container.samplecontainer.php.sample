@@ -1,7 +1,7 @@
 <?php
 
     return [
-        'title' => 'Page Builder 1',
+        'title' => 'Page Builder Container',
 
 //        'show_in_templates' => [ 3 ],
 
@@ -9,12 +9,14 @@
 
 //        'hide_in_docs' => [ 10, 63 ],
 
+//        'addType' => 'images',
+
         'placement' => 'content',
 
         'templates' => [
             'owner' => '
                 <div>
-                    Slider:
+                    Container:
                     [+wrap+]
                 </div>
             ',
