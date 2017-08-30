@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}pagebuilder` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 
-# Upgrading to v1.0.0
+# Upgrading to v1.1.0
 
 # adding column for sections container
 
