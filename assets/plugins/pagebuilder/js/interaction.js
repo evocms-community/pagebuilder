@@ -567,7 +567,7 @@
                 $container.on('click', '.add-block-icons a', function(e) {
                     e.preventDefault();
 
-                    $(this).parent().prev('.trigger').children('a').click();
+                    $(this).closest('.add-block-icons').prev('.trigger').children('a').click();
 
                     var config = $(this).attr('data-config');
 
