@@ -1,0 +1,53 @@
+<?php
+
+    return [
+        'title' => 'Two columns: text and image',
+
+//        'show_in_templates' => [ 4 ],
+
+//        'show_in_docs' => [ 2 ],
+
+//        'hide_in_docs' => [ 5 ],
+        
+//        'order' => 1,
+        
+        'image' => 'assets/plugins/pagebuilder/images/2col-text-photo.jpg',
+
+//        'container' => 'default',
+
+        'templates' => [
+            'owner' => '
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="user-content">
+                                [+richtext+]
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <img src="[[phpthumb? &input=`[+image+]` &options=`w=540,f=jpg`]]" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            ',
+        ],
+
+        'fields' => [
+            'image' => [
+                'caption' => 'Image',
+                'type'    => 'image',
+            ],
+
+            'richtext' => [
+                'caption' => 'Text',
+                'type'    => 'richtext',
+                'default' => '',
+                'theme'   => 'mini',
+                'options' => [
+                    'height' => '200px',
+                ],
+            ],
+        ],
+    ];
+
