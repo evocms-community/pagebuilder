@@ -64,7 +64,7 @@
 .content-blocks .add-block select + .dropdown-add-block { text-decoration: none; font-size: 150%; vertical-align: middle; padding: 5px; }
 .content-blocks .add-block select + .dropdown-add-block i { color: #449d44; }
 .content-blocks .add-block .trigger { height: 0; margin: 20px 0; }
-.content-blocks .add-block .trigger a { display: inline-block; padding: 10px; background: #fff; font-size: 22px; color: #555; line-height: 40px; margin-top: -20px; height: 40px; text-decoration: none; transition: all 0.2s ease; }
+.content-blocks .add-block .trigger a { display: inline-block; padding: 10px; font-size: 22px; color: #555; line-height: 40px; margin-top: -20px; height: 40px; text-decoration: none; transition: all 0.2s ease; }
 .content-blocks .add-block .trigger a:hover { color: #449d44; }
 .content-blocks .add-block .trigger a:before { vertical-align: top; line-height: 20px; }
 .content-blocks .add-block.show .trigger a { transform: rotate(45deg); color: #c9302c; }
@@ -83,4 +83,3 @@
     .content-blocks .block .field.uploadable input[type="text"] { width: 78%; }
     .content-blocks .block .field.uploadable input[type="button"] { width: 20% !important; margin-right: 2%; }
 }
-
