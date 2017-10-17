@@ -1,10 +1,10 @@
 <div class="field type-<?= $field['type'] ?>" data-field="<?= $name ?>">
-	<? if ( !empty( $field['caption'] ) ) { ?> 
+	<?php if (!empty($field['caption'])): ?> 
 		<div class="field-name"><?= $field['caption'] ?></div>
-	<? } ?> 
+	<?php endif; ?> 
 
-	<? $random = md5( rand() ); ?>
+	<?php $random = md5(rand()); ?>
 
-	<input type="text" name="contentblocks_<?= $name ?>_<?= $random ?>" value="<?= htmlentities( $value ) ?>">
+	<input type="text" name="contentblocks_<?= $name ?>_<?= $random ?>" value="<?= htmlentities($value) ?>">
 	<i class="fa fa-calendar"></i>
 </div>

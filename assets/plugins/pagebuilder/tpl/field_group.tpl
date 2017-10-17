@@ -4,14 +4,14 @@
 	</div>
 
 	<div class="sortable-list">
-		<? foreach ( $values as $i => $value ) { ?> 
+		<?php foreach ($values as $i => $value): ?> 
 			<div class="sortable-item<?= !$i ? ' hidden' : '' ?>">
 				<div class="handle"></div>
 
 				<div class="fields-list<?= !$i ? ' hidden' : '' ?>">
-					<? foreach ( $field['fields'] as $child => $childfield ) { ?> 
-						<?= $instance->renderField( $childfield, $child, isset( $value[$child] ) ? $value[$child] : null ) ?> 
-					<? } ?> 
+					<?php foreach ($field['fields'] as $child => $childfield): ?> 
+						<?= $this->renderField($childfield, $child, isset($value[$child]) ? $value[$child] : null) ?> 
+					<?php endforeach; ?> 
 				</div>
 
 				<div class="controls">
@@ -19,6 +19,6 @@
 					<a href="#" class="insert" title="<?= $l['Insert element'] ?>"><i class="fa fa-plus-circle"></i></a>
 				</div>
 			</div>
-		<? } ?> 
+		<?php endforeach; ?> 
 	</div>
 </div>

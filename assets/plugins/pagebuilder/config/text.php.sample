@@ -1,0 +1,40 @@
+<?php
+
+    return [
+        'title' => 'Text',
+
+//        'show_in_templates' => [ 4 ],
+
+//        'show_in_docs' => [ 2 ],
+
+//        'hide_in_docs' => [ 5 ],
+        
+//        'order' => 1,
+        
+        'image' => 'assets/plugins/pagebuilder/images/text.jpg',
+
+//        'container' => 'default',
+
+        'templates' => [
+            'owner' => '
+                <div class="container">
+                    <div class="user-content">
+                        [+richtext+]
+                    </div>
+                </div>
+            ',
+        ],
+
+        'fields' => [
+            'richtext' => [
+                'caption' => 'Text',
+                'type'    => 'richtext',
+                'default' => '',
+                'theme'   => 'mini',
+                'options' => [
+                    'height' => '300px',
+                ],
+            ],
+        ],
+    ];
+
