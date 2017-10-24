@@ -1,4 +1,3 @@
-
     var initcontentblocks = function(opts) {
         return (function($) {
 
@@ -554,15 +553,16 @@
                         e.stopImmediatePropagation();
 
                         if ($(this).hasClass('dropdown-add-block')) {
-                            var config   = $(this).prev('select').children().last().val(),
-                                $current = $(this).closest('.block, .add-block');
+                            var config = $(this).prev('select').children().last().val();
                         } else {
-                            var config   = $(this).parent().next('.add-block-icons').find('a').attr('data-config'),
-                                $current = $(this).closest('.block');
+                            var config = $(this).parent().next('.add-block-icons').find('a').attr('data-config');
 
-                            if (!$current.length) {
-                                $current = $(this).closest('.add-block');
-                            }
+                        }
+                        
+                        var $current = $(this).closest('.block');
+
+                        if (!$current.length) {
+                            $current = $(this).closest('.add-block');
                         }
 
                         ContentBlock.append(config, $current);
@@ -574,7 +574,12 @@
                     var config = $(this).prev('select').val();
 
                     if (config != '') {
-                        var $current = $(this).closest('.block, .add-block');
+                        var $current = $(this).closest('.block');
+
+                        if (!$current.length) {
+                            $current = $(this).closest('.add-block');
+                        }
+                        
                         ContentBlock.append(config, $current);
                     }
                 });
