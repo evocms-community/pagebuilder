@@ -543,10 +543,31 @@
             }
 
             opts.containers.each(function() {
-
                 var $container = $(this);
 
                 ContentBlock.initialize($container.children('.block'));
+
+                if ($container.hasClass('single')) {
+                    $container.on('click', '.dropdown-add-block, .add-block .trigger a', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        if ($(this).hasClass('dropdown-add-block')) {
+                            var config   = $(this).prev('select').children().last().val(),
+                                $current = $(this).closest('.block, .add-block');
+                        } else {
+                            var config   = $(this).parent().next('.add-block-icons').find('a').attr('data-config'),
+                                $current = $(this).closest('.block');
+
+                            if (!$current.length) {
+                                $current = $(this).closest('.add-block');
+                            }
+                        }
+
+                        ContentBlock.append(config, $current);
+                    });
+                }
 
                 $container.on('click', '.dropdown-add-block', function(e) {
                     e.preventDefault();

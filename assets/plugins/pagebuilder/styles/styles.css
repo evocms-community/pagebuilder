@@ -77,6 +77,12 @@
 .content-blocks .add-block .add-block-icons a > .icon i { font-size: 36px; }
 .content-blocks .add-block .add-block-icons a > .icon img { vertical-align: top; }
 
+.content-blocks.single .change-type select { display: none; }
+.content-blocks.single .change-type .visible { margin-left: 0; }
+.content-blocks.single .add-block { margin: 10px 0; }
+.content-blocks.single .add-block select { display: none; }
+.content-blocks.single .block-inner { margin-bottom: 10px; }
+
 @supports (display: flex) {
     .content-blocks .add-block .add-block-icons .icons-list { display: flex; justify-content: center; flex-wrap: wrap; }
 }

@@ -6,7 +6,7 @@
         <h4 class="container-title"><?= $container['title'] ?></h4>
 <?php endif; ?>
 
-    <div class="content-blocks" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>">
+    <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>">
         <div class="change-type" style="display: none;">
             <?= $this->renderTpl('tpl/add_block_dropdown.tpl', ['configs' => $configs]); ?>
         </div>
