@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.1.2';
+        const version = '1.1.3';
 
         private $modx;
         private $data;
@@ -569,6 +569,25 @@
             }
 
             return '';
+        }
+
+        /**
+         * Called ad OnWebPageInit, OnManagerPageInit events once after plugin installed
+         */
+        public function install() {
+            $table = $modx->getFullTableName('system_eventnames');
+
+            foreach (['OnPBContainerRender', 'OnPBFieldRender'] as $event) {
+                $query = $this->modx->db->select('*', $table, "`name` = '" . $event . "'");
+
+                if (!$this->modx->db->getRecordCount($query)) {
+                    $this->modx->db->insert([
+                        'name'      => $event,
+                        'service'   => 6,
+                        'groupname' => 'PageBuilder',
+                    ], $this->table);
+                }
+            }
         }
 
         /**
