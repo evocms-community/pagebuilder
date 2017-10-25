@@ -575,7 +575,7 @@
          * Called ad OnWebPageInit, OnManagerPageInit events once after plugin installed
          */
         public function install() {
-            $table = $modx->getFullTableName('system_eventnames');
+            $table = $this->modx->getFullTableName('system_eventnames');
 
             foreach (['OnPBContainerRender', 'OnPBFieldRender'] as $event) {
                 $query = $this->modx->db->select('*', $table, "`name` = '" . $event . "'");
