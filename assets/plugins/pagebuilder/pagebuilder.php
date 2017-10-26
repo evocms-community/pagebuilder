@@ -540,7 +540,7 @@
                         $this->themes[ $field['theme'] ] = $result;
                     }
 
-                    return $this->renderTpl('tpl/field_richtext.tpl', $params);
+                    return $this->renderTpl('tpl/field_richtext.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
                 }
 
                 case 'checkbox': {
@@ -564,11 +564,28 @@
                 }
 
                 default: {
-                    return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params);
+                    return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
                 }
             }
 
             return '';
+        }
+
+        /**
+         * Wrapper for invokeEvent method
+         * 
+         * @param  string $event  Name of the event
+         * @param  array  $params
+         * @return string
+         */
+        public function trigger($event, $params) {
+            $result = $this->modx->invokeEvent($event, $params);
+
+            if (is_array($result)) {
+                $result = implode($result);
+            }
+
+            return $result;
         }
 
         /**

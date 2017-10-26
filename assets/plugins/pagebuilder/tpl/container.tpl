@@ -25,6 +25,13 @@
                 ]); ?> 
             <?php endif; ?>
         <?php endforeach; ?>
+
+        <?= $this->trigger('OnPBContainerRender', [
+            'name'      => $name,
+            'container' => $container,
+            'configs'   => $configs,
+            'blocks'    => $blocks,
+        ]) ?>
     </div>
 </div>
 
