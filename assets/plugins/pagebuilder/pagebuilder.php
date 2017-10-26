@@ -585,7 +585,7 @@
                         'name'      => $event,
                         'service'   => 6,
                         'groupname' => 'PageBuilder',
-                    ], $this->table);
+                    ], $table);
                 }
             }
         }
