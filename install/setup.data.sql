@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}pagebuilder` (
 # adding column for sections container
 
 ALTER TABLE {PREFIX}pagebuilder ADD COLUMN container varchar(255) DEFAULT NULL AFTER document_id;
+
 ALTER TABLE {PREFIX}pagebuilder DROP INDEX `document_id`;
+
 ALTER TABLE {PREFIX}pagebuilder ADD INDEX `document_id` (`document_id`, `container`);
 
 # Adding visibility option
