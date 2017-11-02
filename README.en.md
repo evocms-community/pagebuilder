@@ -1,5 +1,7 @@
 ## Page Builder for Evolution CMS
 
+<img src="https://img.shields.io/badge/PHP-%3E=5.6-green.svg?php=5.6">
+
 Other languages: <a href="https://github.com/mnoskov/pagebuilder/blob/master/README.md">Russian</a>
 
 The plug-in allows the developer to define a set of blocks with a certain markup and a list of fields, so that the content manager uses those blocks that it considers necessary, with its content.

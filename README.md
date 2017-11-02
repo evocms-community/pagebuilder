@@ -1,5 +1,7 @@
 ## Page Builder for Evolution CMS
 
+<img src="https://img.shields.io/badge/PHP-%3E=5.6-green.svg?php=5.6">
+
 Other languages: <a href="https://github.com/mnoskov/pagebuilder/blob/master/README.en.md">English</a>
 
 Плагин позволяет разработчику определить набор блоков с определенной разметкой и списком полей, чтобы контент-менеджер использовал те блоки, которые считает нужным, со своим наполнением.
