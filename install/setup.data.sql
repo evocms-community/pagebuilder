@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}pagebuilder` (
   `index` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `document_id` (`document_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+);
 
 
 # Upgrading to v1.1.0
