@@ -1,0 +1,33 @@
+<?php
+
+    return [
+        'title' => 'Image',
+
+//        'show_in_templates' => [ 4 ],
+
+//        'show_in_docs' => [ 2 ],
+
+//        'hide_in_docs' => [ 5 ],
+        
+//        'order' => 1,
+        
+        'image' => 'assets/plugins/pagebuilder/images/image.jpg',
+
+//        'container' => 'default',
+
+        'templates' => [
+            'owner' => '
+                <div class="container">
+                    <img src="[[phpthumb? &input=`[+image+]` &options=`w=1110,f=jpg`]]" alt="" class="img-fluid">
+                </div>
+            ',
+        ],
+
+        'fields' => [
+            'image' => [
+                'caption' => 'Image',
+                'type'    => 'image',
+            ],
+        ],
+    ];
+

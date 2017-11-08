@@ -1,4 +1,5 @@
 <?php
+
 	return [
 		'Add block' => 'Blok toevoegen',
 		'Choose' => 'Selecteer',
@@ -12,4 +13,5 @@
 		'Fill with images' => 'Vullen met afbeeldingen',
 		'No variants provided' => 'Geen opties',
 		'No fields provided in this block' => 'In deze eenheid, zijn er geen velden om in te vullen',
+		'Visible' => 'Toon',
 	];

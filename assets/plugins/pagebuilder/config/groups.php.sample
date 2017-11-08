@@ -9,6 +9,10 @@
 
 //        'hide_in_docs' => [ 10, 63 ],
 
+//        'order' => 2,
+
+//        'container' => ['samplecontainer', 'default'],
+
         'templates' => [
             'owner' => '
                 <div>Text:<br> [+text+]</div>
