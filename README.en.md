@@ -77,7 +77,7 @@ You can use field names (eg `[+title+]`) and group field names (eg `[+images+]`,
 
 Also in templates for fields "dropdown", "checkbox" and "radio", the placeholders `[+value+]` and `[+title+]` are available.
 
-Also the placeholders `[+index+]` and `[+iteration+]` are available in the "owner" template, and `[+{field_name}_index+]` and `[+{field_name_iteration+]` are available in the group fields and selection fields.
+Also the placeholders `[+index+]` and `[+iteration+]` are available in the "owner" template, and `[+{field_name}_index+]` and `[+{field_name}_iteration+]` are available in the group fields and selection fields.
 
 #### Templates sources
 
