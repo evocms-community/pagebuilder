@@ -1,5 +1,5 @@
 <?php if ($container['placement'] == 'tab'): ?>
-    <div class="tab-page content-blocks-tab">
+    <div class="tab-page content-blocks-tab" id="tabPB_<?= $name ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
     <div class="content-blocks-container" id="cb-<?= $name ?>">
@@ -33,6 +33,8 @@
             'blocks'    => $blocks,
         ]) ?>
     </div>
+
+    <table></table>
 </div>
 
 <?php if ($container['placement'] == 'content'): ?>
