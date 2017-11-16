@@ -644,6 +644,20 @@
                 });
             });
 
+            $('.fields-group').each(function(){
+				$(this).hide().before('<div class="btn btn-success controlblock">Развернуть блок</div>');
+			});
+	
+			$('.controlblock').click(function(){
+				var th = $(this);
+				if(!th.hasClass('open')) {
+					th.text('Свернуть блок').next().show();
+				} else {
+					th.text('Развернуть блок').next().hide();
+				}
+				th.toggleClass('open');
+			});
+            
         })(jQuery);
     }
 
