@@ -1,10 +1,10 @@
 <div class="field fields-group" data-field="<?= $name ?>">
 	<div class="group-title">
 		<?= $field['caption'] ?> 
-		<div class="btn btn-success toggle-group">Развернуть блок</div>
+		<a href="#" class="btn btn-success toggle-group"></a>
 	</div>
 
-	<div class="sortable-list">
+	<div class="sortable-list<?= count($values) > 1 ? ' collapsed' : '' ?>">
 		<?php foreach ($values as $i => $value): ?> 
 			<div class="sortable-item<?= !$i ? ' hidden' : '' ?>">
 				<div class="handle"></div>
