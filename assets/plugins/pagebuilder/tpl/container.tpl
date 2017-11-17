@@ -37,8 +37,10 @@
     <table></table>
 </div>
 
-<?php if ($container['placement'] == 'content'): ?>
-    <script>
+<script>
+    <?php if ($container['placement'] == 'content'): ?>
         jQuery('#cb-<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
-    </script>
-<?php endif; ?>
+    <?php else: ?>
+        tpSettings.addTabPage(document.getElementById("tabPB_<?= $name ?>"));
+    <?php endif; ?>
+</script>
