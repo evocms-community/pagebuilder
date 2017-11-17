@@ -1,7 +1,7 @@
 <div class="field fields-group" data-field="<?= $name ?>">
 	<div class="group-title">
 		<?= $field['caption'] ?> 
-		<a href="#" class="btn btn-success toggle-group"></a>
+		<a href="#" class="btn toggle-group"></a>
 	</div>
 
 	<div class="sortable-list<?= count($values) > 1 ? ' collapsed' : '' ?>">

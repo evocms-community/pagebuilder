@@ -21,7 +21,7 @@
 .content-blocks .block .fields-list > :last-child { margin-bottom: 0 !important; }
 .content-blocks .block .fields-group { border: 2px dashed #ccc; padding: 15px; margin-top: 10px; }
 .content-blocks .block .fields-group .group-title { margin: 0 0 10px; }
-.content-blocks .block .fields-group .group-title .btn { margin-left: 20px; padding: 3px 10px; }
+.content-blocks .block .fields-group .group-title .btn { margin-left: 20px; padding: 3px 10px; background: #e6e6e6; color: #333; border-color: #ccc; }
 .content-blocks .block .fields-group .field { margin-bottom: 5px; }
 .content-blocks .block .field .check-list .check-row { margin: 5px 0; }
 .content-blocks .block .field .check-list .check-row label { display: inline-block; padding-left: 20px; position: relative; vertical-align: top; }
