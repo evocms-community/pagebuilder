@@ -14,4 +14,6 @@
 		'No variants provided' => 'Geen opties',
 		'No fields provided in this block' => 'In deze eenheid, zijn er geen velden om in te vullen',
 		'Visible' => 'Toon',
+		'Show group items' => 'Het tonen van %s items',
+		'Hide group items' => 'Om %s items verbergen',
 	];

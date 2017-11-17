@@ -14,5 +14,7 @@
 		'No variants provided' => 'Brak wariantów',
 		'No fields provided in this block' => 'W tym bloku nie ma pól do wypełnienia',
 		'Visible' => 'Pokaż',
+		'Show group items' => 'Pokaż %s elementów',
+		'Hide group items' => 'Ukryj %s elementów',
 	];
 
