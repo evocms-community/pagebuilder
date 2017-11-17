@@ -14,5 +14,7 @@
 		'No variants provided' => 'Нет вариантов выбора',
 		'No fields provided in this block' => 'В этом блоке нет полей для заполнения',
 		'Visible' => 'Показывать',
+		'Show group items' => 'Показать (%s шт.)',
+		'Hide group items' => 'Скрыть (%s шт.)',
 	];
 

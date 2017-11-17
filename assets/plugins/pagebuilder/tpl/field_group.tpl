@@ -1,6 +1,7 @@
 <div class="field fields-group" data-field="<?= $name ?>">
 	<div class="group-title">
 		<?= $field['caption'] ?> 
+		<div class="btn btn-success toggle-group">Развернуть блок</div>
 	</div>
 
 	<div class="sortable-list">

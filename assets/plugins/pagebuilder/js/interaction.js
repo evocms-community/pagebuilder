@@ -606,6 +606,21 @@
                         ContentBlock.append(config, $current);
                     }
                 });
+
+                $container.on('click', '.toggle-group', function() {
+                    var $self = $(this),
+                        $list = $self.parent().next('.sortable-list');
+
+                    if (!$list.hasClass('opened')) {
+                        $self.text(opts.lang['Show group items'].replace('%s', $list.children().length));
+                        $list.slideUp(200);
+                    } else {
+                        $self.text(opts.lang['Hide group items'].replace('%s', $list.children().length));
+                        $list.slideDown(200);
+                    }
+
+                    $list.toggleClass('opened');
+                });
             });
 
             opts.containers.eq(0).closest('form').submit(function() {
@@ -644,20 +659,6 @@
                 });
             });
 
-            $('.fields-group').each(function(){
-				$(this).hide().before('<div class="btn btn-success controlblock">Развернуть блок</div>');
-			});
-	
-			$('.controlblock').click(function(){
-				var th = $(this);
-				if(!th.hasClass('open')) {
-					th.text('Свернуть блок').next().show();
-				} else {
-					th.text('Развернуть блок').next().hide();
-				}
-				th.toggleClass('open');
-			});
-            
         })(jQuery);
     }
 
