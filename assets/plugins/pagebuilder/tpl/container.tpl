@@ -1,5 +1,5 @@
 <?php if ($container['placement'] == 'tab'): ?>
-    <div class="tab-page content-blocks-tab">
+    <div class="tab-page content-blocks-tab" id="tabPB_<?= $name ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
     <div class="content-blocks-container" id="cb-<?= $name ?>">
@@ -33,10 +33,14 @@
             'blocks'    => $blocks,
         ]) ?>
     </div>
+
+    <table></table>
 </div>
 
-<?php if ($container['placement'] == 'content'): ?>
-    <script>
+<script>
+    <?php if ($container['placement'] == 'content'): ?>
         jQuery('#cb-<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
-    </script>
-<?php endif; ?>
+    <?php else: ?>
+        tpSettings.addTabPage(document.getElementById("tabPB_<?= $name ?>"));
+    <?php endif; ?>
+</script>

@@ -14,5 +14,7 @@
 		'No variants provided' => 'No variants provided',
 		'No fields provided in this block' => 'No fields provided in this block',
 		'Visible' => 'Visible',
+		'Show group items' => 'Show %s items',
+		'Hide group items' => 'Hide %s items',
 	];
 

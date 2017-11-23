@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.1.3';
+        const version = '1.1.5';
 
         private $modx;
         private $data;
@@ -209,13 +209,15 @@
 
             $wrapper = '[+wrap+]';
 
-            if (isset($params['wrapTpl'])) {
-                $wrapper = $this->modx->getChunk($params['wrapTpl']);
-            } else if (isset($this->containers[ $params['container'] ])) {
-                $container = $this->containers[ $params['container'] ];
+            if (!empty($out)) {
+                if (isset($params['wrapTpl'])) {
+                    $wrapper = $this->modx->getChunk($params['wrapTpl']);
+                } else if (isset($this->containers[ $params['container'] ])) {
+                    $container = $this->containers[ $params['container'] ];
 
-                if (!empty($container['templates']['owner'])) {
-                    $wrapper = $container['templates']['owner'];
+                    if (!empty($container['templates']['owner'])) {
+                        $wrapper = $container['templates']['owner'];
+                    }
                 }
             }
 

@@ -4,7 +4,7 @@
  * 
  * output content sections for current page
  * 
- * @version     1.1.3
+ * @version     1.1.5
  * @author      mnoskov
  * @category    snippet
  * @internal    @properties

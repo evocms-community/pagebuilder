@@ -77,13 +77,12 @@ You can use field names (eg `[+title+]`) and group field names (eg `[+images+]`,
 
 Also in templates for fields "dropdown", "checkbox" and "radio", the placeholders `[+value+]` and `[+title+]` are available.
 
-Also the placeholders `[+index+]` and `[+iteration+]` are available in the "owner" template, and `[+{field_name}_index+]` and `[+{field_name_iteration+]` are available in the group fields and selection fields.
+Also the placeholders `[+index+]` and `[+iteration+]` are available in the "owner" template, and `[+{field_name}_index+]` and `[+{field_name}_iteration+]` are available in the group fields and selection fields.
 
 #### Templates sources
 
 Markup can be specified in the configuration directly, as shown in examples above.
 
-Возможно указание имени чанка, в котором находится нужный шаблон. Для этого нужно использовать привязку `@CHUNK`, например:
 Also can be specified name of the chunk with th template markup. To do this, use the `@CHUNK` binding, for example:
 
 ```php
@@ -96,7 +95,6 @@ It is also possible to load a template from a file:
 'owner' => '@FILE pagebuilder/all_fields.tpl',
 ```
 
-В этом примере файл шаблона будем загружен из `MODX_BASE_PATH . "assets/templates/pagebuilder/all_fields.tpl"`. Вообще файл  ищется в следующих директориях:
 In this example, the template file will be loaded from `MODX_BASE_PATH . "assets/templates/pagebuilder/all_fields.tpl"`. In general, the file is searched in the following directories:
 
 ```
@@ -122,7 +120,6 @@ Templates can be grouped to use different groups of templates with the parameter
 ],
 ```
 
-то вызов сниппета с параметром `&templates`, равным `anchors`, будет использовать для вывода шаблоны, которые определены в группе `anchors`:
 then next snippet call will use the templates that are defined in the `anchors` group to output:
 
 ```

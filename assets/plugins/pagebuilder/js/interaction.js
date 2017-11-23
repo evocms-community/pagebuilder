@@ -17,8 +17,10 @@
                         // add button for mass upload
                         $block.find('.sortable-list').each(function() {
                             if ($(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length) {
-                                $(this).prev('.group-title').append('<input type="button" class="fill-with-images" value="' + opts.lang['Fill with images'] + '">');
+                                $(this).prev('.group-title').append('<input type="button" class="btn fill-with-images" value="' + opts.lang['Fill with images'] + '">');
                             }
+
+                            ContentBlock.groupUpdated($(this));
                         });
 
                         // add controls handlers
@@ -57,8 +59,13 @@
                         $block.on('click', '.sortable-item > .controls > .remove', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
+                            
                             $(this).closest('.sortable-item').slideUp(200, function() {
-                                $(this).remove();
+                                var $self = $(this),
+                                    $list = $self.parent();
+
+                                $self.remove();
+                                ContentBlock.groupUpdated($list);
                             });
                         });
 
@@ -81,6 +88,8 @@
                                         $input.val(files[i]);
                                         ContentBlock.setThumb($input.parent());
                                     }
+
+                                    ContentBlock.groupUpdated($list);
                                 });
                             })($list);
                         });
@@ -177,6 +186,7 @@
                                         
                                         $clone.appendTo($sortable).show();
 
+                                        ContentBlock.groupUpdated($sortable);
                                         ContentBlock.setValues(conf[field].fields, $clone.children('.fields-list'), values[field][i]);
                                     }
                                 }
@@ -362,6 +372,7 @@
                         ContentBlock.initializeSortableList($list);
                     }
 
+                    ContentBlock.groupUpdated($list);
                     ContentBlock.initializeFieldsList($after.children('.fields-list').data('fields'), $clone.children('.fields-list'));
 
                     $clone.slideDown(200);
@@ -395,7 +406,7 @@
 
                             case 'image': {
                                 $field.children('input[type="text"]').on('input change', function() {
-                                    if (this.value == '') {
+                                    if (this.value != '') {
                                         ContentBlock.setThumb($(this).parent());
                                     }
                                 });
@@ -448,6 +459,8 @@
                             });
                         }
                     });
+
+                    ContentBlock.groupUpdated($sortable);
                 },
 
                 initializeRichField: function($textarea) {
@@ -535,6 +548,19 @@
                     var wnd = window.open(opts.browser + '?type=' + type, 'FileManager', params);
                 },
 
+                groupUpdated: function($list) {
+                    var $btn  = $list.prev('.group-title').children('.btn.toggle-group'),
+                        count = $list.children(':not(.hidden)').length;
+
+                    $btn.toggle(count > 0);
+
+                    if ($list.hasClass('collapsed')) {
+                        $btn.text(opts.lang['Show group items'].replace('%s', count));
+                    } else {
+                        $btn.text(opts.lang['Hide group items'].replace('%s', count));
+                    }
+                },
+
                 randomString: function() {
                     return (((1 + Math.random()) * 0x100000) | 0).toString(16);
                 }
@@ -605,6 +631,15 @@
 
                         ContentBlock.append(config, $current);
                     }
+                });
+
+                $container.on('click', '.toggle-group', function(e) {
+                    e.preventDefault();
+
+                    var $list = $(this).parent().next('.sortable-list');
+
+                    $list.toggleClass('collapsed');
+                    ContentBlock.groupUpdated($list);
                 });
             });
 
