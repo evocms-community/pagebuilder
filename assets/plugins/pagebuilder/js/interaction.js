@@ -75,7 +75,7 @@
 
                         $block.on('click', '.fill-with-images', function(e) {
                             e.preventDefault();
-                            var $list = $(this).parent().next('.sortable-list');
+                            var $list = $(this).closest('.group-title').next('.sortable-list');
 
                             (function($list) {
                                 ContentBlock.openBrowser($list, 'images', function(files) {
