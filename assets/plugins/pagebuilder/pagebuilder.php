@@ -204,7 +204,9 @@
                     continue;
                 }
 
-                $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $row['values']);
+                $values = $this->prepareData($conf, $row['values']);
+
+                $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
             }
 
             $wrapper = '[+wrap+]';
@@ -270,6 +272,34 @@
                     'format'     => $this->modx->getConfig('datetime_format') . ' hh:mm:00',
                 ],
             ]);
+        }
+
+        /**
+         * Prepares data row for output, if 'prepare' key defined
+         * 
+         * @param  array  $options config options
+         * @param  array  $values  values
+         * @return array           modified values
+         */
+        private function prepareData($options, $values) {
+            if (isset($options['prepare'])) {
+                $params = [
+                    'options' => $options,
+                    'values'  => $values,
+                ];
+
+                if (is_callable($options['prepare'])) {
+                    call_user_func_array($options['prepare'], $params);
+                } else {
+                    $result = $this->modx->runSnippet($options['prepare'], $params);
+
+                    if (isset($result) && is_array($result)) {
+                        $values = $result;
+                    }
+                }
+            }
+
+            return $values;
         }
 
         /**
