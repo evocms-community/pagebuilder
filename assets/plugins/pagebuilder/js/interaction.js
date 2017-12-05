@@ -17,7 +17,7 @@
                         // add button for mass upload
                         $block.find('.sortable-list').each(function() {
                             if ($(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length) {
-                                $(this).prev('.group-title').append('<input type="button" class="btn fill-with-images" value="' + opts.lang['Fill with images'] + '">');
+                                $(this).prev('.group-title').children('.btn-group').append('<input type="button" class="btn btn-secondary fill-with-images" value="' + opts.lang['Fill with images'] + '">');
                             }
 
                             ContentBlock.groupUpdated($(this));
@@ -549,7 +549,7 @@
                 },
 
                 groupUpdated: function($list) {
-                    var $btn  = $list.prev('.group-title').children('.btn.toggle-group'),
+                    var $btn  = $list.prev('.group-title').children('.btn-group').children('.btn.toggle-group'),
                         count = $list.children(':not(.hidden)').length;
 
                     $btn.toggle(count > 0);
@@ -636,7 +636,7 @@
                 $container.on('click', '.toggle-group', function(e) {
                     e.preventDefault();
 
-                    var $list = $(this).parent().next('.sortable-list');
+                    var $list = $(this).closest('.group-title').next('.sortable-list');
 
                     $list.toggleClass('collapsed');
                     ContentBlock.groupUpdated($list);
