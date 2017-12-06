@@ -24,3 +24,9 @@ ALTER TABLE {PREFIX}pagebuilder ADD INDEX `document_id` (`document_id`, `contain
 
 ALTER TABLE {PREFIX}pagebuilder ADD COLUMN visible tinyint(1) unsigned DEFAULT 1 AFTER `values`;
 
+# Fix #51
+
+UPDATE {PREFIX}pagebuilder SET `container` = 'default' WHERE `container` IS NULL;
+
+UPDATE {PREFIX}pagebuilder SET `config` = REPLACE(`config`, '.php', '') WHERE `config` REGEXP '\.php$';
+
