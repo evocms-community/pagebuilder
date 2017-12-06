@@ -7,6 +7,11 @@
 <?php endif; ?>
 
     <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>">
+        <div class="btn-group">
+            <a href="#" class="btn btn-secondary export"><?= $l['Export'] ?></a>
+            <label href="#" class="btn btn-secondary import"><input type="file" name="import-file"><?= $l['Import'] ?></label>
+        </div>
+
         <div class="change-type" style="display: none;">
             <?= $this->renderTpl('tpl/add_block_dropdown.tpl', ['configs' => $configs]); ?>
         </div>
