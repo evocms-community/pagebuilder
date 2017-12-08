@@ -1,7 +1,10 @@
 <div class="field fields-group" data-field="<?= $name ?>">
 	<div class="group-title">
-		<?= $field['caption'] ?> 
-		<a href="#" class="btn toggle-group"></a>
+		<?= $field['caption'] ?>
+
+		<div class="btn-group">
+			<a href="#" class="btn btn-secondary toggle-group"><?= $l['Show group items'] ?></a>
+		</div>
 	</div>
 
 	<div class="sortable-list<?= count($values) > 1 ? ' collapsed' : '' ?>">

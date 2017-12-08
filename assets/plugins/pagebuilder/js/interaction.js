@@ -17,7 +17,7 @@
                         // add button for mass upload
                         $block.find('.sortable-list').each(function() {
                             if ($(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length) {
-                                $(this).prev('.group-title').append('<input type="button" class="btn fill-with-images" value="' + opts.lang['Fill with images'] + '">');
+                                $(this).prev('.group-title').children('.btn-group').append('<input type="button" class="btn btn-secondary fill-with-images" value="' + opts.lang['Fill with images'] + '">');
                             }
 
                             ContentBlock.groupUpdated($(this));
@@ -75,7 +75,7 @@
 
                         $block.on('click', '.fill-with-images', function(e) {
                             e.preventDefault();
-                            var $list = $(this).parent().next('.sortable-list');
+                            var $list = $(this).closest('.group-title').next('.sortable-list');
 
                             (function($list) {
                                 ContentBlock.openBrowser($list, 'images', function(files) {
@@ -197,16 +197,12 @@
                             case 'checkbox': {
                                 if (typeof values[field] !== 'undefined') {
                                     if (typeof values[field] != 'object') {
-                                        values[field] = [ values[field] ];
-                                    }
-
-                                    if (typeof values[field].length == 'undefined') {
-                                        values[field] = {};
+                                        values[field] = { 0: values[field] };
                                     }
 
                                     var $inputs = $field.children('.check-list').children('.check-row').children('label').children('input').removeAttr('checked');
 
-                                    for (var i = 0; i < values[field].length; i++) {
+                                    for (var i in values[field]) {
                                         var $input = $inputs.filter('[value="' + values[field][i] + '"]');
 
                                         if ($input.length) {
@@ -233,6 +229,10 @@
                             default: {
                                 if (typeof values[field] !== 'undefined' && typeof values[field] != 'object') {
                                     $field.children('input[type="text"], textarea, select').val(values[field]);
+
+                                    if (conf[field].type == 'image') {
+                                        ContentBlock.setThumb($field);
+                                    }
                                 }
                             }
                         }
@@ -285,6 +285,7 @@
 
                     if ($newblock.length) {
                         $newblock = $newblock.clone().data('values', values);
+                        $newblock.append($block.children('.add-block'));
                         $block.replaceWith($newblock);
 
                         ContentBlock.setValues(opts.config[type].fields, $newblock.children('.block-inner').children('.fields-list'), values);
@@ -314,6 +315,8 @@
 
                         $block.hide().insertAfter($after).slideDown(200);
                         ContentBlock.initialize($block);
+
+                        return $block;
                     }
                 },
 
@@ -549,7 +552,7 @@
                 },
 
                 groupUpdated: function($list) {
-                    var $btn  = $list.prev('.group-title').children('.btn.toggle-group'),
+                    var $btn  = $list.prev('.group-title').children('.btn-group').children('.btn.toggle-group'),
                         count = $list.children(':not(.hidden)').length;
 
                     $btn.toggle(count > 0);
@@ -636,10 +639,75 @@
                 $container.on('click', '.toggle-group', function(e) {
                     e.preventDefault();
 
-                    var $list = $(this).parent().next('.sortable-list');
+                    var $list = $(this).closest('.group-title').next('.sortable-list');
 
                     $list.toggleClass('collapsed');
                     ContentBlock.groupUpdated($list);
+                });
+
+                $container.on('click', '.export', function(e) {
+                    e.preventDefault();
+
+                    var $group = $(this).closest('.content-blocks'),
+                        name   = $group.attr('data-container'),
+                        $items = $group.children('.block'),
+                        values = [];
+
+                    $items.each(function(i) {
+                        values[i] = {
+                            config: $(this).attr('data-config'),
+                            values: ContentBlock.fetch($(this))
+                        };
+                    });
+
+                    var $a = $('<a>')
+                        .attr('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(values, '', 2)))
+                        .attr('download', name + '.json')
+                        .hide().appendTo(document.body);
+
+                    $a.get(0).click();
+
+                    $a.remove();
+                });
+
+                $container.on('change', '[name="import-file"]', function(e) {
+                    e.target.files;
+
+                    if ( e.target.files && e.target.files.length ) {
+                        var file   = e.target.files[0],
+                            reader = new FileReader();
+
+                        reader.onload = (function(file, $control) {
+                            return function(e) {
+                                try {
+                                    var json = JSON.parse(e.target.result);
+                                } catch(e) {
+                                    alert('Error');
+                                    return;
+                                };
+
+                                var $group = $control.closest('.content-blocks'),
+                                    $last  = $group.children('.block').last();
+
+                                if (!$last.length) {
+                                    $last = $group.children('.add-block');
+                                }
+
+                                for (var i = json.length - 1; i >= 0; i--) {
+                                    var $block = ContentBlock.append(json[i].config, $last);
+                                    ContentBlock.setValues(opts.config[json[i].config].fields, $block.find('.fields-list').first(), json[i].values);
+                                }
+                            };
+                        })(file, $(this));
+
+                        reader.onloadend = (function($control) {
+                            return function() {
+                                $control.replaceWith($control.get(0).outerHTML);
+                            };
+                        })($(this));
+
+                        reader.readAsText(file);
+                    }
                 });
             });
 

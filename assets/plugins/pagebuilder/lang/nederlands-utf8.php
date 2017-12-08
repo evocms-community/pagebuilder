@@ -16,4 +16,6 @@
 		'Visible' => 'Toon',
 		'Show group items' => 'Het tonen van %s items',
 		'Hide group items' => 'Om %s items verbergen',
+		'Export' => 'Exporteren',
+		'Import' => 'Import',
 	];

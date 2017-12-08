@@ -16,5 +16,7 @@
 		'Visible' => 'Показывать',
 		'Show group items' => 'Показать (%s шт.)',
 		'Hide group items' => 'Скрыть (%s шт.)',
+		'Export' => 'Экспорт',
+		'Import' => 'Импорт',
 	];
 

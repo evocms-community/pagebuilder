@@ -16,5 +16,7 @@
 		'Visible' => 'Pokaż',
 		'Show group items' => 'Pokaż %s elementów',
 		'Hide group items' => 'Ukryj %s elementów',
+		'Export' => 'Eksportowanie',
+		'Import' => 'Import',
 	];
 
