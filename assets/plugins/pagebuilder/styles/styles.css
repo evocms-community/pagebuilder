@@ -5,7 +5,6 @@
 .content-blocks .btn-group .btn.import { cursor: pointer; }
 .content-blocks .btn-group .btn.import input { display: none; }
 .content-blocks-tab > .content-blocks { margin: 10px 0; }
-#tabGeneral .content-blocks-container { margin-top: 30px; }
 .content-blocks .blocks { padding: 0 0 40px; }
 .content-blocks .block:last-child { margin-bottom: 0 !important; }
 .content-blocks .block .block-inner { border: 2px solid #ccc; padding: 20px; border-radius: 0; position: relative; margin: 0 0 20px; background-color: #f8f8f8; }
@@ -89,3 +88,7 @@
 @supports (display: flex) {
     .content-blocks .add-block .add-block-icons .icons-list { display: flex; justify-content: center; flex-wrap: wrap; }
 }
+
+#tabGeneral .content-blocks-container { margin-top: 30px; }
+#tabGeneral .tmplvars .content-blocks-container { margin-top: 0; }
+#tabGeneral .tmplvars .content-blocks { margin-bottom: 0; }

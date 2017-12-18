@@ -2,7 +2,9 @@
 <script src="../assets/plugins/pagebuilder/js/jquery-ui.min.js"></script>
 <script src="../assets/plugins/pagebuilder/js/interaction.js?<?= $version ?>"></script>
 
-<div class="content-blocks-configs">
+<?php $formid = md5(rand()); ?>
+
+<div class="content-blocks-configs" data-formid="<?= $formid ?>">
 	<?php foreach ($configs as $filename => $config): ?> 
 		<?= $this->renderTpl('tpl/block.tpl', [ 
 			'configs' => $configs, 
@@ -12,10 +14,13 @@
 	<?php endforeach; ?>
 </div>
 
+<?php $names = []; ?>
+
 <?php foreach ($containers as $name => $container): ?>
 	<?= $this->renderTpl('tpl/container.tpl', [
 		'name'      => $name,
 		'container' => $container,
+		'formid'    => $formid,
 		'blocks'    => array_filter($blocks, function($block) use ($container) {
             return in_array($block['config'], $container['sections']);
         }),
@@ -23,6 +28,8 @@
             return in_array($key, $container['sections']);
         }, ARRAY_FILTER_USE_KEY),
 	]) ?>
+
+	<?php $names[] = '#PB_' . $name; ?>
 <?php endforeach; ?>
 
 <?php foreach ($this->themes as $theme): ?> 
@@ -32,7 +39,7 @@
 <script>
 	jQuery( function() {
 		initcontentblocks( {
-			containers: jQuery('.content-blocks'), 
+			containers: jQuery('<?= implode(', ', $names) ?>'), 
 			values: <?= json_encode( $block, JSON_UNESCAPED_UNICODE ) ?>, 
 			config: <?= json_encode( $configs, JSON_UNESCAPED_UNICODE ) ?>,
 			lang: <?= json_encode( $l, JSON_UNESCAPED_UNICODE ) ?>,
