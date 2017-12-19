@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.1.6';
+        const version = '1.1.7';
 
         private $modx;
         private $data;
@@ -14,14 +14,14 @@
         private $lang;
         private $iterations = [];
 
-        public function __construct($modx) {
+        public function __construct($modx, $params = null) {
             $this->modx = $modx;
 
             $this->richeditor  = $modx->getConfig('which_editor');
             $this->browser     = $modx->getConfig('which_browser');
             $this->table       = $modx->getFullTableName('pagebuilder');
             $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
-            $this->params      = $modx->event->params;
+            $this->params      = is_null($params) ? $modx->event->params : $params;
 
             $lang = $modx->getConfig('manager_language');
             $lang = __DIR__ . '/lang/' . $lang . '.php';
@@ -313,6 +313,16 @@
         private function canIncludeBlock($block, $docid) {
             $templateid = isset($this->params['template']) ? $this->params['template'] : $this->modx->documentObject['template'];
 
+            if (isset($block['placement'])) {
+                if (isset($this->params['tv']) && $block['placement'] != 'tv') {
+                    return false;
+                }
+
+                if (!isset($this->params['tv']) && $block['placement'] == 'tv') {
+                    return false;
+                }
+            }
+
             foreach ([ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt) {
                 if (isset($block[$opt]) && !is_array($block[$opt])) {
                     $block[$opt] = [ $block[$opt] ];
@@ -394,7 +404,7 @@
 
                 foreach ($containers as $container) {
                     if (!isset($this->containers[$container])) {
-                        $container = 'default';
+                        continue;
                     }
 
                     $this->containers[$container]['sections'][] = $name;
@@ -410,6 +420,22 @@
 
             $this->containers = array_filter($this->containers, function($container) {
                 return !empty($container['sections']);
+            });
+
+            $this->conf = array_filter($this->conf, function($conf) {
+                $containers = isset($conf['container']) ? $conf['container'] : ['default'];
+
+                if (!is_array($containers)) {
+                    $containers = [$containers];
+                }
+
+                foreach ($containers as $container) {
+                    if (isset($this->containers[$container])) {
+                        return true;
+                    }
+                }
+
+                return false;
             });
 
             $this->containers = array_map(function($item) {

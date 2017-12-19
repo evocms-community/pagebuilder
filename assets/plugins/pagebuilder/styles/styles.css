@@ -5,8 +5,6 @@
 .content-blocks .btn-group .btn.import { cursor: pointer; }
 .content-blocks .btn-group .btn.import input { display: none; }
 .content-blocks-tab > .content-blocks { margin: 10px 0; }
-#tabGeneral .content-blocks-container { margin-top: 30px; }
-.content-blocks input[type="button"] { border: 1px solid rgba(0,0,0,0.15); }
 .content-blocks .blocks { padding: 0 0 40px; }
 .content-blocks .block:last-child { margin-bottom: 0 !important; }
 .content-blocks .block .block-inner { border: 2px solid #ccc; padding: 20px; border-radius: 0; position: relative; margin: 0 0 20px; background-color: #f8f8f8; }
@@ -16,8 +14,8 @@
 .content-blocks .block .field > textarea { resize: vertical; }
 .content-blocks .block .field > select { width: 100% !important; }
 .content-blocks .block .field .field-name { margin: 0 0 2px; }
-.content-blocks .block .field.uploadable > input[type="text"] { width: 91%; }
-.content-blocks .block .field.uploadable > input[type="button"] { width: 8% !important; margin-right: 1%; }
+.content-blocks .block .field.uploadable > input[type="text"] { width: calc(100% - 90px); }
+.content-blocks .block .field.uploadable > input[type="button"] { width: 80px; margin-right: 10px; }
 .content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 112px; }
 .content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 31px; background-color: #f2f2f2; border: 1px solid #ddd; left: 0; top: 0; background-position: center; background-size: contain; background-repeat: no-repeat; }
 .content-blocks .block .field.type-image.with-thumb .field-name + .preview { height: 56px; }
@@ -91,12 +89,6 @@
     .content-blocks .add-block .add-block-icons .icons-list { display: flex; justify-content: center; flex-wrap: wrap; }
 }
 
-@media (max-width: 1100px) {
-    .content-blocks .block .field.uploadable input[type="text"] { width: 87%; }
-    .content-blocks .block .field.uploadable input[type="button"] { width: 12% !important; }
-}
-
-@media (max-width: 850px) {
-    .content-blocks .block .field.uploadable input[type="text"] { width: 78%; }
-    .content-blocks .block .field.uploadable input[type="button"] { width: 20% !important; margin-right: 2%; }
-}
+#tabGeneral .content-blocks-container { margin-top: 30px; }
+#tabGeneral .tmplvars .content-blocks-container { margin-top: 0; }
+#tabGeneral .tmplvars .content-blocks { margin-bottom: 0; }

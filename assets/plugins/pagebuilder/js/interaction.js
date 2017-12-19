@@ -280,8 +280,9 @@
                 },
 
                 changeType: function($block, type) {
-                    var values = this.fetch($block, $block.data('values')),
-                        $newblock = $('.content-blocks-configs').children('[data-config="' + type + '"]');
+                    var values    = this.fetch($block, $block.data('values')),
+                        formid    = $block.closest('.content-blocks').attr('data-formid'),
+                        $newblock = $('.content-blocks-configs[data-formid="' + formid + '"]').children('[data-config="' + type + '"]').eq(0);
 
                     if ($newblock.length) {
                         $newblock = $newblock.clone().data('values', values);
@@ -294,7 +295,8 @@
                 },
 
                 append: function(config, $after) {
-                    var $block = $('.content-blocks-configs').children('[data-config="' + config + '"]');
+                    var formid = $after.closest('.content-blocks').attr('data-formid'),
+                        $block = $('.content-blocks-configs[data-formid="' + formid + '"]').children('[data-config="' + config + '"]').eq(0);
 
                     if ($block.length) {
                         $block = $block.clone();

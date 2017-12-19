@@ -2,11 +2,13 @@
     <div class="tab-page content-blocks-tab" id="tabPB_<?= $name ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
-    <div class="content-blocks-container" id="cb-<?= $name ?>">
-        <h4 class="container-title"><?= $container['title'] ?></h4>
+    <div class="content-blocks-container">
+        <?php if ($container['placement'] == 'content'): ?>
+            <h4 class="container-title"><?= $container['title'] ?></h4>
+        <?php endif; ?>
 <?php endif; ?>
 
-    <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>">
+    <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>" id="PB_<?= $name ?>" data-formid="<?= $formid ?>">
         <div class="btn-group">
             <a href="#" class="btn btn-secondary export"><?= $l['Export'] ?></a>
             <label href="#" class="btn btn-secondary import"><input type="file" name="import-file"><?= $l['Import'] ?></label>
@@ -45,7 +47,7 @@
 <script>
     <?php if ($container['placement'] == 'content'): ?>
         jQuery('#cb-<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
-    <?php else: ?>
+    <?php elseif ($container['placement'] == 'tab'): ?>
         tpSettings.addTabPage(document.getElementById("tabPB_<?= $name ?>"));
     <?php endif; ?>
 </script>
