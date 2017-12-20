@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.1.7';
+        const version = '1.2.0';
 
         private $modx;
         private $data;
@@ -154,6 +154,7 @@
                 'templates' => '',
                 'offset'    => 0,
                 'limit'     => 0,
+                'renderTo'  => 'templates',
             ], $params);
 
             if ($params['blocks'] != '*') {
@@ -164,6 +165,8 @@
             $idx = -1;
 
             $this->fetch($params['docid'], $params['container'], false);
+
+            $data = [];
 
             foreach ($this->data as $row) {
                 $idx++;
@@ -188,42 +191,62 @@
                 }
 
                 $conf = $this->conf[ $row['config'] ];
-                $templates = $conf['templates'];
-
-                if (!empty($params['templates'])) {
-                    if (!isset($templates[ $params['templates'] ])) {
-                        $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
-                        continue;
-                    }
-
-                    $templates = $templates[ $params['templates'] ];
-                }
-
-                if (!isset($templates['owner'])) {
-                    $out .= "<div>Template 'owner' not defined</div>";
-                    continue;
-                }
 
                 $values = $this->prepareData($conf, $row['values']);
 
-                $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
-            }
+                if ($params['renderTo'] != 'templates') {
+                    $data[] = $values;
+                    continue;
+                } else {
+                    $templates = $conf['templates'];
 
-            $wrapper = '[+wrap+]';
+                    if (!empty($params['templates'])) {
+                        if (!isset($templates[ $params['templates'] ])) {
+                            $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                            continue;
+                        }
 
-            if (!empty($out)) {
-                if (isset($params['wrapTpl'])) {
-                    $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                } else if (isset($this->containers[ $params['container'] ])) {
-                    $container = $this->containers[ $params['container'] ];
-
-                    if (!empty($container['templates']['owner'])) {
-                        $wrapper = $container['templates']['owner'];
+                        $templates = $templates[ $params['templates'] ];
                     }
+
+                    if (!isset($templates['owner'])) {
+                        $out .= "<div>Template 'owner' not defined</div>";
+                        continue;
+                    }
+
+                    $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
                 }
             }
 
-            return $this->parseTemplate($wrapper, ['wrap' => $out]);
+            if ($params['renderTo'] == 'json') {
+                $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+            }
+
+            if ($params['renderTo'] == 'templates') {
+                $wrapper = '[+wrap+]';
+
+                if (!empty($out)) {
+                    if (isset($params['wrapTpl'])) {
+                        $wrapper = $this->modx->getChunk($params['wrapTpl']);
+                    } else if (isset($this->containers[ $params['container'] ])) {
+                        $container = $this->containers[ $params['container'] ];
+
+                        if (!empty($container['templates']['owner'])) {
+                            $wrapper = $container['templates']['owner'];
+                        }
+                    }
+                }
+                
+                $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+            } else {
+                $out = $data;
+            }
+
+            if (!empty($params['giveTo'])) {
+                return $this->modx->runSnippet($params['giveTo'], ['data' => $out]);
+            }
+
+            return $out;
         }
 
         /**
@@ -311,8 +334,6 @@
          * @return boolean
          */
         private function canIncludeBlock($block, $docid) {
-            $templateid = isset($this->params['template']) ? $this->params['template'] : $this->modx->documentObject['template'];
-
             if (isset($block['placement'])) {
                 if (isset($this->params['tv']) && $block['placement'] != 'tv') {
                     return false;
@@ -329,7 +350,7 @@
                 }
             }
 
-            if (isset($block['show_in_templates']) && !in_array($templateid, $block['show_in_templates'])) {
+            if (isset($block['show_in_templates']) && !in_array($this->params['template'], $block['show_in_templates'])) {
                 return false;
             }
 
@@ -363,6 +384,15 @@
             ];
 
             $this->conf = [];
+
+            if (!isset($this->params['template'])) {
+                if ($docid == $modx->documentIdentifier) {
+                    $this->params['template'] = $this->modx->documentObject['template'];
+                } else {
+                    $doc = $this->modx->getDocument($docid, 'template');
+                    $this->params['template'] = $doc['template'];
+                }
+            }
 
             // Loading all config files, that complied with filters
             foreach (scandir($this->path) as $entry) {
