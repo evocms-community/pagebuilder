@@ -2,7 +2,7 @@
     <div class="tab-page content-blocks-tab" id="tabPB_<?= $name ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
-    <div class="content-blocks-container">
+    <div class="content-blocks-container" id="contentPB_<?= $name ?>">
         <?php if ($container['placement'] == 'content'): ?>
             <h4 class="container-title"><?= $container['title'] ?></h4>
         <?php endif; ?>
@@ -46,7 +46,7 @@
 
 <script>
     <?php if ($container['placement'] == 'content'): ?>
-        jQuery('#cb-<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
+        jQuery('#contentPB_<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
     <?php elseif ($container['placement'] == 'tab'): ?>
         tpSettings.addTabPage(document.getElementById("tabPB_<?= $name ?>"));
     <?php endif; ?>
