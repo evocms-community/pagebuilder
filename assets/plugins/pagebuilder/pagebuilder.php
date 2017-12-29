@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.0';
+        const version = '1.2.1';
 
         private $modx;
         private $data;
@@ -304,21 +304,17 @@
          * @param  array  $values  values
          * @return array           modified values
          */
-        private function prepareData($options, $values) {
+        private function prepareData(&$options, &$values) {
             if (isset($options['prepare'])) {
                 $params = [
-                    'options' => $options,
-                    'values'  => $values,
+                    'options' => &$options,
+                    'values'  => &$values,
                 ];
 
                 if (is_callable($options['prepare'])) {
                     call_user_func_array($options['prepare'], $params);
                 } else {
-                    $result = $this->modx->runSnippet($options['prepare'], $params);
-
-                    if (isset($result) && is_array($result)) {
-                        $values = $result;
-                    }
+                    $this->modx->runSnippet($options['prepare'], $params);
                 }
             }
 
