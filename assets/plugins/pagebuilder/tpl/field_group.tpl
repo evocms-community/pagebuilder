@@ -12,7 +12,7 @@
 			<div class="sortable-item<?= !$i ? ' hidden' : '' ?>">
 				<div class="handle"></div>
 
-				<div class="fields-list<?= !$i ? ' hidden' : '' ?>">
+				<div class="fields-list<?= !$i ? ' hidden' : '' ?><?= !empty($field['layout']) ? ' ' . $field['layout'] . '-layout' : '' ?>">
 					<?php foreach ($field['fields'] as $child => $childfield): ?> 
 						<?= $this->renderField($childfield, $child, isset($value[$child]) ? $value[$child] : null) ?> 
 					<?php endforeach; ?> 

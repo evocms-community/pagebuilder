@@ -8,3 +8,6 @@
 !/assets/plugins
 !/assets/plugins/pagebuilder
 /assets/plugins/pagebuilder/config/*.php
+!/assets/tvs
+/assets/tvs/*
+!/assets/tvs/pagebuilder
