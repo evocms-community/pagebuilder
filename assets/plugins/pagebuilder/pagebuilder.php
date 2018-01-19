@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.1';
+        const version = '1.2.2';
 
         private $modx;
         private $data;
