@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.1';
+        const version = '1.2.2';
 
         private $modx;
         private $data;
@@ -22,6 +22,10 @@
             $this->table       = $modx->getFullTableName('pagebuilder');
             $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
             $this->params      = is_null($params) ? $modx->event->params : $params;
+
+            if (empty($this->params['id'])) {
+                $this->params['id'] = 0;
+            }
 
             $lang = $modx->getConfig('manager_language');
             $lang = __DIR__ . '/lang/' . $lang . '.php';
@@ -471,16 +475,14 @@
 
             $this->data = [];
 
-            if ($docid) {
-                $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$notpl ? " AND `visible` = '1'" : ''), "`index` ASC");
+            $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$notpl ? " AND `visible` = '1'" : ''), "`index` ASC");
 
-                while ($row = $this->modx->db->getRow($query)) {
-                    $row['config'] = str_replace('.php', '', $row['config']);
+            while ($row = $this->modx->db->getRow($query)) {
+                $row['config'] = str_replace('.php', '', $row['config']);
 
-                    if (isset($this->conf[ $row['config'] ])) {
-                        $row['values'] = json_decode($row['values'], true);
-                        $this->data[] = $row;
-                    }
+                if (isset($this->conf[ $row['config'] ])) {
+                    $row['values'] = json_decode($row['values'], true);
+                    $this->data[] = $row;
                 }
             }
         }
@@ -490,10 +492,10 @@
          */
         public function save() {
             if (isset($_POST['contentblocks'])) {
+                $docid  = !empty($this->params['id']) ? $this->params['id'] : 0;
+
                 foreach ($_POST['contentblocks'] as $container => $blocks) {
                     if (is_array($blocks)) {
-                        $docid  = $this->params['id'];
-
                         $exists = array_map(function($element) { 
                             return $element['id'];
                         }, $blocks);
@@ -517,7 +519,7 @@
                             }
                         }
                     } else {
-                        $this->modx->db->delete($this->table, "`document_id` = '" . $this->params['id'] . "' AND `container` = '$container'");
+                        $this->modx->db->delete($this->table, "`document_id` = '" . $docid . "' AND `container` = '$container'");
                     }
                 }
             }

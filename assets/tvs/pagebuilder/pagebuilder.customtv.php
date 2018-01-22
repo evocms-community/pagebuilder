@@ -18,8 +18,8 @@ $container = include $config;
 $pb = new PageBuilder($modx, [
     'placement' => 'tv',
     'tv'        => $field_id,
-    'id'        => $content['id'],
-    'template'  => $content['template'],
+    'id'        => isset($content['modulecode']) ? 0 : $content['id'],
+    'template'  => isset($content['modulecode']) ? 0 : $content['template'],
     'container' => $row['name'],
     'addType'   => !empty($container['addType']) ? $container['addType'] : 'dropdown',
 ]);
