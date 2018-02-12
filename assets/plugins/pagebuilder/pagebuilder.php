@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.2';
+        const version = '1.2.3';
 
         private $modx;
         private $data;
@@ -294,6 +294,7 @@
                 'configs'    => $this->conf,
                 'blocks'     => $this->data,
                 'adminlang'  => $_lang,
+                'thumbsDir'  => $this->modx->getConfig('thumbsDir'),
                 'picker'     => [
                     'yearOffset' => $this->modx->getConfig('datepicker_offset'),
                     'format'     => $this->modx->getConfig('datetime_format') . ' hh:mm:00',

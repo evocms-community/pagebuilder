@@ -44,6 +44,7 @@
 			config: <?= json_encode( $configs, JSON_UNESCAPED_UNICODE ) ?>,
 			lang: <?= json_encode( $l, JSON_UNESCAPED_UNICODE ) ?>,
 			browser: "<?= $browseurl ?>",
+			thumbsDir: "<?= $thumbsDir ?>",
 			picker: {
 				yearOffset: <?= $picker['yearOffset'] ?>,
 				format: '<?= $picker['format'] ?>',
