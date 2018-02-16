@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.3';
+        const version = '1.2.4';
 
         private $modx;
         private $data;
@@ -141,7 +141,7 @@
                 }
             }
 
-            return $this->parseTemplate($template, array_merge($this->iterations, $data));
+            return $this->parseTemplate($template, array_merge($this->iterations, $values, $data));
         }
 
         /**
