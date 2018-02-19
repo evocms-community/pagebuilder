@@ -242,7 +242,7 @@
                 setThumb: function($field) {
                     var source   = $.trim($field.children('input[type="text"]').val());
                         $preview = $field.children('.preview'),
-                        thumb    = source.replace('assets/images/', '../assets/.thumbs/images/');
+                        thumb    = source.replace('assets/images/', '../assets/' + opts.thumbsDir + '/images/');
 
                     if (source == '') {
                         $field.removeClass('with-thumb');
