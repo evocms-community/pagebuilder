@@ -96,3 +96,26 @@
     .content-blocks .block .field.uploadable input[type="text"] { width: 78%; }
     .content-blocks .block .field.uploadable input[type="button"] { width: 20% !important; margin-right: 2%; }
 }
+
+/* отображение сеткой (галерея) */
+.content-blocks .block .fields-group.style-gallery > .sortable-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.content-blocks .block .fields-group.style-gallery > .sortable-list.collapsed {
+    display: none;
+}
+.content-blocks .block .fields-group.style-gallery > .sortable-list > .sortable-item {
+    margin: 2px;
+    border: 2px dashed #e2e2e2;
+    padding: 5px 5px 5px 20px;
+}
+.content-blocks .block .fields-group.style-gallery > .sortable-list > .sortable-item > .fields-list .field > .preview {
+    width: 150px;
+    height: 100px;
+    margin-bottom: 5px;
+    position: static;
+}
+.content-blocks .block .fields-group.style-gallery > .sortable-list > .sortable-item > .fields-list > .with-thumb {
+    padding-left: 0;
+}

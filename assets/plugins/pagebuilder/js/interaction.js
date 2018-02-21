@@ -418,6 +418,7 @@
                                 });
 
                                 if (!$list.parent().hasClass('hidden')) {
+                                    if ($field.hasClass('style-gallery')) $sortable['custom-style'] = 'axis';
                                     ContentBlock.initializeSortableList($sortable);
                                 }
 
@@ -428,8 +429,9 @@
                 },
 
                 initializeSortableList: function($sortable) {
+                    var axis = typeof($sortable['custom-style']) === 'string' ? '' : 'y';
                     $sortable.sortable({
-                        axis:  'y',
+                        axis:  axis,
                         items: '> .sortable-item:not(.hidden)',
                         handle: '> .handle',
                         start: function(e, ui) {

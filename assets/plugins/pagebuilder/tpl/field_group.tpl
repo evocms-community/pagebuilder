@@ -1,4 +1,4 @@
-<div class="field fields-group" data-field="<?= $name ?>">
+<div class="field fields-group<?= $field['style'] ? ' style-'.$field['style'] : '' ?>" data-field="<?= $name ?>">
 	<div class="group-title">
 		<?= $field['caption'] ?> 
 	</div>
