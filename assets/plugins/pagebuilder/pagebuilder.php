@@ -22,7 +22,8 @@
             $this->table       = $modx->getFullTableName('pagebuilder');
             $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
             $this->params      = is_null($params) ? $modx->event->params : $params;
-            $this->isBackend   = defined(IN_MANAGER_MODE) && IN_MANAGER_MODE == 'true';
+            $this->isBackend   = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
+            $this->isTV        = isset($this->params['tv']);
 
             if (empty($this->params['id'])) {
                 $this->params['id'] = 0;
@@ -332,16 +333,13 @@
          * after filtering by parameters
          * 
          * @param  array   $block Block configuration
-         * @param  integer $docid Curent document identifier
+         * @param  integer $docid Current document identifier
          * @return boolean
          */
         private function canIncludeBlock($block, $docid) {
-            if ($this->isBackend && isset($block['placement'])) {
-                if (isset($this->params['tv']) && $block['placement'] != 'tv') {
-                    return false;
-                }
-
-                if (!isset($this->params['tv']) && $block['placement'] == 'tv') {
+            if ($this->isBackend && $block['isContainer']) {
+                $isTVBlock = isset($block['placement']) && $block['placement'] == 'tv';
+                if ($this->isTV && !$isTVBlock || !$this->isTV && $isTVBlock) {
                     return false;
                 }
             }
@@ -384,6 +382,12 @@
                 'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content'
             ];
 
+            // If there's tv placement and tv name is not 'default',
+            // then there should not be default container
+            if ($this->isTV && $this->params['container'] != 'default') {
+                unset($this->containers['default']['placement']);
+            }
+
             $this->conf = [];
 
             if (!isset($this->params['template'])) {
@@ -401,12 +405,14 @@
                     $name  = pathinfo($entry, PATHINFO_FILENAME);
                     $block = include($this->path . $entry);
 
+                    $block['isContainer'] = strpos($name, 'container.') === 0;
+
                     if ($this->canIncludeBlock($block, $docid)) {
                         if ($this->isBackend) {
                             unset($block['templates']);
                         }
 
-                        if (strpos($name, 'container.') === 0) {
+                        if ($block['isContainer']) {
                             $name = str_replace('container.', '', $name);
                             $block['sections'] = [];
                             $this->containers[$name] = $block;
@@ -450,6 +456,11 @@
             });
 
             $this->containers = array_filter($this->containers, function($container) {
+                $isTVContainer = isset($container['placement']) && $container['placement'] = 'tv';
+                if ($this->isTV && !$isTVContainer) {
+                    return false;
+                }
+
                 return !empty($container['sections']);
             });
 
@@ -473,6 +484,7 @@
                 $item['sections'] = array_unique($item['sections']);
                 return $item;
             }, $this->containers);
+
 
             $this->data = [];
 
