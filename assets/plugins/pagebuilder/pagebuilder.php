@@ -22,6 +22,7 @@
             $this->table       = $modx->getFullTableName('pagebuilder');
             $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
             $this->params      = is_null($params) ? $modx->event->params : $params;
+            $this->isBackend   = defined(IN_MANAGER_MODE) && IN_MANAGER_MODE == 'true';
 
             if (empty($this->params['id'])) {
                 $this->params['id'] = 0;
@@ -168,7 +169,7 @@
             $out = '';
             $idx = -1;
 
-            $this->fetch($params['docid'], $params['container'], false);
+            $this->fetch($params['docid'], $params['container']);
 
             $data = [];
 
@@ -335,7 +336,7 @@
          * @return boolean
          */
         private function canIncludeBlock($block, $docid) {
-            if (isset($block['placement'])) {
+            if ($this->isBackend && isset($block['placement'])) {
                 if (isset($this->params['tv']) && $block['placement'] != 'tv') {
                     return false;
                 }
@@ -375,9 +376,8 @@
          * 
          * @param  int $docid Document identificator
          * @param  string $container Name of the container
-         * @param  boolean $notpl If true, template will be cut from configuration array
          */
-        private function fetch($docid, $containerName = null, $notpl = true) {
+        private function fetch($docid, $containerName = null) {
             $this->containers['default'] = [
                 'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
@@ -402,7 +402,7 @@
                     $block = include($this->path . $entry);
 
                     if ($this->canIncludeBlock($block, $docid)) {
-                        if ($notpl) {
+                        if ($this->isBackend) {
                             unset($block['templates']);
                         }
 
@@ -476,7 +476,7 @@
 
             $this->data = [];
 
-            $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$notpl ? " AND `visible` = '1'" : ''), "`index` ASC");
+            $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$this->isBackend ? " AND `visible` = '1'" : ''), "`index` ASC");
 
             while ($row = $this->modx->db->getRow($query)) {
                 $row['config'] = str_replace('.php', '', $row['config']);
