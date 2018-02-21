@@ -167,92 +167,99 @@
                 $params['blocks'] = explode(',', $params['blocks']);
             }
 
-            $out = '';
-            $idx = -1;
+            $containers = explode(',', $params['container']);
+            $result = [];
 
-            $this->fetch($params['docid'], $params['container']);
+            foreach ($containers as $container) {
+                $params['container'] = trim($container);
+                $this->fetch($params['docid'], $params['container']);
 
-            $data = [];
+                $out  = '';
+                $idx  = -1;
+                $data = [];
 
-            foreach ($this->data as $row) {
-                $idx++;
+                foreach ($this->data as $row) {
+                    $idx++;
 
-                $this->iterations['index']     = $idx;
-                $this->iterations['iteration'] = $idx + 1;
+                    $this->iterations['index']     = $idx;
+                    $this->iterations['iteration'] = $idx + 1;
 
-                if ($params['blocks'] != '*') {
-                    $config = pathinfo($row['config'], PATHINFO_FILENAME);
+                    if ($params['blocks'] != '*') {
+                        $config = pathinfo($row['config'], PATHINFO_FILENAME);
 
-                    if (!in_array($config, $params['blocks'])) {
+                        if (!in_array($config, $params['blocks'])) {
+                            continue;
+                        }
+                    }
+
+                    if ($idx < $params['offset']) {
                         continue;
                     }
-                }
 
-                if ($idx < $params['offset']) {
-                    continue;
-                }
+                    if ($params['limit'] > 0 && $idx >= $params['limit']) {
+                        break;
+                    }
 
-                if ($params['limit'] > 0 && $idx >= $params['limit']) {
-                    break;
-                }
+                    $conf = $this->conf[ $row['config'] ];
 
-                $conf = $this->conf[ $row['config'] ];
+                    $values = $this->prepareData($conf, $row['values']);
 
-                $values = $this->prepareData($conf, $row['values']);
+                    if ($params['renderTo'] != 'templates') {
+                        $data[] = $values;
+                        continue;
+                    } else {
+                        $templates = $conf['templates'];
 
-                if ($params['renderTo'] != 'templates') {
-                    $data[] = $values;
-                    continue;
-                } else {
-                    $templates = $conf['templates'];
+                        if (!empty($params['templates'])) {
+                            if (!isset($templates[ $params['templates'] ])) {
+                                $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                                continue;
+                            }
 
-                    if (!empty($params['templates'])) {
-                        if (!isset($templates[ $params['templates'] ])) {
-                            $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                            $templates = $templates[ $params['templates'] ];
+                        }
+
+                        if (!isset($templates['owner'])) {
+                            $out .= "<div>Template 'owner' not defined</div>";
                             continue;
                         }
 
-                        $templates = $templates[ $params['templates'] ];
+                        $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
                     }
-
-                    if (!isset($templates['owner'])) {
-                        $out .= "<div>Template 'owner' not defined</div>";
-                        continue;
-                    }
-
-                    $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
                 }
-            }
 
-            if ($params['renderTo'] == 'json') {
-                $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-            }
+                if ($params['renderTo'] == 'json') {
+                    $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+                }
 
-            if ($params['renderTo'] == 'templates') {
-                $wrapper = '[+wrap+]';
+                if ($params['renderTo'] == 'templates') {
+                    $wrapper = '[+wrap+]';
 
-                if (!empty($out)) {
-                    if (isset($params['wrapTpl'])) {
-                        $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (isset($this->containers[ $params['container'] ])) {
-                        $container = $this->containers[ $params['container'] ];
+                    if (!empty($out)) {
+                        if (isset($params['wrapTpl'])) {
+                            $wrapper = $this->modx->getChunk($params['wrapTpl']);
+                        } else if (isset($this->containers[ $params['container'] ])) {
+                            $container = $this->containers[ $params['container'] ];
 
-                        if (!empty($container['templates']['owner'])) {
-                            $wrapper = $container['templates']['owner'];
+                            if (!empty($container['templates']['owner'])) {
+                                $wrapper = $container['templates']['owner'];
+                            }
                         }
                     }
+
+                    $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+                } else {
+                    $out = $data;
                 }
-                
-                $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
-            } else {
-                $out = $data;
+
+                $result[] = $out;
             }
 
             if (!empty($params['giveTo'])) {
-                return $this->modx->runSnippet($params['giveTo'], ['data' => $out]);
+                return $this->modx->runSnippet($params['giveTo'], ['data' => $result]);
             }
 
-            return $out;
+            return implode($result);
         }
 
         /**
