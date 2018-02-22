@@ -7,12 +7,12 @@
 		</div>
 	</div>
 
-	<div class="sortable-list<?= count($values) > 1 ? ' collapsed' : '' ?>">
+	<div class="sortable-list<?= count($values) > 1 ? ' collapsed' : '' ?><?= !empty($field['layout']) ? ' ' . $field['layout'] . '-layout' : '' ?>">
 		<?php foreach ($values as $i => $value): ?> 
 			<div class="sortable-item<?= !$i ? ' hidden' : '' ?>">
 				<div class="handle"></div>
 
-				<div class="fields-list<?= !$i ? ' hidden' : '' ?><?= !empty($field['layout']) ? ' ' . $field['layout'] . '-layout' : '' ?>">
+				<div class="fields-list<?= !$i ? ' hidden' : '' ?>">
 					<?php foreach ($field['fields'] as $child => $childfield): ?> 
 						<?= $this->renderField($childfield, $child, isset($value[$child]) ? $value[$child] : null) ?> 
 					<?php endforeach; ?> 
