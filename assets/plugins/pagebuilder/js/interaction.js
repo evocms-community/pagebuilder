@@ -753,10 +753,14 @@
                         length++;
                     });
 
+                    $(this).find('[name]').attr('disabled', true);
+
                     if (!length) {
                         $('<input type="hidden"/>').attr('name', 'contentblocks[' + container + ']').val('0').appendTo($form);
                     }
                 });
+                
+                $('.content-blocks-configs [name]').attr('disabled', true);
             });
 
         })(jQuery);
