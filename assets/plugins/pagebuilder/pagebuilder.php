@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.2.4';
+        const version = '1.3.1';
 
         private $modx;
         private $data;
@@ -22,6 +22,8 @@
             $this->table       = $modx->getFullTableName('pagebuilder');
             $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
             $this->params      = is_null($params) ? $modx->event->params : $params;
+            $this->isBackend   = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
+            $this->isTV        = isset($this->params['tv']);
 
             if (empty($this->params['id'])) {
                 $this->params['id'] = 0;
@@ -165,92 +167,99 @@
                 $params['blocks'] = explode(',', $params['blocks']);
             }
 
-            $out = '';
-            $idx = -1;
+            $containers = explode(',', $params['container']);
+            $result = [];
 
-            $this->fetch($params['docid'], $params['container'], false);
+            foreach ($containers as $container) {
+                $params['container'] = trim($container);
+                $this->fetch($params['docid'], $params['container']);
 
-            $data = [];
+                $out  = '';
+                $idx  = -1;
+                $data = [];
 
-            foreach ($this->data as $row) {
-                $idx++;
+                foreach ($this->data as $row) {
+                    $idx++;
 
-                $this->iterations['index']     = $idx;
-                $this->iterations['iteration'] = $idx + 1;
+                    $this->iterations['index']     = $idx;
+                    $this->iterations['iteration'] = $idx + 1;
 
-                if ($params['blocks'] != '*') {
-                    $config = pathinfo($row['config'], PATHINFO_FILENAME);
+                    if ($params['blocks'] != '*') {
+                        $config = pathinfo($row['config'], PATHINFO_FILENAME);
 
-                    if (!in_array($config, $params['blocks'])) {
+                        if (!in_array($config, $params['blocks'])) {
+                            continue;
+                        }
+                    }
+
+                    if ($idx < $params['offset']) {
                         continue;
                     }
-                }
 
-                if ($idx < $params['offset']) {
-                    continue;
-                }
+                    if ($params['limit'] > 0 && $idx >= $params['limit']) {
+                        break;
+                    }
 
-                if ($params['limit'] > 0 && $idx >= $params['limit']) {
-                    break;
-                }
+                    $conf = $this->conf[ $row['config'] ];
 
-                $conf = $this->conf[ $row['config'] ];
+                    $values = $this->prepareData($conf, $row['values']);
 
-                $values = $this->prepareData($conf, $row['values']);
+                    if ($params['renderTo'] != 'templates') {
+                        $data[] = $values;
+                        continue;
+                    } else {
+                        $templates = $conf['templates'];
 
-                if ($params['renderTo'] != 'templates') {
-                    $data[] = $values;
-                    continue;
-                } else {
-                    $templates = $conf['templates'];
+                        if (!empty($params['templates'])) {
+                            if (!isset($templates[ $params['templates'] ])) {
+                                $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                                continue;
+                            }
 
-                    if (!empty($params['templates'])) {
-                        if (!isset($templates[ $params['templates'] ])) {
-                            $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                            $templates = $templates[ $params['templates'] ];
+                        }
+
+                        if (!isset($templates['owner'])) {
+                            $out .= "<div>Template 'owner' not defined</div>";
                             continue;
                         }
 
-                        $templates = $templates[ $params['templates'] ];
+                        $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
                     }
-
-                    if (!isset($templates['owner'])) {
-                        $out .= "<div>Template 'owner' not defined</div>";
-                        continue;
-                    }
-
-                    $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
                 }
-            }
 
-            if ($params['renderTo'] == 'json') {
-                $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-            }
+                if ($params['renderTo'] == 'json') {
+                    $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+                }
 
-            if ($params['renderTo'] == 'templates') {
-                $wrapper = '[+wrap+]';
+                if ($params['renderTo'] == 'templates') {
+                    $wrapper = '[+wrap+]';
 
-                if (!empty($out)) {
-                    if (isset($params['wrapTpl'])) {
-                        $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (isset($this->containers[ $params['container'] ])) {
-                        $container = $this->containers[ $params['container'] ];
+                    if (!empty($out)) {
+                        if (isset($params['wrapTpl'])) {
+                            $wrapper = $this->modx->getChunk($params['wrapTpl']);
+                        } else if (isset($this->containers[ $params['container'] ])) {
+                            $container = $this->containers[ $params['container'] ];
 
-                        if (!empty($container['templates']['owner'])) {
-                            $wrapper = $container['templates']['owner'];
+                            if (!empty($container['templates']['owner'])) {
+                                $wrapper = $container['templates']['owner'];
+                            }
                         }
                     }
+
+                    $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+                } else {
+                    $out = $data;
                 }
-                
-                $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
-            } else {
-                $out = $data;
+
+                $result[] = $out;
             }
 
             if (!empty($params['giveTo'])) {
-                return $this->modx->runSnippet($params['giveTo'], ['data' => $out]);
+                return $this->modx->runSnippet($params['giveTo'], ['data' => $result]);
             }
 
-            return $out;
+            return implode($result);
         }
 
         /**
@@ -331,16 +340,13 @@
          * after filtering by parameters
          * 
          * @param  array   $block Block configuration
-         * @param  integer $docid Curent document identifier
+         * @param  integer $docid Current document identifier
          * @return boolean
          */
         private function canIncludeBlock($block, $docid) {
-            if (isset($block['placement'])) {
-                if (isset($this->params['tv']) && $block['placement'] != 'tv') {
-                    return false;
-                }
-
-                if (!isset($this->params['tv']) && $block['placement'] == 'tv') {
+            if ($this->isBackend && $block['isContainer']) {
+                $isTVBlock = isset($block['placement']) && $block['placement'] == 'tv';
+                if ($this->isTV && !$isTVBlock || !$this->isTV && $isTVBlock) {
                     return false;
                 }
             }
@@ -375,14 +381,19 @@
          * 
          * @param  int $docid Document identificator
          * @param  string $container Name of the container
-         * @param  boolean $notpl If true, template will be cut from configuration array
          */
-        private function fetch($docid, $containerName = null, $notpl = true) {
+        private function fetch($docid, $containerName = null) {
             $this->containers['default'] = [
                 'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
                 'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content'
             ];
+
+            // If there's tv placement and tv name is not 'default',
+            // then there should not be default container
+            if ($this->isTV && $this->params['container'] != 'default') {
+                unset($this->containers['default']['placement']);
+            }
 
             $this->conf = [];
 
@@ -401,12 +412,14 @@
                     $name  = pathinfo($entry, PATHINFO_FILENAME);
                     $block = include($this->path . $entry);
 
+                    $block['isContainer'] = strpos($name, 'container.') === 0;
+
                     if ($this->canIncludeBlock($block, $docid)) {
-                        if ($notpl) {
+                        if ($this->isBackend) {
                             unset($block['templates']);
                         }
 
-                        if (strpos($name, 'container.') === 0) {
+                        if ($block['isContainer']) {
                             $name = str_replace('container.', '', $name);
                             $block['sections'] = [];
                             $this->containers[$name] = $block;
@@ -450,6 +463,11 @@
             });
 
             $this->containers = array_filter($this->containers, function($container) {
+                $isTVContainer = isset($container['placement']) && $container['placement'] = 'tv';
+                if ($this->isTV && !$isTVContainer) {
+                    return false;
+                }
+
                 return !empty($container['sections']);
             });
 
@@ -474,9 +492,10 @@
                 return $item;
             }, $this->containers);
 
+
             $this->data = [];
 
-            $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$notpl ? " AND `visible` = '1'" : ''), "`index` ASC");
+            $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$this->isBackend ? " AND `visible` = '1'" : ''), "`index` ASC");
 
             while ($row = $this->modx->db->getRow($query)) {
                 $row['config'] = str_replace('.php', '', $row['config']);

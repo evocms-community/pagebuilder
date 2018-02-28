@@ -50,6 +50,14 @@
                             ContentBlock.openBrowser($(this).next('input'), $(this).parent().hasClass('type-image') ? 'images' : 'files');
                         });
 
+                        $block.on('click', '.preview', function(e) {
+                            var $self = $(this);
+
+                            if ($self.closest('.sortable-list').hasClass('gallery-layout')) {
+                                $self.next('.btn').click();
+                            }
+                        });
+
                         $block.on('click', '.sortable-item > .controls > .insert', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -444,8 +452,10 @@
                 },
 
                 initializeSortableList: function($sortable) {
+                    var axis = $sortable.hasClass('gallery-layout') ? '' : 'y';
+
                     $sortable.sortable({
-                        axis:  'y',
+                        axis:  axis,
                         items: '> .sortable-item:not(.hidden)',
                         handle: '> .handle',
                         start: function(e, ui) {
@@ -743,10 +753,14 @@
                         length++;
                     });
 
+                    $(this).find('[name]').attr('disabled', true);
+
                     if (!length) {
                         $('<input type="hidden"/>').attr('name', 'contentblocks[' + container + ']').val('0').appendTo($form);
                     }
                 });
+                
+                $('.content-blocks-configs [name]').attr('disabled', true);
             });
 
         })(jQuery);
