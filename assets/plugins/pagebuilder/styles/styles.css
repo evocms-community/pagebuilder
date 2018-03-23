@@ -54,7 +54,7 @@
 .content-blocks .block .sortable-list > .ui-sortable-helper > .handle { cursor: url(closedhand.cur) 4 4, move !important; }
 .content-blocks .block .sortable-list > .sortable-item.hidden { display: none; }
 .content-blocks .block .sortable-list > .sortable-item.hidden > .controls .remove { display: none; }
-.content-blocks .block .sortable-list > .sortable-item.hidden:last-child { display: block; border-top: 0; padding: 0; }
+.content-blocks .block .sortable-list > .sortable-item.hidden:last-child { display: block; border-top: 0; padding: 0; border: 0; width: 100%; }
 .content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .handle { display: none; }
 .content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .fields-list { display: none; }
 .content-blocks .block .sortable-list > .sortable-item.hidden:last-child > .controls { top: -28px; }
