@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.1';
+        const version = '1.3.2';
 
         private $modx;
         private $data;
@@ -174,9 +174,10 @@
                 $params['container'] = trim($container);
                 $this->fetch($params['docid'], $params['container']);
 
-                $out  = '';
-                $idx  = -1;
-                $data = [];
+                $out   = '';
+                $idx   = -1;
+                $total = 0;
+                $data  = [];
 
                 foreach ($this->data as $row) {
                     $idx++;
@@ -196,7 +197,7 @@
                         continue;
                     }
 
-                    if ($params['limit'] > 0 && $idx >= $params['limit']) {
+                    if ($params['limit'] > 0 && $total++ >= $params['limit']) {
                         break;
                     }
 
