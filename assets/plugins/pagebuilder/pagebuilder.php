@@ -347,7 +347,12 @@
         private function canIncludeBlock($block, $docid) {
             if ($this->isBackend && $block['isContainer']) {
                 $isTVBlock = isset($block['placement']) && $block['placement'] == 'tv';
+
                 if ($this->isTV && !$isTVBlock || !$this->isTV && $isTVBlock) {
+                    return false;
+                }
+
+                if ($this->isTV && $block['name'] != $this->params['container']) {
                     return false;
                 }
             }
@@ -415,6 +420,7 @@
                     $block = include($this->path . $entry);
 
                     $block['isContainer'] = strpos($name, 'container.') === 0;
+                    $block['name'] = $name = str_replace('container.', '', $name);
 
                     if ($this->canIncludeBlock($block, $docid)) {
                         if ($this->isBackend) {
@@ -426,7 +432,6 @@
                         }
 
                         if ($block['isContainer']) {
-                            $name = str_replace('container.', '', $name);
                             $block['sections'] = [];
                             $this->containers[$name] = $block;
                         } else {
