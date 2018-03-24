@@ -180,11 +180,6 @@
                 $data  = [];
 
                 foreach ($this->data as $row) {
-                    $idx++;
-
-                    $this->iterations['index']     = $idx;
-                    $this->iterations['iteration'] = $idx + 1;
-
                     if ($params['blocks'] != '*') {
                         $config = pathinfo($row['config'], PATHINFO_FILENAME);
 
@@ -192,6 +187,11 @@
                             continue;
                         }
                     }
+
+                    $idx++;
+
+                    $this->iterations['index']     = $idx;
+                    $this->iterations['iteration'] = $idx + 1;
 
                     if ($idx < $params['offset']) {
                         continue;
