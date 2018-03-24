@@ -387,7 +387,8 @@
             $this->containers['default'] = [
                 'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
-                'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content'
+                'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content',
+                'order'     => $this->params['order'],
             ];
 
             // If there's tv placement and tv name is not 'default',
@@ -420,6 +421,10 @@
                             unset($block['templates']);
                         }
 
+                        if (!isset($block['order'])) {
+                            $block['order'] = PHP_INT_MAX;
+                        }
+
                         if ($block['isContainer']) {
                             $name = str_replace('container.', '', $name);
                             $block['sections'] = [];
@@ -427,10 +432,6 @@
                         } else {
                             if (!isset($block['container'])) {
                                 $block['container'] = 'default';
-                            }
-
-                            if (!isset($block['order'])) {
-                                $block['order'] = PHP_INT_MAX;
                             }
 
                             $block['name'] = $name;
@@ -493,6 +494,12 @@
                 return $item;
             }, $this->containers);
 
+            uasort($this->containers, function($a, $b) {
+                if ($a['order'] == $b['order']) {
+                    return 0;
+                }
+                return ($a['order'] < $b['order']) ? -1 : 1;
+            });
 
             $this->data = [];
 
