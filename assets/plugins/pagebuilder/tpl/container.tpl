@@ -46,8 +46,15 @@
 
 <script>
     <?php if ($container['placement'] == 'content'): ?>
-        jQuery('#contentPB_<?= $name ?>').insertAfter(jQuery('#content_body').closest('table'));
+        var $element = jQuery('#content_body').closest('table'),
+            $containers = $element.nextAll('.content-blocks-container');
+
+        if ($containers.length) {
+            $element = $containers.last();
+        }
+
+        jQuery('#contentPB_<?= $name ?>').insertAfter($element);
     <?php elseif ($container['placement'] == 'tab'): ?>
-        tpSettings.addTabPage(document.getElementById("tabPB_<?= $name ?>"));
+        tpSettings.addTabPage(jQuery('#tabPB_<?= $name ?>'));
     <?php endif; ?>
 </script>

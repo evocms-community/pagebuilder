@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.1';
+        const version = '1.3.3';
 
         private $modx;
         private $data;
@@ -174,16 +174,12 @@
                 $params['container'] = trim($container);
                 $this->fetch($params['docid'], $params['container']);
 
-                $out  = '';
-                $idx  = -1;
-                $data = [];
+                $out   = '';
+                $idx   = -1;
+                $total = 0;
+                $data  = [];
 
                 foreach ($this->data as $row) {
-                    $idx++;
-
-                    $this->iterations['index']     = $idx;
-                    $this->iterations['iteration'] = $idx + 1;
-
                     if ($params['blocks'] != '*') {
                         $config = pathinfo($row['config'], PATHINFO_FILENAME);
 
@@ -192,11 +188,16 @@
                         }
                     }
 
+                    $idx++;
+
+                    $this->iterations['index']     = $idx;
+                    $this->iterations['iteration'] = $idx + 1;
+
                     if ($idx < $params['offset']) {
                         continue;
                     }
 
-                    if ($params['limit'] > 0 && $idx >= $params['limit']) {
+                    if ($params['limit'] > 0 && $total++ >= $params['limit']) {
                         break;
                     }
 
@@ -346,7 +347,12 @@
         private function canIncludeBlock($block, $docid) {
             if ($this->isBackend && $block['isContainer']) {
                 $isTVBlock = isset($block['placement']) && $block['placement'] == 'tv';
+
                 if ($this->isTV && !$isTVBlock || !$this->isTV && $isTVBlock) {
+                    return false;
+                }
+
+                if ($this->isTV && $block['name'] != $this->params['container']) {
                     return false;
                 }
             }
@@ -386,7 +392,8 @@
             $this->containers['default'] = [
                 'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
-                'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content'
+                'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content',
+                'order'     => $this->params['order'],
             ];
 
             // If there's tv placement and tv name is not 'default',
@@ -413,23 +420,23 @@
                     $block = include($this->path . $entry);
 
                     $block['isContainer'] = strpos($name, 'container.') === 0;
+                    $block['name'] = $name = str_replace('container.', '', $name);
 
                     if ($this->canIncludeBlock($block, $docid)) {
                         if ($this->isBackend) {
                             unset($block['templates']);
                         }
 
+                        if (!isset($block['order'])) {
+                            $block['order'] = PHP_INT_MAX;
+                        }
+
                         if ($block['isContainer']) {
-                            $name = str_replace('container.', '', $name);
                             $block['sections'] = [];
                             $this->containers[$name] = $block;
                         } else {
                             if (!isset($block['container'])) {
                                 $block['container'] = 'default';
-                            }
-
-                            if (!isset($block['order'])) {
-                                $block['order'] = PHP_INT_MAX;
                             }
 
                             $block['name'] = $name;
@@ -492,6 +499,12 @@
                 return $item;
             }, $this->containers);
 
+            uasort($this->containers, function($a, $b) {
+                if ($a['order'] == $b['order']) {
+                    return 0;
+                }
+                return ($a['order'] < $b['order']) ? -1 : 1;
+            });
 
             $this->data = [];
 
