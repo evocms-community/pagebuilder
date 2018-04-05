@@ -663,8 +663,8 @@
                 }
 
                 case 'checkbox': {
-                    if (!is_array($value)) {
-                        $value = [ $value ];
+                    if (!is_array($params['value'])) {
+                        $params['value'] = [ $params['value'] ];
                     }
                 }
 
