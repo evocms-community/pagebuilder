@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.3';
+        const version = '1.3.4';
 
         private $modx;
         private $data;
@@ -662,12 +662,14 @@
                     return $this->renderTpl('tpl/field_richtext.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
                 }
 
+                case 'imagecheckbox':
                 case 'checkbox': {
                     if (!is_array($params['value'])) {
                         $params['value'] = [ $params['value'] ];
                     }
                 }
 
+                case 'imageradio':
                 case 'radio': {
                     $params['layout'] = 'vertical';
 

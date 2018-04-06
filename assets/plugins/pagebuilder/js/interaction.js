@@ -144,6 +144,7 @@
                                 break;
                             }
 
+                            case 'imagecheckbox':
                             case 'checkbox': {
                                 if (typeof values[field] != 'object') {
                                     values[field] = {};
@@ -160,6 +161,7 @@
                                 break;
                             }
 
+                            case 'imageradio':
                             case 'radio': {
                                 var $input = $field.children('.check-list').children('.check-row').children('label').children(':checked');
 
@@ -202,6 +204,7 @@
                                 break;
                             } 
 
+                            case 'imagecheckbox':
                             case 'checkbox': {
                                 if (typeof values[field] !== 'undefined') {
                                     if (typeof values[field] != 'object') {
@@ -222,6 +225,7 @@
                                 break;
                             }
 
+                            case 'imageradio':
                             case 'radio': {
                                 if (typeof values[field] !== 'undefined' && typeof values[field] != 'object') {
                                     var $input = $field.children('.check-list').children('.check-row').children('label').children('[value="' + values[field] + '"]');
@@ -319,7 +323,7 @@
                         $add.children('.add-block-icons').removeAttr('style');
                         $block.append($add);
 
-                        $block.find('.type-radio').each(function() {
+                        $block.find('.type-radio, .type-imageradio').each(function() {
                             $(this).find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
                         });
 
@@ -370,7 +374,7 @@
                     $clone.removeClass('hidden').hide();
                     $clone.children('.fields-list').removeClass('hidden');
 
-                    $clone.children('.fields-list').children('.type-radio').find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
+                    $clone.children('.fields-list').children('.type-radio, .type-imageradio').find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
 
                     return $clone;
                 },

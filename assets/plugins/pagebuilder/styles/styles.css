@@ -30,6 +30,8 @@
 .content-blocks .block .field .check-list .check-row input { position: absolute; left: 0; top: 3px; margin: 0; }
 .content-blocks .block .field .check-list.horizontal-layout .check-row { display: inline-block; vertical-align: top; margin-right: 20px; }
 .content-blocks .block .field .check-list.horizontal-layout .check-row label { display: block; }
+.content-blocks .block .field.image-toggle .check-row label span { display: block; border: 1px solid transparent; }
+.content-blocks .block .field.image-toggle .check-row label :checked + span { border-color: #666; }
 .content-blocks .block .change-type { position: absolute; left: 20px; top: -20px; }
 .content-blocks .block .change-type select { width: 150px !important; }
 .content-blocks .block .change-type .visible { margin: 0 10px; vertical-align: middle; background: #fff; padding: 6px 10px; cursor: pointer; }
