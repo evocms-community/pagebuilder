@@ -3,7 +3,7 @@
 		<div class="field-name"><?= $field['caption'] ?></div>
 	<?php endif; ?> 
 
-	<div class="check-list layout-<?= $layout ?>">
+	<div class="check-list <?= $layout ?>-layout">
 		<?php foreach ($elements as $val => $image): ?> 
 			<div class="check-row">
 				<label>

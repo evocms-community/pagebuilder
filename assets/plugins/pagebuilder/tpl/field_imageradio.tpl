@@ -5,7 +5,7 @@
 
 	<?php $random = md5(rand()); ?>
 
-	<div class="check-list layout-<?= $layout ?>">
+	<div class="check-list <?= $layout ?>-layout">
 		<?php foreach ($elements as $val => $image): ?> 
 			<div class="check-row">
 				<label>
