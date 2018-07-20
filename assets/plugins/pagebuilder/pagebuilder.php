@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.4';
+        const version = '1.3.5';
 
         private $modx;
         private $data;
@@ -258,6 +258,10 @@
 
             if (!empty($params['giveTo'])) {
                 return $this->modx->runSnippet($params['giveTo'], ['data' => $result]);
+            }
+
+            if ($params['renderTo'] == 'array') {
+                return $result;
             }
 
             return implode($result);

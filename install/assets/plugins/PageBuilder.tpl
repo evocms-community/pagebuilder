@@ -5,7 +5,7 @@
  * Creates form for manage content sections
  *
  * @category    plugin
- * @version     1.3.4
+ * @version     1.3.5
  * @author      mnoskov
  * @internal    @properties &tabName=Tab name;text;Page Builder &addType=Add type;menu;dropdown,icons,images;dropdown &placement=Placement;menu;content,tab;tab &order=Default container ordering;text;0
  * @internal    @events OnWebPageInit,OnManagerPageInit,OnDocFormRender,OnDocFormSave,OnBeforeEmptyTrash,OnDocDuplicate 
