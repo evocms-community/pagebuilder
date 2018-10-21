@@ -407,6 +407,7 @@
             }
 
             $this->conf = [];
+            $this->data = [];
 
             if (!isset($this->params['template'])) {
                 if ($docid == $modx->documentIdentifier) {
@@ -510,8 +511,6 @@
                 return ($a['order'] < $b['order']) ? -1 : 1;
             });
 
-            $this->data = [];
-
             $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$this->isBackend ? " AND `visible` = '1'" : ''), "`index` ASC");
 
             while ($row = $this->modx->db->getRow($query)) {
@@ -520,6 +519,41 @@
                 if (isset($this->conf[ $row['config'] ])) {
                     $row['values'] = json_decode($row['values'], true);
                     $this->data[] = $row;
+                }
+            }
+
+            foreach ($this->containers as $name => $container) {
+                if (!empty($container['defaults'])) {
+                    $dataExists = false;
+
+                    foreach ($this->data as $row) {
+                        if ($row['container'] == $name) {
+                            $dataExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!$dataExists) {
+                        foreach ($container['defaults'] as $index => $block) {
+                            if (!isset($block['block']) || !isset($block['values'])) {
+                                throw new Exception('Structure of "defaults" section is wrong!');
+                            }
+
+                            if (!isset($this->conf[$block['block']])) {
+                                continue;
+                            }
+
+                            $this->data[] = [
+                                'id'          => 0,
+                                'document_id' => $docid,
+                                'container'   => $name,
+                                'config'      => $block['block'],
+                                'values'      => $block['values'],
+                                'visible'     => 1,
+                                'index'       => $index,
+                            ];
+                        }
+                    }
                 }
             }
         }
