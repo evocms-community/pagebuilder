@@ -242,7 +242,9 @@
                         } else if (isset($this->containers[ $params['container'] ])) {
                             $container = $this->containers[ $params['container'] ];
 
-                            if (!empty($container['templates']['owner'])) {
+                            if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
+                                $wrapper = $container['templates'][ $params['templates'] ]['owner'];
+                            } else if (!empty($container['templates']['owner'])) {
                                 $wrapper = $container['templates']['owner'];
                             }
                         }
