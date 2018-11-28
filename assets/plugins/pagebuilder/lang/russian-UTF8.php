@@ -11,6 +11,7 @@
 		'Move up' => 'Переместить наверх',
 		'Move down' => 'Переместить вниз',
 		'Fill with images' => 'Заполнить изображениями',
+		'Fill with files' => 'Заполнить файлами',
 		'No variants provided' => 'Нет вариантов выбора',
 		'No fields provided in this block' => 'В этом блоке нет полей для заполнения',
 		'Visible' => 'Показывать',

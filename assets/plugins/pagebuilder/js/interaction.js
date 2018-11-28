@@ -16,8 +16,16 @@
 
                         // add button for mass upload
                         $block.find('.sortable-list').each(function() {
-                            if ($(this).children('.sortable-item').eq(0).children('.fields-list').children('.type-image').length) {
-                                $(this).prev('.group-title').children('.btn-group').append('<input type="button" class="btn btn-secondary fill-with-images" value="' + opts.lang['Fill with images'] + '">');
+                            var $list    = $(this),
+                                $fields  = $list.children('.sortable-item').eq(0).children('.fields-list'),
+                                $buttons = $list.prev('.group-title').children('.btn-group');
+
+                            if ($fields.children('.type-image').length) {
+                                $('<input type="button" class="btn btn-secondary fill-with" data-type="image">').val(opts.lang['Fill with images']).appendTo($buttons);
+                            }
+
+                            if ($fields.children('.type-file').length) {
+                                $('<input type="button" class="btn btn-secondary fill-with" data-type="file">').val(opts.lang['Fill with files']).appendTo($buttons);
                             }
 
                             ContentBlock.groupUpdated($(this));
@@ -81,25 +89,29 @@
                             ContentBlock.changeType($(this).closest('.block'), $(this).val());
                         });
 
-                        $block.on('click', '.fill-with-images', function(e) {
+                        $block.on('click', '.fill-with', function(e) {
                             e.preventDefault();
-                            var $list = $(this).closest('.group-title').next('.sortable-list');
+                            var $list = $(this).closest('.group-title').next('.sortable-list'),
+                                type  = $(this).attr('data-type');
 
-                            (function($list) {
-                                ContentBlock.openBrowser($list, 'images', function(files) {
+                            (function($list, type) {
+                                ContentBlock.openBrowser($list, type + 's', function(files) {
                                     var $item = $list.children(':last-child');
 
                                     for (var i = 0; i < files.length; i++) {
                                         $item = ContentBlock.insertItem($item);
 
-                                        var $input = $item.children('.fields-list').children('.type-image').eq(0).children('input[type="text"]');
+                                        var $input = $item.children('.fields-list').children('.type-' + type).eq(0).children('input[type="text"]');
                                         $input.val(files[i]);
-                                        ContentBlock.setThumb($input.parent());
+
+                                        if (type == 'image') {
+                                            ContentBlock.setThumb($input.parent());
+                                        }
                                     }
 
                                     ContentBlock.groupUpdated($list);
                                 });
-                            })($list);
+                            })($list, type);
                         });
 
                         ContentBlock.initializeFieldsList(conf.fields, $list);
