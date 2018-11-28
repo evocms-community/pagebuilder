@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.5';
+        const version = '1.3.6';
 
         private $modx;
         private $data;
@@ -767,6 +767,32 @@
                 }
             }
         }
+
+        /**
+         * Called at OnCollectSearchableContent
+         * @param  int $docid
+         * @return string
+         *
+        public function getSearchableContent()
+        {
+            $output = '';
+
+            if (!empty($this->params['id'])) {
+                $query = $this->modx->db->select('*', $this->table, "`document_id` = '" . intval($this->params['id']) . "'", "`index` ASC");
+
+                while ($row = $this->modx->db->getRow($query)) {
+                    $values = json_decode($row['values'], true);
+
+                    if (is_array($values)) {
+                        array_walk_recursive($values, function($value, $key) use (&$output) {
+                            $output .= ' ' . $value;
+                        });
+                    }
+                }
+            }
+
+            return trim($output);
+        }*/
 
         /**
          * Called at OnDocDuplicate event
