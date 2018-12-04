@@ -55,6 +55,6 @@
 
         jQuery('#contentPB_<?= $name ?>').insertAfter($element);
     <?php elseif ($container['placement'] == 'tab'): ?>
-        tpSettings.addTabPage(jQuery('#tabPB_<?= $name ?>'));
+        tpSettings.addTabPage(jQuery('#tabPB_<?= $name ?>').get(0));
     <?php endif; ?>
 </script>
