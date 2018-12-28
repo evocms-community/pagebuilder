@@ -14,6 +14,7 @@
 .content-blocks .block .field > textarea { resize: vertical; }
 .content-blocks .block .field > select { width: 100% !important; }
 .content-blocks .block .field .field-name { margin: 0 0 2px; }
+.content-blocks .block .field .field-note { margin: 2px 0 0; font-size: 80%; opacity: 0.8; }
 .content-blocks .block .field.uploadable > input[type="text"] { width: calc(100% - 90px); }
 .content-blocks .block .field.uploadable > input[type="button"] { width: 80px; margin-right: 10px; }
 .content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 112px; }

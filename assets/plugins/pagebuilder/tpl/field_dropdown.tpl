@@ -8,4 +8,8 @@
 			<option value="<?= $val ?>" <?php if ($val == $value) { ?> selected<?php } ?>><?= htmlentities($title) ?></option>
 		<?php endforeach; ?> 
 	</select>
+
+    <?php if (!empty($field['note'])): ?> 
+        <div class="field-note"><?= $field['note'] ?></div>
+    <?php endif; ?>
 </div>

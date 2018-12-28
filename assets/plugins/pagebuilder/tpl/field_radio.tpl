@@ -12,4 +12,8 @@
 			</div>
 		<?php endforeach; ?> 
 	</div>
+
+    <?php if (!empty($field['note'])): ?> 
+        <div class="field-note"><?= $field['note'] ?></div>
+    <?php endif; ?>
 </div>
