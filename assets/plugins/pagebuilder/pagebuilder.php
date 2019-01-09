@@ -415,7 +415,7 @@
                 if ($docid == $this->modx->documentIdentifier) {
                     $this->params['template'] = $this->modx->documentObject['template'];
                 } else {
-                    $doc = $this->modx->getDocument($docid, 'template');
+                    $doc = $this->modx->getDocument($docid, 'template', 'all');
                     $this->params['template'] = $doc['template'];
                 }
             }
