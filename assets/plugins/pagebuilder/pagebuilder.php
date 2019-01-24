@@ -585,7 +585,7 @@
                             ];
 
                             if (!empty($row['id'])) {
-                                $this->modx->db->update($data, $this->table, "`id` = '{$row[id]}'");
+                                $this->modx->db->update($data, $this->table, "`id` = '" . $row['id'] . "'");
                             } else {
                                 $data['document_id'] = $docid;
                                 $this->modx->db->insert($data, $this->table);
