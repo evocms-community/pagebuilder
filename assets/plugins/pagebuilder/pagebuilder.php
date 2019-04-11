@@ -582,6 +582,7 @@
                                 'values'    => $this->modx->db->escape($row['values']),
                                 'visible'   => $row['visible'] > 0 ? 1 : 0,
                                 'index'     => $index,
+                                'title'     => ''
                             ];
 
                             if (!empty($row['id'])) {
