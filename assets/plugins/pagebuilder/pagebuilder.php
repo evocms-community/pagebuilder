@@ -399,7 +399,7 @@
                 'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
                 'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
                 'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content',
-                'order'     => $this->params['order'],
+                'order'     => !empty($this->params['order']) ? $this->params['order'] : '0',
             ];
 
             // If there's tv placement and tv name is not 'default',
