@@ -512,30 +512,10 @@
                                 
                     if (typeof tinymce !== 'undefined') {
                         var conf = theme != undefined ? window['config_tinymce4_' + theme] : window[ modxRTEbridge_tinymce4.default ];
-
-                        // content field configuration for tinymce
-                        if (options) {
-                            var old = {};
-
-                            // save all standard options for other fields
-                            for (option in options) {
-                                old[option] = conf[option] ? conf[option] : undefined;
-                                conf[option] = options[option];
-                            }
-                        }
+                        conf = $.extend({}, conf, options ? options : {});
 
                         conf['selector'] = '#' + $textarea.attr('id');
                         tinymce.init(conf);
-
-                        if (options) {
-                            for (option in old) {
-                                if (old[option] != undefined) {
-                                    conf[option] = old[option];
-                                } else {
-                                    delete conf[option];
-                                }
-                            }
-                        }
                     }
                 },
 
