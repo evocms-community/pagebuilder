@@ -46,7 +46,7 @@
 
 <script>
     <?php if ($container['placement'] == 'content'): ?>
-        var $element = jQuery('#ta').closest('.tab-page').children().last(),
+        var $element = jQuery('#content_body').closest('table'),
             $containers = $element.nextAll('.content-blocks-container');
 
         if ($containers.length) {
