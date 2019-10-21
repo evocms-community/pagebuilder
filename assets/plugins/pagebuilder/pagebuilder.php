@@ -74,7 +74,7 @@
             return $this->modx->parseText($template , $data);
         }
 
-        private function renderFieldsList($templates, $template, $config, $values) {
+        private function renderFieldsList($templates, $template, $config, $values, $set = '') {
             $out = '';
             $data = [];
 
@@ -143,7 +143,19 @@
                 }
             }
 
-            return $this->parseTemplate($template, array_merge($this->iterations, $values, $data));
+            $result = $this->parseTemplate($template, array_merge($this->iterations, $values, $data));
+
+            if (preg_match('/\[\+(.+?)\/(.+?)\+\]/', $result, $matches)) {
+                $set   = $matches[1];
+                $field = $matches[2];
+
+                if (isset($values[$field]) && isset($templates[$set])) {
+                    $result = str_replace('[+' . $set . '/' . $field . '+]', '[+' . $field . '+]', $result);
+                    $result = $this->renderFieldsList($templates[$set], $result, $config, $values, $set, true);
+                }
+            }
+
+            return $result;
         }
 
         /**
