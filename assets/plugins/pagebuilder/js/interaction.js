@@ -392,7 +392,9 @@
                     $clone.removeClass('hidden').hide();
                     $clone.children('.fields-list').removeClass('hidden');
 
-                    $clone.children('.fields-list').children('.type-radio, .type-imageradio').find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
+                    $clone.children('.fields-list').children('.type-radio, .type-imageradio').each(function() {
+                        $(this).find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
+                    });
 
                     return $clone;
                 },
