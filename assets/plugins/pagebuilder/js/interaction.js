@@ -271,7 +271,8 @@
                     if (thumb.match(/\.svg$/)) {
                         thumb = '../' + thumb;
                     } else {
-                        thumb = thumb.replace('assets/images/', '../assets/' + opts.thumbsDir + '/images/');
+                        thumb = thumb.replace('assets', '../assets');
+                        thumb = thumb.replace('/images/', '/' + opts.thumbsDir + '/images/');
                     }
 
                     if (source == '') {
@@ -295,7 +296,7 @@
                                 image.onerror = function() {
                                     if (this.thumbChecked == undefined) {
                                         this.thumbChecked = true;
-                                        this.src = source.replace('assets/images', '../assets/images');
+                                        this.src = source.replace('assets', '../assets');
                                     } else {
                                         $preview.css('background-image', 'url("../assets/images/noimage.jpg")');
                                     }
