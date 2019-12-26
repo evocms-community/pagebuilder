@@ -192,9 +192,8 @@
                 $data  = [];
 
                 foreach ($this->data as $row) {
+                    $config = pathinfo($row['config'], PATHINFO_FILENAME);
                     if ($params['blocks'] != '*') {
-                        $config = pathinfo($row['config'], PATHINFO_FILENAME);
-
                         if (!in_array($config, $params['blocks'])) {
                             continue;
                         }
@@ -218,7 +217,7 @@
                     $values = $this->prepareData($conf, $row['values']);
 
                     if ($params['renderTo'] != 'templates') {
-                        $data[] = $values;
+                        $data[] = array_merge($values, ['config'=>$config]);
                         continue;
                     } else {
                         $templates = $conf['templates'];
