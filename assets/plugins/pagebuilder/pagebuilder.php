@@ -160,7 +160,7 @@
 
         /**
          * Shows all content blocks for document
-         * 
+         *
          * @param  int $params Snippet parameters
          * @return string Output
          */
@@ -188,6 +188,12 @@
             $total = 0;
             $data  = [];
 
+            $bladeTemplate = false;
+
+            if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($this->containers[ $params['container'] ]['blade_template'])) {
+                $bladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
+            }
+
             foreach ($this->data as $row) {
                 if ($params['blocks'] != '*') {
                     $config = pathinfo($row['config'], PATHINFO_FILENAME);
@@ -214,7 +220,15 @@
 
                 $values = $this->prepareData($conf, $row['values']);
 
-                if ($params['renderTo'] != 'templates') {
+                if ($params['renderTo'] == 'structure' || $bladeTemplate) {
+                    $data[] = [
+                        'name'      => $row['config'],
+                        'index'     => $idx,
+                        'iteration' => $idx + 1,
+                        'config'    => $conf,
+                        'data'      => $values,
+                    ];
+                } else if ($params['renderTo'] != 'templates') {
                     $data[] = $values;
                     continue;
                 } else {
@@ -243,23 +257,27 @@
             }
 
             if ($params['renderTo'] == 'templates') {
-                $wrapper = '[+wrap+]';
+                if ($bladeTemplate) {
+                    $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $bladeTemplate, $data);
+                } else {
+                    $wrapper = '[+wrap+]';
 
-                if (!empty($out)) {
-                    if (isset($params['wrapTpl'])) {
-                        $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (isset($this->containers[ $params['container'] ])) {
-                        $container = $this->containers[ $params['container'] ];
+                    if (!empty($out)) {
+                        if (isset($params['wrapTpl'])) {
+                            $wrapper = $this->modx->getChunk($params['wrapTpl']);
+                        } else if (isset($this->containers[ $params['container'] ])) {
+                            $container = $this->containers[ $params['container'] ];
 
-                        if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
-                            $wrapper = $container['templates'][ $params['templates'] ]['owner'];
-                        } else if (!empty($container['templates']['owner'])) {
-                            $wrapper = $container['templates']['owner'];
+                            if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
+                                $wrapper = $container['templates'][ $params['templates'] ]['owner'];
+                            } else if (!empty($container['templates']['owner'])) {
+                                $wrapper = $container['templates']['owner'];
+                            }
                         }
                     }
-                }
 
-                $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+                    $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+                }
             } else {
                 $out = $data;
             }
@@ -268,6 +286,10 @@
 
             if (!empty($params['giveTo'])) {
                 return $this->modx->runSnippet($params['giveTo'], ['data' => $result]);
+            }
+
+            if ($params['renderTo'] == 'structure') {
+                return $result[0];
             }
 
             if ($params['renderTo'] == 'array') {
@@ -279,7 +301,7 @@
 
         /**
          * Renders template in admin panel
-         * 
+         *
          * @param  string $template Template
          * @param  array $data Values for binding to template
          * @return string Output
@@ -292,13 +314,13 @@
             include(__DIR__ . '/' . $template);
             $output = ob_get_contents();
             ob_end_clean();
-            
+
             return $output;
         }
 
         /**
          * Renders form in new tab on document editing page, called at OnDocFormRender event
-         * 
+         *
          * @return string Output
          */
         public function renderForm() {
@@ -328,7 +350,7 @@
 
         /**
          * Prepares data row for output, if 'prepare' key defined
-         * 
+         *
          * @param  array  $options config options
          * @param  array  $values  values
          * @return array           modified values
@@ -353,7 +375,7 @@
         /**
          * Determines whether a block can be included and shown
          * after filtering by parameters
-         * 
+         *
          * @param  array   $block Block configuration
          * @param  integer $docid Current document identifier
          * @return boolean
@@ -398,7 +420,7 @@
 
         /**
          * Loads saved content blocks and configuration files
-         * 
+         *
          * @param  int $docid Document identificator
          * @param  string $container Name of the container
          */
@@ -577,7 +599,7 @@
 
                 foreach ($_POST['contentblocks'] as $container => $blocks) {
                     if (is_array($blocks)) {
-                        $exists = array_map(function($element) { 
+                        $exists = array_map(function($element) {
                             return $element['id'];
                         }, $blocks);
 
@@ -608,7 +630,7 @@
         }
 
         /**
-         * Parse values from modx-style string, 
+         * Parse values from modx-style string,
          * e.g. 1||2,
          * or @EVAL ...,
          * or @SELECT
@@ -653,7 +675,7 @@
 
         /**
          * Renders field control
-         * 
+         *
          * @param  array $field Array with field options
          * @param  string $name Symbolic identificator of field
          * @param  mixed $value Value of field
@@ -666,7 +688,7 @@
 
             if (!empty($field['default'])) {
                 $default = $this->parseValues($field['default']);
-                
+
                 if ($field['type'] != 'checkbox' && is_array($default)) {
                     $default = reset($default);
                 }
@@ -676,7 +698,7 @@
                 'name'     => $name,
                 'field'    => $field,
                 'value'    => is_null($value) ? $default : $value,
-                'elements' => [ 
+                'elements' => [
                     '' => $this->lang['No variants provided'],
                 ],
             ];
@@ -743,7 +765,7 @@
 
         /**
          * Wrapper for invokeEvent method
-         * 
+         *
          * @param  string $event  Name of the event
          * @param  array  $params
          * @return string
@@ -826,7 +848,7 @@
         /**
          * Called at OnBeforeEmptyTrash event
          */
-        public function delete() { 
+        public function delete() {
             if (!empty($this->params['ids'])) {
                 $this->modx->db->delete($this->table, "`document_id` IN ('" . implode("','", $this->params['ids']) . "')");
             }
