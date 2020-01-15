@@ -30,3 +30,6 @@ UPDATE {PREFIX}pagebuilder SET `container` = 'default' WHERE `container` IS NULL
 
 UPDATE {PREFIX}pagebuilder SET `config` = REPLACE(`config`, '.php', '') WHERE `config` REGEXP '\.php$';
 
+# Fix, default value for title
+
+ALTER TABLE {PREFIX}pagebuilder CHANGE `title` `title` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
