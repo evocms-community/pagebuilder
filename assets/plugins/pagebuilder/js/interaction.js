@@ -75,7 +75,7 @@
                         $block.on('click', '.sortable-item > .controls > .remove', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            
+
                             $(this).closest('.sortable-item').slideUp(200, function() {
                                 var $self = $(this),
                                     $list = $self.parent();
@@ -161,7 +161,7 @@
                                 if (typeof values[field] != 'object') {
                                     values[field] = {};
                                 }
-                                
+
                                 $field.children('.check-list').children('.check-row').each(function(i) {
                                     var $input = $(this).children('label').children(':checked');
 
@@ -169,7 +169,7 @@
                                         values[field][i] = $input.val();
                                     }
                                 });
-                                
+
                                 break;
                             }
 
@@ -180,7 +180,7 @@
                                 if ($input.length) {
                                     values[field] = $input.val();
                                 }
-                                
+
                                 break;
                             }
 
@@ -205,7 +205,7 @@
 
                                     for (var i = 0; i < values[field].length; i++) {
                                         var $clone = ContentBlock.createSortableItem($sortable);
-                                        
+
                                         $clone.appendTo($sortable).show();
 
                                         ContentBlock.groupUpdated($sortable);
@@ -214,7 +214,7 @@
                                 }
 
                                 break;
-                            } 
+                            }
 
                             case 'imagecheckbox':
                             case 'checkbox': {
@@ -346,7 +346,10 @@
                             $(this).find('[type="radio"]').attr('name', 'contentblocks_radio_' + ContentBlock.randomString());
                         });
 
-                        $block.hide().insertAfter($after).slideDown(200);
+                        $block.hide().insertAfter($after).slideDown(200, function() {
+                            $(this).removeAttr('style');
+                        });
+
                         ContentBlock.initialize($block);
 
                         return $block;
@@ -354,14 +357,16 @@
                 },
 
                 move: function($block, direction) {
+                    var $sibling;
+
                     if (direction == 'up') {
-                        var $sibling = $block.prev('.block');
+                        $sibling = $block.prev('.block');
 
                         if (!$sibling.length) {
                             return;
                         }
                     } else {
-                        var $sibling = $block.next('.block');
+                        $sibling = $block.next('.block');
 
                         if ($sibling.length) {
                             $block.insertAfter($sibling);
@@ -432,11 +437,11 @@
                                 if (fieldConfig.options) {
                                     $textarea.data('options', fieldConfig.options);
                                 }
-                                
+
                                 if (fieldConfig.theme) {
                                     $textarea.data('theme', fieldConfig.theme);
                                 }
-                                
+
                                 ContentBlock.initializeRichField($textarea);
 
                                 break;
@@ -512,32 +517,32 @@
                         options = $textarea.data('options');
 
                     $textarea.get(0).id = 'rich' + ContentBlock.randomString();
-                                
+
                     if (typeof tinymce !== 'undefined') {
                         var conf = theme != undefined ? window['config_tinymce4_' + theme] : window[ modxRTEbridge_tinymce4.default ];
                         conf = $.extend({}, conf, options ? options : {});
 
-                        conf['selector'] = '#' + $textarea.attr('id');
+                        conf.selector = '#' + $textarea.attr('id');
                         tinymce.init(conf);
                     }
                 },
 
                 openBrowser: function($element, type, multipleCallback) {
                     var wnd    = window.parent || window,
-                        margin = parseInt(wnd.innerHeight * .1),
+                        margin = parseInt(wnd.innerHeight * 0.1),
                         width  = wnd.innerWidth - margin * 2,
                         height = wnd.innerHeight - margin * 2,
-                        params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + (margin + (wnd._startY ? wnd._startY * .5 : 0));
+                        params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + (margin + (wnd._startY ? wnd._startY * 0.5 : 0));
 
-                    if (window['SetUrl']) {
-                        window['SetUrl_disabled'] = window['SetUrl'];
-                        window['SetUrl'] = null;
+                    if (window.SetUrl) {
+                        window.SetUrl_disabled = window.SetUrl;
+                        window.SetUrl = null;
                     }
 
                     window.KCFinder = {
                         callBack: function(url) {
-                            if (window['SetUrl_disabled']) {
-                                window['SetUrl'] = window['SetUrl_disabled'];
+                            if (window.SetUrl_disabled) {
+                                window.SetUrl = window.SetUrl_disabled;
                             }
 
                             window.KCFinder = null;
@@ -555,9 +560,9 @@
                             if (typeof files !== 'object') {
                                 files = [ files ];
                             }
-                            
-                            if (window['SetUrl_disabled']) {
-                                window['SetUrl'] = window['SetUrl_disabled'];
+
+                            if (window.SetUrl_disabled) {
+                                window.SetUrl = window.SetUrl_disabled;
                             }
 
                             window.KCFinder = null;
@@ -565,7 +570,7 @@
                         };
                     }
 
-                    var wnd = window.open(opts.browser + '?type=' + type, 'FileManager', params);
+                    window.open(opts.browser + '?type=' + type, 'FileManager', params);
                 },
 
                 groupUpdated: function($list) {
@@ -585,7 +590,7 @@
                     return (((1 + Math.random()) * 0x100000) | 0).toString(16);
                 }
 
-            }
+            };
 
             opts.containers.each(function() {
                 var $container = $(this);
@@ -598,13 +603,15 @@
                         e.stopPropagation();
                         e.stopImmediatePropagation();
 
+                        var config;
+
                         if ($(this).hasClass('dropdown-add-block')) {
-                            var config = $(this).prev('select').children().last().val();
+                            config = $(this).prev('select').children().last().val();
                         } else {
-                            var config = $(this).parent().next('.add-block-icons').find('a').attr('data-config');
+                            config = $(this).parent().next('.add-block-icons').find('a').attr('data-config');
 
                         }
-                        
+
                         var $current = $(this).closest('.block');
 
                         if (!$current.length) {
@@ -625,7 +632,7 @@
                         if (!$current.length) {
                             $current = $(this).closest('.add-block');
                         }
-                        
+
                         ContentBlock.append(config, $current);
                     }
                 });
@@ -688,20 +695,20 @@
                 });
 
                 $container.on('change', '[name="import-file"]', function(e) {
-                    e.target.files;
-
                     if ( e.target.files && e.target.files.length ) {
                         var file   = e.target.files[0],
                             reader = new FileReader();
 
                         reader.onload = (function(file, $control) {
                             return function(e) {
+                                var json;
+
                                 try {
-                                    var json = JSON.parse(e.target.result);
+                                    json = JSON.parse(e.target.result);
                                 } catch(e) {
                                     alert('Error');
                                     return;
-                                };
+                                }
 
                                 var $group = $control.closest('.content-blocks'),
                                     $last  = $group.children('.block').last();
@@ -764,10 +771,10 @@
                         $('<input type="hidden"/>').attr('name', 'contentblocks[' + container + ']').val('0').appendTo($form);
                     }
                 });
-                
+
                 $('.content-blocks-configs [name]').attr('disabled', true);
             });
 
         })(jQuery);
-    }
+    };
 
