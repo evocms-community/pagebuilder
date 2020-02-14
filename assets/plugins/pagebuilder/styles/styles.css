@@ -2,7 +2,7 @@
 .content-blocks .btn-group { margin-left: 20px; }
 .content-blocks .btn-group .btn { padding: 3px 10px; font-size: .6772rem; line-height: 1.4; }
 .content-blocks > .btn-group { position: absolute; right: 0; }
-.content-blocks .btn-group .btn.import { cursor: pointer; }
+.content-blocks .btn-group .btn.import { cursor: pointer; margin-bottom: 0; }
 .content-blocks .btn-group .btn.import input { display: none; }
 .content-blocks-tab > .content-blocks { margin: 10px 0; }
 .content-blocks .blocks { padding: 0 0 40px; }
