@@ -318,6 +318,7 @@
                     if ($newblock.length) {
                         $newblock = $newblock.clone().data('values', values);
                         $newblock.append($block.children('.add-block'));
+                        $newblock.children('.block-inner').children('.change-type').replaceWith($block.children('.block-inner').children('.change-type'));
                         $block.replaceWith($newblock);
 
                         ContentBlock.setValues(opts.config[type].fields, $newblock.children('.block-inner').children('.fields-list'), values);
