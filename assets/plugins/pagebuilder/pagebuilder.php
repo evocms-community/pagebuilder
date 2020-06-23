@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.11';
+        const version = '1.3.12';
 
         private $modx;
         private $data;
@@ -418,6 +418,31 @@
             return true;
         }
 
+        private function getConfig($elements = [], $folder = '')
+        {
+            if (!empty($folder)) {
+                $folder .= '/';
+            }
+
+            foreach (scandir($this->path . $folder) as $entry) {
+                if ($entry == '.' || $entry == '..') {
+                    continue;
+                }
+
+                if (pathinfo($entry, PATHINFO_EXTENSION) == 'php') {
+                    $name = pathinfo($entry, PATHINFO_FILENAME);
+                    $elements[] = $folder . $name;
+                    continue;
+                }
+
+                if (is_dir($this->path . $folder . $entry)) {
+                    $elements = $this->getConfig($elements, $folder . $entry);
+                }
+            }
+
+            return $elements;
+        }
+
         /**
          * Loads saved content blocks and configuration files
          *
@@ -450,35 +475,33 @@
                 }
             }
 
-            // Loading all config files, that complied with filters
-            foreach (scandir($this->path) as $entry) {
-                if (pathinfo($entry, PATHINFO_EXTENSION) == 'php') {
-                    $name  = pathinfo($entry, PATHINFO_FILENAME);
-                    $block = include($this->path . $entry);
+            // Loading all config files, complied with filters
+            foreach ($this->getConfig() as $name) {
+                $block = include($this->path . $name . '.php');
 
-                    $block['isContainer'] = strpos($name, 'container.') === 0;
-                    $block['name'] = $name = str_replace('container.', '', $name);
+                $block['isContainer'] = strpos($name, 'container.') !== false;
+                $block['name'] = $name = str_replace('container.', '', $name);
+                $block['alias'] = str_replace('/', '__', $name);
 
-                    if ($this->canIncludeBlock($block, $docid)) {
-                        if ($this->isBackend) {
-                            unset($block['templates']);
+                if ($this->canIncludeBlock($block, $docid)) {
+                    if ($this->isBackend) {
+                        unset($block['templates']);
+                    }
+
+                    if (!isset($block['order'])) {
+                        $block['order'] = PHP_INT_MAX;
+                    }
+
+                    if ($block['isContainer']) {
+                        $block['sections'] = [];
+                        $this->containers[$name] = $block;
+                    } else {
+                        if (!isset($block['container'])) {
+                            $block['container'] = 'default';
                         }
 
-                        if (!isset($block['order'])) {
-                            $block['order'] = PHP_INT_MAX;
-                        }
-
-                        if ($block['isContainer']) {
-                            $block['sections'] = [];
-                            $this->containers[$name] = $block;
-                        } else {
-                            if (!isset($block['container'])) {
-                                $block['container'] = 'default';
-                            }
-
-                            $block['name'] = $name;
-                            $this->conf[$name] = $block;
-                        }
+                        $block['name'] = $name;
+                        $this->conf[$name] = $block;
                     }
                 }
             }

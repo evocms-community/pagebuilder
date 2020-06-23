@@ -29,7 +29,7 @@
         }, ARRAY_FILTER_USE_KEY),
 	]) ?>
 
-	<?php $names[] = '#PB_' . $name; ?>
+	<?php $names[] = '#PB_' . $container['alias']; ?>
 <?php endforeach; ?>
 
 <?php foreach ($this->themes as $theme): ?> 

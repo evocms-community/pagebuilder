@@ -1,14 +1,14 @@
 <?php if ($container['placement'] == 'tab'): ?>
-    <div class="tab-page content-blocks-tab" id="tabPB_<?= $name ?>">
+    <div class="tab-page content-blocks-tab" id="tabPB_<?= $container['alias'] ?>">
         <h2 class="tab"><?= $container['title'] ?></h2>
 <?php else: ?>
-    <div class="content-blocks-container" id="contentPB_<?= $name ?>">
+    <div class="content-blocks-container" id="contentPB_<?= $container['alias'] ?>">
         <?php if ($container['placement'] == 'content'): ?>
             <h4 class="container-title"><?= $container['title'] ?></h4>
         <?php endif; ?>
 <?php endif; ?>
 
-    <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>" id="PB_<?= $name ?>" data-formid="<?= $formid ?>">
+    <div class="content-blocks<?php if (count($configs) < 2): ?> single<?php endif; ?>" data-add-type="<?= $container['addType'] ?>" data-container="<?= $name ?>" id="PB_<?= $container['alias'] ?>" data-formid="<?= $formid ?>">
         <div class="btn-group">
             <a href="#" class="btn btn-secondary export"><?= $l['Export'] ?></a>
             <label href="#" class="btn btn-secondary import"><input type="file" name="import-file"><?= $l['Import'] ?></label>
@@ -53,8 +53,8 @@
             $element = $containers.last();
         }
 
-        jQuery('#contentPB_<?= $name ?>').insertAfter($element);
+        jQuery('#contentPB_<?= $container['alias'] ?>').insertAfter($element);
     <?php elseif ($container['placement'] == 'tab'): ?>
-        tpSettings.addTabPage(jQuery('#tabPB_<?= $name ?>').get(0));
+        tpSettings.addTabPage(jQuery('#tabPB_<?= $container['alias'] ?>').get(0));
     <?php endif; ?>
 </script>
