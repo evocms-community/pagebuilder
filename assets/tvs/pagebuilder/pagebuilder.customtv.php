@@ -5,7 +5,9 @@ if (IN_MANAGER_MODE != 'true') {
 }
 
 $path   = __DIR__ . '/../../plugins/pagebuilder/';
-$config = $path . 'config/container.' . $row['name'] . '.php';
+$parts  = explode('/', $row['name']);
+$name   = 'container.' . array_pop($parts) . '.php';
+$config = $path . 'config/' . implode('/', $parts) . '/' . $name;
 
 require_once $path . 'pagebuilder.php';
 
