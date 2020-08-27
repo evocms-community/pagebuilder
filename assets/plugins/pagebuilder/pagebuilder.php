@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.12';
+        const version = '1.3.13';
 
         private $modx;
         private $data;
@@ -559,12 +559,22 @@
                 return $item;
             }, $this->containers);
 
-            uasort($this->containers, function($a, $b) {
-                if ($a['order'] == $b['order']) {
-                    return 0;
+            if ($containerName !== null) {
+                if (isset($this->containers[$containerName])) {
+                    $this->containers = [
+                        "$containerName" => $this->containers[$containerName],
+                    ];
+                } else {
+                    $this->containers = [];
                 }
-                return ($a['order'] < $b['order']) ? -1 : 1;
-            });
+            } else {
+                uasort($this->containers, function($a, $b) {
+                    if ($a['order'] == $b['order']) {
+                        return 0;
+                    }
+                    return ($a['order'] < $b['order']) ? -1 : 1;
+                });
+            }
 
             $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$this->isBackend ? " AND `visible` = '1'" : ''), "`index` ASC");
 
