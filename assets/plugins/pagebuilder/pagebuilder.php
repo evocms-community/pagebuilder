@@ -739,7 +739,8 @@
                     ]));
                 }
 
-                case 'richtext': {
+                case 'richtext': {					
+					$params['layout'] = $field['layout'] ?? 'col-12';
                     if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
                         $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
                             'editor'  => $this->richeditor,
@@ -766,7 +767,6 @@
                 case 'imageradio':
                 case 'radio': {
                     $params['layout'] = 'vertical';
-
                     if (isset($field['layout']) && in_array($field['layout'], [ 'horizontal', 'vertical' ])) {
                         $params['layout'] = $field['layout'];
                     }
@@ -779,6 +779,7 @@
                 }
 
                 default: {
+					$params['layout'] = $field['layout'] ?? 'col-12';
                     return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
                 }
             }
