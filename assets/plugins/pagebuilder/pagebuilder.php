@@ -2,7 +2,7 @@
 
     class PageBuilder {
 
-        const version = '1.3.12';
+        const version = '1.3.13';
 
         private $modx;
         private $data;
@@ -559,12 +559,22 @@
                 return $item;
             }, $this->containers);
 
-            uasort($this->containers, function($a, $b) {
-                if ($a['order'] == $b['order']) {
-                    return 0;
+            if ($containerName !== null) {
+                if (isset($this->containers[$containerName])) {
+                    $this->containers = [
+                        "$containerName" => $this->containers[$containerName],
+                    ];
+                } else {
+                    $this->containers = [];
                 }
-                return ($a['order'] < $b['order']) ? -1 : 1;
-            });
+            } else {
+                uasort($this->containers, function($a, $b) {
+                    if ($a['order'] == $b['order']) {
+                        return 0;
+                    }
+                    return ($a['order'] < $b['order']) ? -1 : 1;
+                });
+            }
 
             $query = $this->modx->db->select('*', $this->table, "`document_id` = '$docid'" . ($containerName !== null ? " AND `container` = '$containerName'" : '') . (!$this->isBackend ? " AND `visible` = '1'" : ''), "`index` ASC");
 
@@ -739,7 +749,8 @@
                     ]));
                 }
 
-                case 'richtext': {
+                case 'richtext': {					
+					$params['layout'] = $field['layout'] ?? 'col-12';
                     if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
                         $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
                             'editor'  => $this->richeditor,
@@ -766,7 +777,6 @@
                 case 'imageradio':
                 case 'radio': {
                     $params['layout'] = 'vertical';
-
                     if (isset($field['layout']) && in_array($field['layout'], [ 'horizontal', 'vertical' ])) {
                         $params['layout'] = $field['layout'];
                     }
@@ -779,6 +789,7 @@
                 }
 
                 default: {
+					$params['layout'] = $field['layout'] ?? 'col-12';
                     return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
                 }
             }
