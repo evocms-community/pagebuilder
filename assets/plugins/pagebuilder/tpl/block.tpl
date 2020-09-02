@@ -21,8 +21,10 @@
 
 		<div class="fields-list">
 			<?php if (!isset($configs[$block['config']]['fields'])): ?>
-				<b><?= $configs[$block['config']]['title'] ?></b><br>
-				<i><?= $l['No fields provided in this block'] ?></i>
+				<div class="field">
+					<b><?= $configs[$block['config']]['title'] ?></b><br>
+					<i><?= $l['No fields provided in this block'] ?></i>
+				</div>
 			<?php else: ?>
 				<?php foreach ($configs[$block['config']]['fields'] as $name => $field): ?>
 					<?= $this->renderField($field, $name, isset($block['values'][$name]) ? $block['values'][$name] : null); ?>
