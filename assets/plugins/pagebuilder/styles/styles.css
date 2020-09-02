@@ -8,7 +8,7 @@
 .content-blocks .blocks { padding: 0 0 40px; }
 .content-blocks .block:last-child { margin-bottom: 0 !important; }
 .content-blocks .block .block-inner { border: 2px solid #ccc; padding: 20px; border-radius: 0; position: relative; margin: 0 0 20px; background-color: #f8f8f8; }
-.content-blocks .block .field { margin: 0 0 10px; position: relative; }
+.content-blocks .block .field { margin: 0 0 10px; position: relative; padding: 0 1rem; }
 .content-blocks .block .field > input,
 .content-blocks .block .field > textarea { width: 100%; margin: 0; }
 .content-blocks .block .field > textarea { resize: vertical; }
@@ -17,10 +17,10 @@
 .content-blocks .block .field .field-note { margin: 2px 0 0; font-size: 80%; opacity: 0.8; }
 .content-blocks .block .field.uploadable > input[type="text"] { width: calc(100% - 90px); }
 .content-blocks .block .field.uploadable > input[type="button"] { width: 80px; margin-right: 10px; }
-.content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 112px; }
-.content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 31px; background-color: #f2f2f2; border: 1px solid #ddd; left: 0; top: 0; background-position: center; background-size: contain; background-repeat: no-repeat; }
+.content-blocks .block .field.type-image.with-thumb { position: relative; padding-left: 132px; }
+.content-blocks .block .field.type-image.with-thumb .preview { position: absolute; width: 100px; height: 31px; background-color: #f2f2f2; border: 1px solid #ddd; left: 1rem; top: 0; background-position: center; background-size: contain; background-repeat: no-repeat; }
 .content-blocks .block .field.type-image.with-thumb .field-name + .preview { height: 56px; }
-.content-blocks .block .field.type-date > i { position: absolute; left: 8px; bottom: 8px; }
+.content-blocks .block .field.type-date > i { position: absolute; left: 25px; bottom: 8px; }
 .content-blocks .block .field.type-date > input { padding-left: 28px; }
 .content-blocks .block .fields-list > :last-child { margin-bottom: 0 !important; }
 .content-blocks .block .fields-group { border: 2px dashed #ccc; padding: 15px; margin-top: 10px; width: 100%; }
@@ -147,3 +147,4 @@
     background: #282c34;
     border-color: #282c34;
 }
+.content-blocks .block .fields-list {display: flex;flex-direction: row;  flex-wrap: wrap;}
