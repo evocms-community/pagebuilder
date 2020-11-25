@@ -2,7 +2,7 @@
 
 class PageBuilder
 {
-    const version = '1.3.14';
+    const version = '1.3.15';
 
     private $modx;
     private $data;
@@ -226,8 +226,13 @@ class PageBuilder
 
         $bladeTemplate = false;
 
-        if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($this->containers[ $params['container'] ]['blade_template'])) {
-            $bladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
+        $container = [];
+        if (isset($this->containers[ $params['container'] ])) {
+            $container = $this->containers[ $params['container'] ];
+        }
+
+        if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($container['blade_template'])) {
+            $bladeTemplate = $container['blade_template'];
         }
 
         foreach ($this->data as $row) {
@@ -257,13 +262,11 @@ class PageBuilder
             $values = $this->prepareData($conf, $row['values']);
 
             if ($params['renderTo'] == 'structure' || $bladeTemplate) {
-                $data[] = [
-                    'name'      => $row['config'],
-                    'index'     => $idx,
-                    'iteration' => $idx + 1,
-                    'config'    => $conf,
-                    'data'      => $values,
+                $values['pb'] = [
+                    'name'   => $row['config'],
+                    'config' => $conf,
                 ];
+                $data[] = $values;
             } else if ($params['renderTo'] != 'templates') {
                 $data[] = array_merge($values, ['config' => $config]);
                 continue;
@@ -288,6 +291,8 @@ class PageBuilder
             }
         }
 
+        $data = $this->prepareData($container, $data);
+
         if ($params['renderTo'] == 'json') {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
         }
@@ -301,14 +306,10 @@ class PageBuilder
                 if (!empty($out)) {
                     if (isset($params['wrapTpl'])) {
                         $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (isset($this->containers[ $params['container'] ])) {
-                        $container = $this->containers[ $params['container'] ];
-
-                        if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
-                            $wrapper = $container['templates'][ $params['templates'] ]['owner'];
-                        } else if (!empty($container['templates']['owner'])) {
-                            $wrapper = $container['templates']['owner'];
-                        }
+                    } else if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
+                        $wrapper = $container['templates'][ $params['templates'] ]['owner'];
+                    } else if (!empty($container['templates']['owner'])) {
+                        $wrapper = $container['templates']['owner'];
                     }
                 }
 
