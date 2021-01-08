@@ -14,30 +14,62 @@ class PageBuilder
     private $lang;
     private $iterations = [];
 
+    private $langAliases = [
+        'bg' => 'bulgarian',
+        'zh' => 'chinese',
+        'cs' => 'czech',
+        'da' => 'danish',
+        'en' => 'english',
+        'fi' => 'finnish',
+        'fr' => 'francais-utf8',
+        'de' => 'german',
+        'he' => 'hebrew',
+        'it' => 'italian',
+        'jp' => 'japanese-utf8',
+        'nl' => 'nederlands-utf8',
+        'no' => 'norsk',
+        'fa' => 'persian',
+        'pl' => 'polish-utf8',
+        'pt' => 'portuguese-br-utf8',
+        'ru' => 'russian-UTF8',
+        'es' => 'spanish-utf8',
+        'sv' => 'svenska-utf8',
+        'uk' => 'ukrainian'
+    ];
+
     public function __construct($modx, $params = null)
     {
         $this->modx = $modx;
 
-        $this->richeditor  = $modx->getConfig('which_editor');
-        $this->browser     = $modx->getConfig('which_browser');
-        $this->table       = $modx->getFullTableName('pagebuilder');
-        $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
-        $this->params      = is_null($params) ? $modx->event->params : $params;
-        $this->isBackend   = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
-        $this->isTV        = isset($this->params['tv']);
+        $this->richeditor = $modx->getConfig('which_editor');
+        $this->browser    = $modx->getConfig('which_browser');
+        $this->table      = $modx->getFullTableName('pagebuilder');
+        $this->path       = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
+        $this->params     = is_null($params) ? $modx->event->params : $params;
+        $this->isBackend  = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
+        $this->isTV       = isset($this->params['tv']);
 
         if (empty($this->params['id'])) {
             $this->params['id'] = 0;
         }
 
-        $lang = $modx->getConfig('manager_language');
-        $lang = __DIR__ . '/lang/' . $lang . '.php';
+        $langCode = $modx->getConfig('manager_language');
 
-        if (!is_readable($lang)) {
-            $lang = __DIR__ . '/lang/english.php';
+        if (isset($this->langAliases[$langCode])) {
+            $langCode = $this->langAliases[$langCode];
         }
 
-        $this->lang = include $lang;
+        $files = [
+            __DIR__ . '/lang/' . $langCode . '.php',
+            __DIR__ . '/lang/english.php',
+        ];
+
+        foreach ($files as $file) {
+            if (is_readable($file)) {
+                $this->lang = include $file;
+                break;
+            }
+        }
     }
 
     /**
@@ -116,14 +148,14 @@ class PageBuilder
                     continue;
                 }
 
-                if ($options['type'] == 'container') {//var_dump($values[$field]);die();
+                if ($options['type'] == 'container') {
                     $tmp = $this->renderSubcontainer($values[$field], [
                         'renderTo' => 'templates',
                         'blocks' => '*',
                         'offset' => 0,
                         'limit'  => 0,
                     ]);
-                    //var_dump($tmp);die();
+
                     $data[$field] = implode($tmp);
                     continue;
                 }
@@ -356,6 +388,8 @@ class PageBuilder
             $bladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
         }
 
+        $data = $this->prepareData($this->containers[ $params['container'] ], $data);
+
         if ($params['renderTo'] == 'json') {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
         }
@@ -462,7 +496,14 @@ class PageBuilder
         }
 
         // load manager lang file for date settings
-        include MODX_MANAGER_PATH . 'includes/lang/' . $this->modx->getConfig('manager_language') . '.inc.php';
+        $langCode = $this->modx->getConfig('manager_language');
+        $_lang = [];
+
+        if (isset($this->langAliases[$langCode])) {
+            include EVO_CORE_PATH . 'lang/' . $langCode . '/global.php';
+        } else {
+            include MODX_MANAGER_PATH . 'includes/lang/' . $langCode . '.inc.php';
+        }
 
         return $this->renderTpl('tpl/form.tpl', [
             'version'    => self::version,
@@ -615,7 +656,6 @@ class PageBuilder
 
         $this->conf = [];
         $this->data = [];
-        $allcontainers = [];
 
         if (!isset($this->params['template'])) {
             if ($docid == $this->modx->documentIdentifier) {
