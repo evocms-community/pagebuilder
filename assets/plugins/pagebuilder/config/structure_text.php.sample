@@ -1,0 +1,24 @@
+<?php
+
+return [
+    'title' => 'Текст',
+    'container' => ['column', 'column2', 'column3'],
+
+    'fields' => [
+        'text' => [
+            'caption' => 'Текст',
+            'type'    => 'richtext',
+        ],
+    ],
+
+    'templates' => [
+        'owner' => '
+            <div class="text-block">
+                <div class="user-content">
+                    [+text+]
+                </div>
+            </div>
+        ',
+    ],
+];
+

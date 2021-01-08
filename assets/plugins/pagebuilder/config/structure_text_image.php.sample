@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'title' => 'Текст + изображение',
+    'container' => ['column', 'column2', 'column3'],
+
+    'fields' => [
+        'text' => [
+            'caption' => 'Текст',
+            'type'    => 'richtext',
+        ],
+
+        'image' => [
+            'caption' => 'Изображение',
+            'type' => 'image',
+        ],
+    ],
+
+    'templates' => [
+        'owner' => '
+            <div class="text-block">
+                <div class="user-content">
+                    [+text+]
+                </div>
+
+                <p><img src="[+image+]" class="img-fluid"></p>
+            </div>
+        ',
+    ],
+];

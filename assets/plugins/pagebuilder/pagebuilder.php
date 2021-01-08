@@ -2,7 +2,7 @@
 
 class PageBuilder
 {
-    const version = '1.3.15';
+    const version = '1.4.0';
 
     private $modx;
     private $data;
@@ -14,62 +14,30 @@ class PageBuilder
     private $lang;
     private $iterations = [];
 
-    private $langAliases = [
-        'bg' => 'bulgarian',
-        'zh' => 'chinese',
-        'cs' => 'czech',
-        'da' => 'danish',
-        'en' => 'english',
-        'fi' => 'finnish',
-        'fr' => 'francais-utf8',
-        'de' => 'german',
-        'he' => 'hebrew',
-        'it' => 'italian',
-        'jp' => 'japanese-utf8',
-        'nl' => 'nederlands-utf8',
-        'no' => 'norsk',
-        'fa' => 'persian',
-        'pl' => 'polish-utf8',
-        'pt' => 'portuguese-br-utf8',
-        'ru' => 'russian-UTF8',
-        'es' => 'spanish-utf8',
-        'sv' => 'svenska-utf8',
-        'uk' => 'ukrainian'
-    ];
-
     public function __construct($modx, $params = null)
     {
         $this->modx = $modx;
 
-        $this->richeditor = $modx->getConfig('which_editor');
-        $this->browser    = $modx->getConfig('which_browser');
-        $this->table      = $modx->getFullTableName('pagebuilder');
-        $this->path       = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
-        $this->params     = is_null($params) ? $modx->event->params : $params;
-        $this->isBackend  = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
-        $this->isTV       = isset($this->params['tv']);
+        $this->richeditor  = $modx->getConfig('which_editor');
+        $this->browser     = $modx->getConfig('which_browser');
+        $this->table       = $modx->getFullTableName('pagebuilder');
+        $this->path        = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
+        $this->params      = is_null($params) ? $modx->event->params : $params;
+        $this->isBackend   = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
+        $this->isTV        = isset($this->params['tv']);
 
         if (empty($this->params['id'])) {
             $this->params['id'] = 0;
         }
 
-        $langCode = $modx->getConfig('manager_language');
+        $lang = $modx->getConfig('manager_language');
+        $lang = __DIR__ . '/lang/' . $lang . '.php';
 
-        if (isset($this->langAliases[$langCode])) {
-            $langCode = $this->langAliases[$langCode];
+        if (!is_readable($lang)) {
+            $lang = __DIR__ . '/lang/english.php';
         }
 
-        $files = [
-            __DIR__ . '/lang/' . $langCode . '.php',
-            __DIR__ . '/lang/english.php',
-        ];
-
-        foreach ($files as $file) {
-            if (is_readable($file)) {
-                $this->lang = include $file;
-                break;
-            }
-        }
+        $this->lang = include $lang;
     }
 
     /**
@@ -148,6 +116,18 @@ class PageBuilder
                     continue;
                 }
 
+                if ($options['type'] == 'container') {//var_dump($values[$field]);die();
+                    $tmp = $this->renderSubcontainer($values[$field], [
+                        'renderTo' => 'templates',
+                        'blocks' => '*',
+                        'offset' => 0,
+                        'limit'  => 0,
+                    ]);
+                    //var_dump($tmp);die();
+                    $data[$field] = implode($tmp);
+                    continue;
+                }
+
                 if ($options['type'] != 'group') {
                     $data[$field] = $values[$field];
                     continue;
@@ -178,7 +158,7 @@ class PageBuilder
             }
         }
 
-        $result = $this->parseTemplate($template, array_merge($this->iterations, $values, $data));
+        $result = $this->parseTemplate($template, array_merge($values['pb'] ?: [], $this->iterations, $values, $data));
 
         if (preg_match('/\[\+(.+?)\/(.+?)\+\]/', $result, $matches)) {
             $set   = $matches[1];
@@ -191,6 +171,157 @@ class PageBuilder
         }
 
         return $result;
+    }
+
+    public function mergeSubcontainerValues($settings, $row)
+    {
+        $values = $row['values'];
+
+        foreach ($settings['fields'] as $field => $options) {
+            if ($options['type'] == 'container') {
+                $tmp = [];
+
+                foreach ($this->data as $dataRow) {
+                    if ($dataRow['hash'] != $values[$field]) {
+                        continue;
+                    }
+
+                    $tmp[] = $this->mergeSubcontainerValues($this->conf[ $dataRow['config'] ], $dataRow);
+                }
+
+                $values[$field] = $tmp;
+            } else if ($options['type'] == 'group') {
+                foreach ($values[$field] as $index => $groupRow) {
+                    $values[$field][$index] = $this->mergeSubcontainerValues($options, ['values' => $groupRow]);
+                }
+            }
+        }
+
+        if (!empty($row['id'])) {
+            $values = array_merge($values, [
+                'pb' => [
+                    'id'           => $row['id'],
+                    'parent_id'    => $row['parent_id'],
+                    'container'    => $row['container'],
+                    'subcontainer' => $row['subcontainer'],
+                    'hash'         => $row['hash'],
+                    'config'       => $row['config'],
+                    'settings'     => $settings,
+                ],
+            ]);
+        }
+
+        return $values;
+    }
+
+    public function renderSubcontainer($sourceData, $params)
+    {
+        $data = [];
+        $isRoot = false;
+
+        if ($sourceData === null) {
+            $isRoot = true;
+
+            $sourceData = array_filter($this->data, function($block) use ($params) {
+                if (!empty($block['hash'])) {
+                    return false;
+                }
+
+                if ($params['blocks'] != '*') {
+                    if (!in_array(pathinfo($row['config'], PATHINFO_FILENAME), $params['blocks'])) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            $sourceData = array_values(array_slice($sourceData, $params['offset'], $params['limit'] ?: null));
+        }
+
+        foreach ($sourceData as $idx => $row) {
+            $iterationsPrefix = '';
+
+            if (!$isRoot) {
+                $row = array_merge($row['pb'], ['values' => $row]);
+                $iterationsPrefix = $row['subcontainer'] . '_';
+            }
+
+            $config = pathinfo($row['config'], PATHINFO_FILENAME);
+
+            $this->iterations[$iterationsPrefix . 'index']     = $idx;
+            $this->iterations[$iterationsPrefix . 'iteration'] = $idx + 1;
+
+            $settings = $this->conf[ $row['config'] ];
+
+            if ($isRoot) {
+                $values = $this->mergeSubcontainerValues($settings, $row);
+            } else {
+                $values = $row['values'];
+            }
+
+            $values = $this->prepareData($settings, $values);
+
+            if ($params['renderTo'] == 'structure' || $bladeTemplate) {
+                $data[] = $values;
+            } else if ($params['renderTo'] != 'templates') {
+                $data[] = array_merge($values, [
+                    'config' => $config,
+                    'id'     => $row['id'],
+                ]);
+                continue;
+            } else {
+                $templates = $settings['templates'];
+
+                if (!empty($params['templates'])) {
+                    if (!isset($templates[ $params['templates'] ])) {
+                        $data[] = "<div>Templates set '" . $params['templates'] . "' not defined</div>";
+                        continue;
+                    }
+
+                    $templates = $templates[ $params['templates'] ];
+                }
+
+                if (!isset($templates['owner'])) {
+                    $data[] = "<div>Template 'owner' not defined</div>";
+                    continue;
+                }
+
+                $tpl = $this->pickTemplateForItem($templates, 'owner', $idx, count($sourceData));
+                $data[] = $this->renderFieldsList($templates, $tpl, $settings, $values);
+            }
+        }
+
+        return $data;
+    }
+
+    protected function pickTemplateForItem($templates, $key, $index, $total)
+    {
+        $tpl = $templates[$key];
+
+        switch (true) {
+            case !$index && isset($templates[$key . '.first']): {
+                $tpl = $templates[$key . '.first'];
+                break;
+            }
+
+            case $index == $total && isset($templates[$key . '.last']): {
+                $tpl = $templates[$key . '.last'];
+                break;
+            }
+
+            case $index % 2 && isset($templates[$key . '.even']): {
+                $tpl = $templates[$key . '.even'];
+                break;
+            }
+
+            case !($index % 2) && isset($templates[$key . '.odd']): {
+                $tpl = $templates[$key . '.odd'];
+                break;
+            }
+        }
+
+        return $tpl;
     }
 
     /**
@@ -215,83 +346,15 @@ class PageBuilder
             $params['blocks'] = explode(',', $params['blocks']);
         }
 
-        $result = [];
-
         $this->fetch($params['docid'], $params['container']);
 
-        $out   = '';
-        $idx   = -1;
-        $total = 0;
-        $data  = [];
+        $data = $this->renderSubcontainer(null, $params);
 
         $bladeTemplate = false;
 
-        $container = [];
-        if (isset($this->containers[ $params['container'] ])) {
-            $container = $this->containers[ $params['container'] ];
+        if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($this->containers[ $params['container'] ]['blade_template'])) {
+            $bladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
         }
-
-        if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($container['blade_template'])) {
-            $bladeTemplate = $container['blade_template'];
-        }
-
-        foreach ($this->data as $row) {
-            $config = pathinfo($row['config'], PATHINFO_FILENAME);
-
-            if ($params['blocks'] != '*') {
-                if (!in_array($config, $params['blocks'])) {
-                    continue;
-                }
-            }
-
-            $idx++;
-
-            $this->iterations['index']     = $idx;
-            $this->iterations['iteration'] = $idx + 1;
-
-            if ($idx < $params['offset']) {
-                continue;
-            }
-
-            if ($params['limit'] > 0 && $total++ >= $params['limit']) {
-                break;
-            }
-
-            $conf = $this->conf[ $row['config'] ];
-
-            $values = $this->prepareData($conf, $row['values']);
-
-            if ($params['renderTo'] == 'structure' || $bladeTemplate) {
-                $values['pb'] = [
-                    'name'   => $row['config'],
-                    'config' => $conf,
-                ];
-                $data[] = $values;
-            } else if ($params['renderTo'] != 'templates') {
-                $data[] = array_merge($values, ['config' => $config]);
-                continue;
-            } else {
-                $templates = $conf['templates'];
-
-                if (!empty($params['templates'])) {
-                    if (!isset($templates[ $params['templates'] ])) {
-                        $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
-                        continue;
-                    }
-
-                    $templates = $templates[ $params['templates'] ];
-                }
-
-                if (!isset($templates['owner'])) {
-                    $out .= "<div>Template 'owner' not defined</div>";
-                    continue;
-                }
-
-                $out .= $this->renderFieldsList($templates, $templates['owner'], $conf, $values);
-            }
-        }
-
-        $data = $this->prepareData($container, $data);
 
         if ($params['renderTo'] == 'json') {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -303,17 +366,21 @@ class PageBuilder
             } else {
                 $wrapper = '[+wrap+]';
 
-                if (!empty($out)) {
+                if (!empty($data)) {
                     if (isset($params['wrapTpl'])) {
                         $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
-                        $wrapper = $container['templates'][ $params['templates'] ]['owner'];
-                    } else if (!empty($container['templates']['owner'])) {
-                        $wrapper = $container['templates']['owner'];
+                    } else if (isset($this->containers[ $params['container'] ])) {
+                        $container = $this->containers[ $params['container'] ];
+
+                        if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
+                            $wrapper = $container['templates'][ $params['templates'] ]['owner'];
+                        } else if (!empty($container['templates']['owner'])) {
+                            $wrapper = $container['templates']['owner'];
+                        }
                     }
                 }
 
-                $out = $this->parseTemplate($wrapper, ['wrap' => $out]);
+                $out = $this->parseTemplate($wrapper, ['wrap' => implode($data)]);
             }
         } else {
             $out = $data;
@@ -356,6 +423,15 @@ class PageBuilder
         return $output;
     }
 
+    public function getCurrentFormId()
+    {
+        if ($this->currentFormId === null) {
+            $this->currentFormId = md5(rand());
+        }
+
+        return $this->currentFormId;
+    }
+
     /**
      * Renders form in new tab on document editing page, called at OnDocFormRender event
      *
@@ -369,15 +445,24 @@ class PageBuilder
             return '';
         }
 
-        // load manager lang file for date settings
-        $langCode = $this->modx->getConfig('manager_language');
-        $_lang = [];
+        $relations = [];
 
-        if (isset($this->langAliases[$langCode])) {
-            include EVO_CORE_PATH . 'lang/' . $langCode . '/global.php';
-        } else {
-            include MODX_MANAGER_PATH . 'includes/lang/' . $langCode . '.inc.php';
+        foreach ($this->conf as $configName => $config) {
+            if (!is_array($config['container'])) {
+                $config['container'] = [$config['container']];
+            }
+
+            foreach ($config['container'] as $containerName) {
+                if (!isset($relations[$containerName])) {
+                    $relations[$containerName] = [];
+                }
+
+                $relations[$containerName][] = $configName;
+            }
         }
+
+        // load manager lang file for date settings
+        include MODX_MANAGER_PATH . 'includes/lang/' . $this->modx->getConfig('manager_language') . '.inc.php';
 
         return $this->renderTpl('tpl/form.tpl', [
             'version'    => self::version,
@@ -385,6 +470,7 @@ class PageBuilder
             'containers' => $this->containers,
             'configs'    => $this->conf,
             'blocks'     => $this->data,
+            'relations'  => $relations,
             'adminlang'  => $_lang,
             'thumbsDir'  => $this->modx->getConfig('thumbsDir'),
             'picker'     => [
@@ -441,7 +527,7 @@ class PageBuilder
             }
         }
 
-        foreach ([ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt) {
+        foreach (['show_in_templates', 'show_in_docs', 'hide_in_docs'] as $opt) {
             if (isset($block[$opt]) && !is_array($block[$opt])) {
                 $block[$opt] = [ $block[$opt] ];
             }
@@ -491,6 +577,21 @@ class PageBuilder
         return $elements;
     }
 
+    protected function fetchSubcontainers($fields)
+    {
+        foreach ($fields as $field => $settings) {
+            if ($settings['type'] == 'container') {
+                $this->containers[$field] = [
+                    'caption'  => $settings['caption'],
+                    'sections' => [],
+                    'isSub'    => true,
+                ];
+            } else if ($settings['type'] == 'group') {
+                $this->fetchSubcontainers($settings['fields']);
+            }
+        }
+    }
+
     /**
      * Loads saved content blocks and configuration files
      *
@@ -514,6 +615,7 @@ class PageBuilder
 
         $this->conf = [];
         $this->data = [];
+        $allcontainers = [];
 
         if (!isset($this->params['template'])) {
             if ($docid == $this->modx->documentIdentifier) {
@@ -551,6 +653,10 @@ class PageBuilder
 
                     $block['name'] = $name;
                     $this->conf[$name] = $block;
+
+                    if (!empty($block['fields'])) {
+                        $this->fetchSubcontainers($block['fields']);
+                    }
                 }
             }
         }
@@ -677,38 +783,52 @@ class PageBuilder
      */
     public function save()
     {
-        if (isset($_POST['contentblocks'])) {
-            $docid  = !empty($this->params['id']) ? $this->params['id'] : 0;
+        if (!isset($_POST['contentblocks'])) {
+            return;
+        }
 
-            foreach ($_POST['contentblocks'] as $container => $blocks) {
-                if (is_array($blocks)) {
-                    $exists = array_map(function($element) {
-                        return $element['id'];
-                    }, $blocks);
+        $docid  = !empty($this->params['id']) ? $this->params['id'] : 0;
+        $db = $this->modx->db;
 
-                    $this->modx->db->delete($this->table, "`document_id` = '$docid' AND `container` = '$container' AND `id` NOT IN ('" . implode("','", $exists) . "')");
+        foreach ($_POST['contentblocks'] as $container => $subs) {
+            if (!is_array($subs)) {
+                $db->delete($this->table, "`document_id` = '" . $docid . "' AND `container` = '$container'");
+                continue;
+            }
 
-                    foreach ($blocks as $index => $row) {
-                        $data = [
-                            'container' => $this->modx->db->escape($container),
-                            'config'    => $this->modx->db->escape($row['config']),
-                            'values'    => $this->modx->db->escape($row['values']),
-                            'visible'   => $row['visible'] > 0 ? 1 : 0,
-                            'index'     => $index,
-                            'title'     => ''
-                        ];
+            $ids = [];
 
-                        if (!empty($row['id'])) {
-                            $this->modx->db->update($data, $this->table, "`id` = '" . $row['id'] . "'");
-                        } else {
-                            $data['document_id'] = $docid;
-                            $this->modx->db->insert($data, $this->table);
-                        }
+            foreach ($subs as $hash => $section) {
+                $common = [];
+
+                if (!empty($section['subcontainer'])) {
+                    $common['parent_id']    = $subs[ $section['parenthash'] ]['values'][ $section['parentindex'] ]['id'];
+                    $common['subcontainer'] = $db->escape($section['subcontainer']);
+                    $common['hash']         = $db->escape($hash);
+                }
+
+                foreach ($section['values'] as $index => $row) {
+                    $data = array_merge([
+                        'container' => $db->escape($container),
+                        'config'    => $db->escape($row['config']),
+                        'values'    => $db->escape($row['values']),
+                        'visible'   => $row['visible'] > 0 ? 1 : 0,
+                        'index'     => $index,
+                    ], $common);
+
+                    if (!empty($row['id'])) {
+                        $db->update($data, $this->table, "`id` = '" . $row['id'] . "'");
+                    } else {
+                        $data['document_id'] = $docid;
+                        $row['id'] = $db->insert($data, $this->table);
                     }
-                } else {
-                    $this->modx->db->delete($this->table, "`document_id` = '" . $docid . "' AND `container` = '$container'");
+
+                    $subs[$hash]['values'][$index]['id'] = $row['id'];
+                    $ids[] = $row['id'];
                 }
             }
+
+            $db->delete($this->table, "`document_id` = '$docid' AND `container` = '$container' AND `id` NOT IN ('" . implode("','", $ids) . "')");
         }
     }
 
@@ -765,7 +885,7 @@ class PageBuilder
      * @param  mixed $value Value of field
      * @return string Output
      */
-    public function renderField($field, $name, $value)
+    public function renderField($field, $name, $value, $block)
     {
         $out = '';
 
@@ -780,8 +900,10 @@ class PageBuilder
         }
 
         $params = [
+            'block'    => $block,
             'name'     => $name,
             'field'    => $field,
+            'layout'   => $field['layout'] ?: 'col-12',
             'value'    => is_null($value) ? $default : $value,
             'elements' => [
                 '' => $this->lang['No variants provided'],
@@ -789,6 +911,11 @@ class PageBuilder
         ];
 
         switch ($field['type']) {
+            case 'container': {
+                $params['hash'] = $value;
+                return $this->renderTpl('tpl/field_container.tpl', $params);
+            }
+
             case 'group': {
                 if (!is_array($value)) {
                     $value = [ [] ];
@@ -802,7 +929,7 @@ class PageBuilder
             }
 
             case 'richtext': {
-				$params['layout'] = $field['layout'] ?? 'col-12';
+                $params['layout'] = $field['layout'] ?? 'col-12';
                 if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
                     $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
                         'editor'  => $this->richeditor,
@@ -829,7 +956,7 @@ class PageBuilder
             case 'imageradio':
             case 'radio': {
                 $params['layout'] = 'vertical';
-                if (isset($field['layout']) && in_array($field['layout'], [ 'horizontal', 'vertical' ])) {
+                if (isset($field['layout']) && in_array($field['layout'], ['horizontal', 'vertical'])) {
                     $params['layout'] = $field['layout'];
                 }
             }
@@ -841,7 +968,6 @@ class PageBuilder
             }
 
             default: {
-				$params['layout'] = $field['layout'] ?? 'col-12';
                 return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
             }
         }
@@ -919,17 +1045,20 @@ class PageBuilder
     public function duplicate()
     {
         if ($this->params['id'] && $this->params['new_id']) {
-            $query = $this->modx->db->select('*', $this->table, "`document_id` = '" . $this->params['id'] . "'", "`index` ASC");
+            $ids = [];
+
+            $query = $this->modx->db->select('*', $this->table, "`document_id` = '" . $this->params['id'] . "'", "`parent_id`, `index`");
 
             while ($row = $this->modx->db->getRow($query)) {
-                $this->modx->db->insert([
-                    'document_id' => $this->params['new_id'],
-                    'container'   => $this->modx->db->escape($row['container']),
-                    'config'      => $this->modx->db->escape($row['config']),
-                    'values'      => $this->modx->db->escape($row['values']),
-                    'visible'     => $row['visible'] > 0 ? 1 : 0,
-                    'index'       => $row['index'],
-                ], $this->table);
+                $id = $row['id'];
+                unset($row['id']);
+                $row['document_id'] = $this->params['new_id'];
+
+                if (!empty($row['parent_id'])) {
+                    $row['parent_id'] = $ids[ $row['parent_id'] ];
+                }
+
+                $ids[$id] = $this->modx->db->insert($row, $this->table);
             }
         }
     }

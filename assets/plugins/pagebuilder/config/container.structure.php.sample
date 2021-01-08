@@ -1,0 +1,15 @@
+<?php
+
+return [
+    'title' => 'Структура страницы',
+
+    'placement' => 'content',
+
+    'templates' => [
+        'owner' => '
+            <div class="page-structure">
+                [+wrap+]
+            </div>
+        ',
+    ],
+];

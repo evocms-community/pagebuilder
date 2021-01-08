@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'title' => 'Секция, одна колонка',
+    'container' => ['structure'],
+
+    'fields' => [
+        'title' => [
+            'caption' => 'Заголовок секции',
+            'type'    => 'text',
+        ],
+
+        'column' => [
+            'caption' => 'Содержимое секции',
+            'type'    => 'container',
+        ],
+    ],
+
+    'templates' => [
+        'owner' => '
+            <div class="section">
+                <div class="container">
+                    <h2>[+title+]</h2>
+
+                    [+column+]
+                </div>
+            </div>
+        ',
+    ],
+];

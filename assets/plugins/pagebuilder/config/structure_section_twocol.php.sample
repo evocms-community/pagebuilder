@@ -1,0 +1,45 @@
+<?php
+
+return [
+    'title' => 'Секция, две колонки',
+    'container' => ['structure'],
+
+    'fields' => [
+        'title' => [
+            'caption' => 'Заголовок секции',
+            'type'    => 'text',
+        ],
+
+        'column' => [
+            'caption' => 'Левая колонка',
+            'type'    => 'container',
+            'layout'  => 'col-6',
+        ],
+
+        'column2' => [
+            'caption' => 'Правая колонка',
+            'type'    => 'container',
+            'layout'  => 'col-6',
+        ],
+    ],
+
+    'templates' => [
+        'owner' => '
+            <div class="section">
+                <div class="container">
+                    <h2>[+title+]</h2>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            [+column+]
+                        </div>
+
+                        <div class="col-sm-6">
+                            [+column2+]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ',
+    ],
+];

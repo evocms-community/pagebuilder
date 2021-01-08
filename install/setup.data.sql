@@ -33,3 +33,13 @@ UPDATE {PREFIX}pagebuilder SET `config` = REPLACE(`config`, '.php', '') WHERE `c
 # Fix, default value for title
 
 ALTER TABLE {PREFIX}pagebuilder CHANGE `title` `title` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+# Subcontainers
+
+ALTER TABLE akt7_pagebuilder2 DROP `title`;
+
+ALTER TABLE akt7_pagebuilder2 ADD COLUMN `parent_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `container`;
+
+ALTER TABLE akt7_pagebuilder2 ADD COLUMN `subcontainer` VARCHAR(255) NOT NULL DEFAULT '' AFTER `parent_id`;
+
+ALTER TABLE akt7_pagebuilder2 ADD COLUMN `hash` VARCHAR(255) NOT NULL DEFAULT '' AFTER `subcontainer`;
