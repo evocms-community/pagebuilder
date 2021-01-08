@@ -4,4 +4,4 @@
 
 [![Youtube review](https://i.ytimg.com/vi/yov7y-OXubo/hqdefault.jpg)](https://youtu.be/yov7y-OXubo)
 
-Актуальное описание: http://docs.evo.im/03_extras/pagebuilder.html
+Актуальное описание: https://docs.evo.im/04_extras/pagebuilder.html
