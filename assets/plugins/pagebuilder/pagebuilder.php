@@ -726,7 +726,7 @@ class PageBuilder
 
         $this->containers = array_filter($this->containers, function($container) {
             $isTVContainer = isset($container['placement']) && $container['placement'] = 'tv';
-            if ($this->isTV && !$isTVContainer) {
+            if ($this->isTV && !$isTVContainer && empty($container['isSub'])) {
                 return false;
             }
 
