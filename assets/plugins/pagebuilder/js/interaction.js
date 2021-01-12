@@ -199,14 +199,15 @@ var initcontentblocks = function(opts) {
                                 e.stopPropagation();
                                 e.stopImmediatePropagation();
                                 $wrap.data('restore', ContentBlock.fetch($wrap));
-                                $wrap.attr('class', 'removed').children('.block-inner').slideUp(200, function() {
+                                $wrap.children('.block-inner').slideUp(200, function() {
+                                    $(this).parent().attr('class', 'removed');
                                     $(this).remove();
                                 });
                                 $wrap.children('.restore-block-wrapper').addClass('active');
                             });
                     })($wrap);
 
-                    $block.on('click', '.restore-block > span', function(e) {
+                    $wrap.on('click', '.restore-block > span', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
