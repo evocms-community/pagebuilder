@@ -29,7 +29,7 @@
             <?php endif; ?>
     <?php endif; ?>
 
-        <div class="btn-group">
+        <div class="btn-group content-blocks-exchange-controls">
             <a href="#" class="btn btn-secondary export"><?= $l['Export'] ?></a>
             <label href="#" class="btn btn-secondary import"><input type="file" name="import-file"><?= $l['Import'] ?></label>
         </div>

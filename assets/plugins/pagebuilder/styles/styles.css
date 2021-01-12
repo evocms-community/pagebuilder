@@ -1,10 +1,11 @@
 .content-blocks { margin: 0 0 30px; position: relative; }
 .content-blocks-container { position: relative; }
-.content-blocks-container > .btn-group { position: absolute; right: 0; z-index: 1; }
-.content-blocks-container .btn-group .btn { padding: 3px 10px; font-size: .6772rem; line-height: 1.4; }
-.content-blocks-container > .btn-group .btn.import { cursor: pointer; margin-bottom: 0; }
-.content-blocks-container > .btn-group .btn.import input { display: none; }
+.content-blocks-exchange-controls { position: absolute; right: 0; z-index: 1; }
+.content-blocks-exchange-controls .btn { padding: 3px 10px; font-size: .6772rem; line-height: 1.4; }
+.content-blocks-exchange-controls .btn.import { cursor: pointer; margin-bottom: 0; }
+.content-blocks-exchange-controls .btn.import input { display: none; }
 .content-blocks-tab > .content-blocks { margin: 10px 0; }
+.content-blocks-tab .content-blocks-exchange-controls { right: 1.25rem; }
 .content-blocks .blocks { padding: 0 0 40px; }
 .content-blocks .block:last-child { margin-bottom: 0 !important; }
 .content-blocks .block .block-inner { border: 2px solid #ccc; padding: 20px; border-radius: 0; position: relative; margin: 0 0 20px; background-color: #f8f8f8; }
