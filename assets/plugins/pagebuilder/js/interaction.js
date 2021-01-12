@@ -4,16 +4,19 @@ var initcontentblocks = function(opts) {
         var ContentBlock = {
             initializeContainers: function($containers) {
                 $containers.each(function() {
-                    var $container = $(this);
+                    var $container = $(this)
+                        containerName = $container.attr('data-container');
 
                     if (!$container.attr('data-hash')) {
                         $container.attr('data-hash', ContentBlock.randomString());
                     }
 
                     ContentBlock.initialize($container.children('.block'));
-                    ContentBlock.initializeConfigSelector($container.children('.add-block').children('select'), $container.attr('data-container'));
+                    ContentBlock.initializeConfigSelector($container.children('.add-block').children('select'), containerName);
 
-                    if ($container.hasClass('single')) {
+                    if (opts.relations[containerName] && opts.relations[containerName].length == 1) {
+                        $container.addClass('single');
+
                         $container.on('click', '.dropdown-add-block, .add-block .trigger a', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
@@ -22,7 +25,7 @@ var initcontentblocks = function(opts) {
                             var config;
 
                             if ($(this).hasClass('dropdown-add-block')) {
-                                config = $(this).prev('select').children().last().val();
+                                config = $(this).prev('select').children(':not([disabled])').last().val();
                             } else {
                                 config = $(this).parent().next('.add-block-icons').find('a').attr('data-config');
                             }
@@ -918,6 +921,10 @@ var initcontentblocks = function(opts) {
                 });
             }
         };
+
+        opts.containers = opts.containers.filter(function(container) {
+            return !$(container).closest('.content-blocks-configs').length;
+        });
 
         ContentBlock.initializeContainers(opts.containers);
 

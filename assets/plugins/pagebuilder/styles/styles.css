@@ -37,7 +37,7 @@
 .content-blocks .block .field.image-toggle .check-row label span { display: block; border: 1px solid transparent; }
 .content-blocks .block .field.image-toggle .check-row label :checked + span { border-color: #666; }
 .content-blocks .block .change-type { position: absolute; left: 20px; top: -20px; }
-.content-blocks .block .change-type select { width: 150px !important; }
+.content-blocks .block .change-type select { width: 220px !important; }
 .content-blocks .block .change-type .visible { margin: 0 10px; vertical-align: middle; background: #fff; padding: 6px 10px; cursor: pointer; }
 
 .content-blocks .block .controls { position: absolute; height: 28px; line-height: 26px; right: 20px; top: -15px; cursor: default; background: #fff; padding: 0 10px; border-radius: 0; border: 1px solid #f8f8f8; font-size: 14px; }
@@ -83,11 +83,11 @@
 .content-blocks .add-block .add-block-icons a > .icon i { font-size: 36px; }
 .content-blocks .add-block .add-block-icons a > .icon img { vertical-align: top; }
 
-.content-blocks.single .change-type select { display: none; }
-.content-blocks.single .change-type .visible { margin-left: 0; }
-.content-blocks.single .add-block { margin: 10px 0; }
-.content-blocks.single .add-block select { display: none; }
-.content-blocks.single .block-inner { margin-bottom: 10px; }
+.content-blocks.single > .change-type select { display: none; }
+.content-blocks.single > .change-type .visible { margin-left: 0; }
+.content-blocks.single > .add-block { margin: 10px 0; }
+.content-blocks.single > .add-block select { display: none; }
+.content-blocks.single > .block > .block-inner { margin-bottom: 10px; }
 
 @supports (display: flex) {
     .content-blocks .add-block .add-block-icons .icons-list { display: flex; justify-content: center; flex-wrap: wrap; }

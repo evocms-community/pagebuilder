@@ -646,6 +646,7 @@ class PageBuilder
             'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
             'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content',
             'order'     => !empty($this->params['order']) ? $this->params['order'] : '0',
+            'alias'     => 'default',
         ];
 
         // If there's tv placement and tv name is not 'default',
