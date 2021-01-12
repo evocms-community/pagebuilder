@@ -36,10 +36,10 @@ ALTER TABLE {PREFIX}pagebuilder CHANGE `title` `title` VARCHAR(255) CHARACTER SE
 
 # Subcontainers
 
-ALTER TABLE akt7_pagebuilder2 DROP `title`;
+ALTER TABLE {PREFIX}pagebuilder DROP `title`;
 
-ALTER TABLE akt7_pagebuilder2 ADD COLUMN `parent_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `container`;
+ALTER TABLE {PREFIX}pagebuilder ADD COLUMN `parent_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `container`;
 
-ALTER TABLE akt7_pagebuilder2 ADD COLUMN `subcontainer` VARCHAR(255) NOT NULL DEFAULT '' AFTER `parent_id`;
+ALTER TABLE {PREFIX}pagebuilder ADD COLUMN `subcontainer` VARCHAR(255) NOT NULL DEFAULT '' AFTER `parent_id`;
 
-ALTER TABLE akt7_pagebuilder2 ADD COLUMN `hash` VARCHAR(255) NOT NULL DEFAULT '' AFTER `subcontainer`;
+ALTER TABLE {PREFIX}pagebuilder ADD COLUMN `hash` VARCHAR(255) NOT NULL DEFAULT '' AFTER `subcontainer`;
