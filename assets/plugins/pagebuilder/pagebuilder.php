@@ -150,7 +150,7 @@ class PageBuilder
 
                 if ($options['type'] == 'container') {
                     $tmp = $this->renderSubcontainer($values[$field], [
-                        'renderTo' => 'templates',
+                        'renderTo' => $this->renderTo,
                         'blocks' => '*',
                         'offset' => 0,
                         'limit'  => 0,
@@ -294,9 +294,9 @@ class PageBuilder
 
             $values = $this->prepareData($settings, $values);
 
-            if ($params['renderTo'] == 'structure' || $bladeTemplate) {
+            if ($this->renderTo == 'structure' || $this->isBladeTemplate) {
                 $data[] = $values;
-            } else if ($params['renderTo'] != 'templates') {
+            } else if ($this->renderTo != 'templates') {
                 $data[] = array_merge($values, [
                     'config' => $config,
                     'id'     => $row['id'],
@@ -380,23 +380,23 @@ class PageBuilder
 
         $this->fetch($params['docid'], $params['container']);
 
-        $data = $this->renderSubcontainer(null, $params);
+        $this->renderTo = $params['renderTo'];
+        $this->isBladeTemplate = false;
 
-        $bladeTemplate = false;
-
-        if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($this->containers[ $params['container'] ]['blade_template'])) {
-            $bladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
+        if ($this->renderTo == 'templates' && empty($params['wrapTpl']) && isset($this->containers[ $params['container'] ]['blade_template'])) {
+            $this->isBladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
         }
 
+        $data = $this->renderSubcontainer(null, $params);
         $data = $this->prepareData($this->containers[ $params['container'] ], $data);
 
-        if ($params['renderTo'] == 'json') {
+        if ($this->renderTo == 'json') {
             $data = json_encode($data, JSON_UNESCAPED_UNICODE);
         }
 
-        if ($params['renderTo'] == 'templates') {
-            if ($bladeTemplate) {
-                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $bladeTemplate, $data);
+        if ($this->renderTo == 'templates') {
+            if ($this->isBladeTemplate) {
+                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $this->isBladeTemplate, $data);
             } else {
                 $wrapper = '[+wrap+]';
 
@@ -426,11 +426,11 @@ class PageBuilder
             return $this->modx->runSnippet($params['giveTo'], ['data' => $result]);
         }
 
-        if ($params['renderTo'] == 'structure') {
+        if ($this->renderTo == 'structure') {
             return $result[0];
         }
 
-        if ($params['renderTo'] == 'array') {
+        if ($this->renderTo == 'array') {
             return $result;
         }
 
