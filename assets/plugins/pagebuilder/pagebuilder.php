@@ -970,7 +970,6 @@ class PageBuilder
             }
 
             case 'richtext': {
-                $params['layout'] = $field['layout'] ?? 'col-12';
                 if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
                     $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
                         'editor'  => $this->richeditor,
@@ -996,9 +995,9 @@ class PageBuilder
 
             case 'imageradio':
             case 'radio': {
-                $params['layout'] = 'vertical';
-                if (isset($field['layout']) && in_array($field['layout'], ['horizontal', 'vertical'])) {
-                    $params['layout'] = $field['layout'];
+                $params['layout'] = preg_replace('/(horizontal|vertical)/', '$1-layout', $field['layout'] ?: 'vertical col-12');
+                if (!preg_match('/col-\d+/', $params['layout'])) {
+                    $params['layout'] .= ' col-12';
                 }
             }
 

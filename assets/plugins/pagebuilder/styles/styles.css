@@ -32,8 +32,8 @@
 .content-blocks .block .field .check-list .check-row { margin: 5px 0; }
 .content-blocks .block .field .check-list .check-row label { display: inline-block; padding-left: 20px; position: relative; vertical-align: top; }
 .content-blocks .block .field .check-list .check-row input { position: absolute; left: 0; top: 3px; margin: 0; }
-.content-blocks .block .field .check-list.horizontal-layout .check-row { display: inline-block; vertical-align: top; margin-right: 20px; }
-.content-blocks .block .field .check-list.horizontal-layout .check-row label { display: block; }
+.content-blocks .block .field.horizontal-layout > .check-list .check-row { display: inline-block; vertical-align: top; margin-right: 20px; }
+.content-blocks .block .field.horizontal-layout > .check-list .check-row label { display: block; }
 .content-blocks .block .field.image-toggle .check-row label span { display: block; border: 1px solid transparent; }
 .content-blocks .block .field.image-toggle .check-row label :checked + span { border-color: #666; }
 .content-blocks .block .change-type { position: absolute; left: 20px; top: -20px; }
@@ -97,9 +97,9 @@
 #tabGeneral .tmplvars .content-blocks-container { margin-top: 0; }
 #tabGeneral .tmplvars .content-blocks { margin-bottom: 0; }
 
-.content-blocks .block .horizontal-layout > div > .fields-list { display: flex; flex-direction: row; flex-wrap: wrap; align-content: stretch; align-items: stretch; margin-right: -7px; }
-.content-blocks .block .horizontal-layout > div > .fields-list .field { margin-bottom: 5px !important; flex-grow: 1; margin-right: 7px; }
-.content-blocks .block .horizontal-layout > div > .fields-list .field:not(.fields-group) { padding-right: 7px; border-right: 1px solid #e7e7e7; }
+.content-blocks .block .sortable-list.horizontal-layout > div > .fields-list { display: flex; flex-direction: row; flex-wrap: wrap; align-content: stretch; align-items: stretch; margin-right: -7px; }
+.content-blocks .block .sortable-list.horizontal-layout > div > .fields-list .field { margin-bottom: 5px !important; flex-grow: 1; margin-right: 7px; }
+.content-blocks .block .sortable-list.horizontal-layout > div > .fields-list .field:not(.fields-group) { padding-right: 7px; border-right: 1px solid #e7e7e7; }
 
 @media (max-width: 850px) {
     .content-blocks .block .field.uploadable input[type="text"] { width: 78%; }
