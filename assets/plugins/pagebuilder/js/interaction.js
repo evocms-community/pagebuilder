@@ -56,6 +56,8 @@
                         $block.on('click', '.open-browser', function(e) {
                             e.preventDefault();
                             ContentBlock.openBrowser($(this).next('input'), $(this).parent().hasClass('type-image') ? 'images' : 'files');
+                            curid = $(this).next('input').attr('name');
+                            $(this).next('input').attr('id',curid);
                         });
 
                         $block.on('click', '.preview', function(e) {
@@ -571,7 +573,7 @@
                         };
                     }
 
-                    window.open(opts.browser + '?type=' + type, 'FileManager', params);
+                    window.open(opts.browser + '?type=' + type + '&field_id='+$element[0].name+'&popup=1&relative_url=1', 'FileManager', params);
                 },
 
                 groupUpdated: function($list) {
