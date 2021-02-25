@@ -449,7 +449,9 @@
                             }
 
                             case 'image': {
-                                $field.children('input[type="text"]').on('input change', function() {
+                                var $input = $field.children('input[type="text"]');
+                                $input.attr('id', 'fm' + ContentBlock.randomString() + ContentBlock.randomString());
+                                $input.on('input change', function() {
                                     if (this.value != '') {
                                         ContentBlock.setThumb($(this).parent());
                                     }
@@ -571,7 +573,7 @@
                         };
                     }
 
-                    window.open(opts.browser + '?type=' + type, 'FileManager', params);
+                    window.open(opts.browser + '?type=' + type + '&field_id=' + $element[0].id + '&popup=1&relative_url=1', 'FileManager', params);
                 },
 
                 groupUpdated: function($list) {
