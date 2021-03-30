@@ -4,7 +4,7 @@ var initcontentblocks = function(opts) {
         var ContentBlock = {
             initializeContainers: function($containers) {
                 $containers.each(function() {
-                    var $container = $(this)
+                    var $container = $(this),
                         containerName = $container.attr('data-container');
 
                     if (!$container.attr('data-hash')) {
@@ -30,10 +30,11 @@ var initcontentblocks = function(opts) {
                                 config = $(this).parent().next('.add-block-icons').find('a').attr('data-config');
                             }
 
-                            var $current = $(this).closest('.block');
+                            var $addBlock = $(this).closest('.add-block'),
+                                $current = $addBlock.parent('.block');
 
                             if (!$current.length) {
-                                $current = $(this).closest('.add-block');
+                                $current = $addBlock;
                             }
 
                             ContentBlock.append(config, $current);
