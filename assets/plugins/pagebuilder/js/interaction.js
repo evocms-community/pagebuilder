@@ -12,7 +12,7 @@ var initcontentblocks = function(opts) {
                     }
 
                     ContentBlock.initialize($container.children('.block'));
-                    ContentBlock.initializeConfigSelector($container.children('.add-block').children('select'), containerName);
+                    ContentBlock.initializeConfigSelector($container.children('.add-block'), containerName);
 
                     if (opts.relations[containerName] && opts.relations[containerName].length == 1) {
                         $container.addClass('single');
@@ -174,8 +174,8 @@ var initcontentblocks = function(opts) {
 
                     // filter container blocks types
                     var containerName = $wrap.parent('.content-blocks').attr('data-container');
-                    ContentBlock.initializeConfigSelector($block.children('.change-type').children('select'), containerName, confName);
-                    ContentBlock.initializeConfigSelector($wrap.children('.add-block').children('select'), containerName);
+                    ContentBlock.initializeConfigSelector($block.children('.change-type'), containerName, confName);
+                    ContentBlock.initializeConfigSelector($wrap.children('.add-block'), containerName);
 
                     // add controls handlers
                     (function($wrap) {
@@ -305,25 +305,37 @@ var initcontentblocks = function(opts) {
                 });
             },
 
-            initializeConfigSelector: function($selector, containerName, value) {
+            initializeConfigSelector: function($addBlock, containerName, value) {
                 var available = [];
 
                 if (opts.relations[containerName]) {
                     available = opts.relations[containerName];
                 }
 
-                $selector.children('option[value!=""]').each(function() {
-                    if (available.indexOf(this.value) !== -1) {
-                        this.disabled = false;
-                        this.style.display = '';
-                    } else {
-                        this.disabled = true;
-                        this.style.display = 'none';
-                    }
-                });
+                var $select = $addBlock.children('select');
 
-                if (typeof value != 'undefined') {
-                    $selector.val(value);
+                if ($select.length) {
+                    $select.children('option[value!=""]').each(function() {
+                        if (available.indexOf(this.value) !== -1) {
+                            this.disabled = false;
+                            this.style.display = '';
+                        } else {
+                            this.disabled = true;
+                            this.style.display = 'none';
+                        }
+                    });
+
+                    if (typeof value != 'undefined') {
+                        $select.val(value);
+                    }
+                }
+
+                var $images = $addBlock.children('.add-block-icons').children('.icons-list');
+
+                if ($images.length) {
+                    $images.children('a').each(function() {
+                        this.style.display = available.indexOf(this.getAttribute('data-config')) !== -1 ? '' : 'none';
+                    });
                 }
             },
 
