@@ -622,11 +622,10 @@ class PageBuilder
     {
         foreach ($fields as $field => $settings) {
             if ($settings['type'] == 'container') {
-                $this->containers[$field] = [
-                    'caption'  => $settings['caption'],
+                $this->containers[$field] = array_merge($settings, [
                     'sections' => [],
                     'isSub'    => true,
-                ];
+                ]);
             } else if ($settings['type'] == 'group') {
                 $this->fetchSubcontainers($settings['fields']);
             }
@@ -954,6 +953,11 @@ class PageBuilder
         switch ($field['type']) {
             case 'container': {
                 $params['hash'] = $value;
+                if (isset($this->containers[$name])) {
+                    $params['container'] = $this->containers[$name];
+                } else {
+                    $params['container'] = [];
+                }
                 return $this->renderTpl('tpl/field_container.tpl', $params);
             }
 
