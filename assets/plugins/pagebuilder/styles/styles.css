@@ -8,6 +8,7 @@
 .content-blocks-tab .content-blocks-exchange-controls { right: 1.25rem; }
 .content-blocks .blocks { padding: 0 0 40px; }
 .content-blocks .block:last-child { margin-bottom: 0 !important; }
+.content-blocks .block:last-child > .add-block { margin-bottom: 0 !important; }
 .content-blocks .block .block-inner { border: 2px solid #ccc; padding: 20px; border-radius: 0; position: relative; margin: 0 0 20px; background-color: #f8f8f8; }
 .content-blocks .block .fields-list { display: flex; flex-direction: row; flex-wrap: wrap; margin: 0 -0.5rem; }
 .content-blocks .block .field { margin: 0 0 10px; position: relative; padding: 0 0.5rem; }
@@ -156,7 +157,7 @@
 
 .field-container > .content-blocks {
     border: 2px dashed #ccc;
-    padding: 15px 15px 0;
+    padding: 15px;
     margin-bottom: 0;
     background: #f5f5f5;
 }
@@ -167,6 +168,9 @@
 
 .field-container > .content-blocks > .add-block {
     margin-top: 0;
+}
+.field-container > .content-blocks > .add-block:last-child {
+    margin-bottom: 0;
 }
 
 .content-blocks .block .fields-group .field-container {
