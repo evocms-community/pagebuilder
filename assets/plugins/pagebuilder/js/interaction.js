@@ -76,10 +76,10 @@ var initcontentblocks = function(opts) {
                         var config = $(this).attr('data-config');
 
                         if (config != '') {
-                            var $current = $(this).closest('.block');
+                            var $current = $(this).closest('.add-block');
 
-                            if (!$current.length) {
-                                $current = $(this).closest('.add-block');
+                            if (!$current.parent().is('.content-blocks')) {
+                                $current = $current.parent();
                             }
 
                             ContentBlock.append(config, $current);
