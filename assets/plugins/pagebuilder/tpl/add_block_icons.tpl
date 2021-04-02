@@ -11,7 +11,7 @@
         <?php foreach ($configs as $filename => $config): ?>
             <div class="icon-wrapper">
                 <?php if ($type == 'images' && isset($config['image'])): ?>
-                    <i class="fa fa-search" onclick="window.open('<?= $config['image']?>', 'popup', 'status=no,location=no,toolbar=no,menubar=no');"></i>
+                    <i class="fa fa-search" onclick="window.open('<?= $this->modx->getConfig('base_url') ?><?= $config['image']?>', 'popup', 'status=no,location=no,toolbar=no,menubar=no');"></i>
                 <?php endif; ?>
                 <a href="#" data-config="<?= $filename ?>" title="<?= $config['title'] ?>">
                     <span class="icon">
