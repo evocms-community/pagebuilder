@@ -819,6 +819,7 @@ class PageBuilder
                 return $this->renderTpl('tpl/field_richtext.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
             }
 
+            case 'dropdown_multiple':
             case 'imagecheckbox':
             case 'checkbox': {
                 if (!is_array($params['value'])) {
