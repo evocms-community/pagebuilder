@@ -774,7 +774,7 @@ class PageBuilder
         if (!empty($field['default'])) {
             $default = $this->parseValues($field['default']);
 
-            if ($field['type'] != 'checkbox' && is_array($default)) {
+            if (!in_array($field['type'], ['checkbox', 'dropdown_multiple', 'imagecheckbox']) && is_array($default)) {
                 $default = reset($default);
             }
         }
