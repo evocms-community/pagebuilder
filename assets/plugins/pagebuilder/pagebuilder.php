@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\View;
+
 class PageBuilder
 {
     const version = '1.3.15';
@@ -299,7 +301,7 @@ class PageBuilder
 
         if ($params['renderTo'] == 'templates') {
             if ($bladeTemplate) {
-                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $bladeTemplate, $data);
+                $out = View::make($bladeTemplate, ['data' => $data])->render();
             } else {
                 $wrapper = '[+wrap+]';
 
