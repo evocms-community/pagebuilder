@@ -222,7 +222,7 @@ class PageBuilder
                 }
 
                 $values[$field] = $tmp;
-            } else if ($options['type'] == 'group') {
+            } else if ($options['type'] == 'group' && !empty($values[$field])) {
                 foreach ($values[$field] as $index => $groupRow) {
                     $values[$field][$index] = $this->mergeSubcontainerValues($options, ['values' => $groupRow]);
                 }
@@ -685,8 +685,15 @@ class PageBuilder
 
                 if ($block['isContainer']) {
                     $block['sections'] = [];
+
+                    if (isset($block['fields'])) {
+                        $block['container'] = $name;
+                    }
+
                     $this->containers[$name] = $block;
-                } else {
+                }
+
+                if (!$block['isContainer'] || isset($block['fields'])) {
                     if (!isset($block['container'])) {
                         $block['container'] = 'default';
                     }
