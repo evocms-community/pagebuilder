@@ -9,7 +9,7 @@
 		<?php foreach ($elements as $val => $image): ?> 
 			<div class="check-row">
 				<label>
-					<input type="radio" name="contentblocks_<?= $name ?>_<?= $random ?>" value="<?= $val ?>" <?php if ($val == $value) { ?> checked<?php } ?>>
+					<input type="radio" name="contentblocks_<?= $name ?>_<?= $random ?>" value="<?= $val ?>" <?php if ((string)$val == (string)$value) { ?> checked<?php } ?>>
 					<span><img src="<?= $image ?>" style="max-width: 140px; max-height: 140px;"></span>
 				</label>
 			</div>

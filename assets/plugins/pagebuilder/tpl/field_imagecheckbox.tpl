@@ -7,7 +7,7 @@
 		<?php foreach ($elements as $val => $image): ?> 
 			<div class="check-row">
 				<label>
-					<input type="checkbox" name="contentblocks_<?= $name ?>" value="<?= $val ?>" <?php if (in_array($val, $value)) { ?> checked<?php } ?>>
+					<input type="checkbox" name="contentblocks_<?= $name ?>" value="<?= $val ?>" <?php if (in_array((string)$val, $value)) { ?> checked<?php } ?>>
 					<span><img src="<?= $image ?>" style="max-width: 140px; max-height: 140px;"></span>
 				</label>
 			</div>

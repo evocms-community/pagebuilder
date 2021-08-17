@@ -5,7 +5,7 @@
 
 	<select name="contentblocks_<?= $name ?>">
 		<?php foreach ($elements as $val => $title): ?> 
-			<option value="<?= $val ?>" <?php if ($val == $value) { ?> selected<?php } ?>><?= htmlentities($title) ?></option>
+			<option value="<?= $val ?>" <?php if ((string)$val == (string)$value) { ?> selected<?php } ?>><?= htmlentities($title) ?></option>
 		<?php endforeach; ?> 
 	</select>
 
