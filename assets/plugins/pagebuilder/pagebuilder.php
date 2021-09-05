@@ -207,7 +207,7 @@ class PageBuilder
 
     public function mergeSubcontainerValues($settings, $row)
     {
-        $values = $row['values'];
+        $values = $row['values'] ?? [];
 
         foreach ($settings['fields'] as $field => $options) {
             if ($options['type'] == 'container') {
