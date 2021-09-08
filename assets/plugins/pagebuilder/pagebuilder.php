@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\View;
+
 class PageBuilder
 {
     const version = '1.4.0';
@@ -396,7 +398,7 @@ class PageBuilder
 
         if ($this->renderTo == 'templates') {
             if ($this->isBladeTemplate) {
-                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $this->isBladeTemplate, $data['items']);
+                $out = View::make($this->isBladeTemplate, ['data' => $data['items']])->render();
             } else {
                 $wrapper = '[+wrap+]';
 
@@ -947,7 +949,7 @@ class PageBuilder
         if (!empty($field['default'])) {
             $default = $this->parseValues($field['default']);
 
-            if ($field['type'] != 'checkbox' && is_array($default)) {
+            if (!in_array($field['type'], ['checkbox', 'dropdown_multiple', 'imagecheckbox']) && is_array($default)) {
                 $default = reset($default);
             }
         }
