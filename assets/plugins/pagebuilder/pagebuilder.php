@@ -387,20 +387,20 @@ class PageBuilder
             $this->isBladeTemplate = $this->containers[ $params['container'] ]['blade_template'];
         }
 
-        $data = $this->renderSubcontainer(null, $params);
-        $data = $this->prepareData($this->containers[ $params['container'] ], $data);
+        $data = [
+            'items' => $this->renderSubcontainer(null, $params),
+            'placeholders' => [],
+        ];
 
-        if ($this->renderTo == 'json') {
-            $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-        }
+        $data = $this->prepareData($this->containers[ $params['container'] ], $data);
 
         if ($this->renderTo == 'templates') {
             if ($this->isBladeTemplate) {
-                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $this->isBladeTemplate, $data);
+                $out = \DLTemplate::getInstance($this->modx)->parseChunk('@B_FILE:' . $this->isBladeTemplate, $data['items']);
             } else {
                 $wrapper = '[+wrap+]';
 
-                if (!empty($data)) {
+                if (!empty($data['items'])) {
                     if (isset($params['wrapTpl'])) {
                         $wrapper = $this->modx->getChunk($params['wrapTpl']);
                     } else if (isset($this->containers[ $params['container'] ])) {
@@ -414,10 +414,16 @@ class PageBuilder
                     }
                 }
 
-                $out = $this->parseTemplate($wrapper, ['wrap' => implode($data)]);
+                $out = $this->parseTemplate($wrapper, array_merge($data['placeholders'], [
+                    'wrap' => implode($data['items']),
+                ]));
             }
         } else {
-            $out = $data;
+            $out = $data['items'];
+        }
+
+        if ($this->renderTo == 'json') {
+            $out = json_encode($out, JSON_UNESCAPED_UNICODE);
         }
 
         $result[] = $out;
