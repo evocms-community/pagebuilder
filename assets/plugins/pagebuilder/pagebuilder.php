@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\View;
 
 class PageBuilder
 {
-    const version = '1.3.15';
+    const version = '1.3.16';
 
     private $modx;
     private $data;
