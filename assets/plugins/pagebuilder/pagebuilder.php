@@ -15,6 +15,11 @@ class PageBuilder
     private $params;
     private $lang;
     private $iterations = [];
+    protected $richeditor;
+    protected $browser;
+    protected $table;
+    protected $isBackend;
+    protected $isTV;
 
     private $langAliases = [
         'bg' => 'bulgarian',
