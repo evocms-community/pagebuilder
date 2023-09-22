@@ -4,10 +4,10 @@ if (IN_MANAGER_MODE != 'true') {
     die('<h1>ERROR:</h1><p>Please use the MODx Content Manager instead of accessing this file directly.</p>');
 }
 
-$path   = __DIR__ . '/../../plugins/pagebuilder/';
+$path   = dirname( __FILE__, 3 ) .'/plugins/pagebuilder/';
 $parts  = explode('/', $row['name']);
 $name   = 'container.' . array_pop($parts) . '.php';
-$config = $path . 'config/' . implode('/', $parts) . '/' . $name;
+$config = $path . 'config' . implode('/', $parts) . '/' . $name;
 
 require_once $path . 'pagebuilder.php';
 
