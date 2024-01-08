@@ -40,9 +40,9 @@
 	jQuery( function() {
 		initcontentblocks( {
 			containers: jQuery('<?= implode(', ', $names) ?>'), 
-			values: <?= json_encode( $block, JSON_UNESCAPED_UNICODE ) ?>, 
-			config: <?= json_encode( $configs, JSON_UNESCAPED_UNICODE ) ?>,
-			lang: <?= json_encode( $l, JSON_UNESCAPED_UNICODE ) ?>,
+			values: <?= !empty($block) ? json_encode( $block, JSON_UNESCAPED_UNICODE ) : "{}" ?>, 
+			config: <?= !empty($configs) ? json_encode( $configs, JSON_UNESCAPED_UNICODE ) : "{}" ?>,
+			lang: <?= !empty($l) ? json_encode( $l, JSON_UNESCAPED_UNICODE ) : "{}" ?>,
 			browser: "<?= $browseurl ?>",
 			thumbsDir: "<?= $thumbsDir ?>",
 			picker: {
