@@ -448,7 +448,9 @@
                                 break;
                             }
 
-                            case 'image': {
+                            case 'image':
+                            case 'files': 
+                            {
                                 var $input = $field.children('input[type="text"]');
                                 $input.attr('id', 'fm' + ContentBlock.randomString() + ContentBlock.randomString());
                                 $input.on('input change', function() {
