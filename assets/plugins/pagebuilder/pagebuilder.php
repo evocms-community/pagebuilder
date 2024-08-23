@@ -730,7 +730,7 @@ class PageBuilder
      */
     private function parseValues($input)
     {
-        if (!function_exists('ParseIntputOptions')) {
+        if (!function_exists('ParseInputOptions')) {
             require_once(MODX_MANAGER_PATH . 'includes/tmplvars.inc.php');
         }
 
@@ -742,7 +742,7 @@ class PageBuilder
             return $input;
         } else {
             $values   = [];
-            $elements = ParseIntputOptions(ProcessTVCommand($input, '', '', 'tvform', $tv = []));
+            $elements = ParseInputOptions(ProcessTVCommand($input, '', '', 'tvform', $tv = []));
 
             if (!empty($elements)) {
                 foreach ($elements as $element) {
