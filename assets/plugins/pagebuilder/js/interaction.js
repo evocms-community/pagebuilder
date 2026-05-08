@@ -537,7 +537,13 @@
                         margin = parseInt(wnd.innerHeight * 0.1),
                         width  = wnd.innerWidth - margin * 2,
                         height = wnd.innerHeight - margin * 2,
-                        params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + (margin + (wnd._startY ? wnd._startY * 0.5 : 0));
+                        params = 'toolbar=no,status=no,resizable=yes,dependent=yes,width=' + width + ',height=' + height + ',left=' + margin + ',top=' + (margin + (wnd._startY ? wnd._startY * 0.5 : 0)),
+                        path = String($element.val()).replace(/assets\//g, "").replace(/^(.+?\/)((\.\.\/)?[^\/]+)$/, '$1'),
+                        dir = "";
+
+                    if(path!=""){
+                        dir += "&dir="+path;
+                    }
 
                     if (window.SetUrl) {
                         window.SetUrl_disabled = window.SetUrl;
@@ -575,7 +581,7 @@
                         };
                     }
 
-                    window.open(opts.browser + '?type=' + type + '&field_id=' + $element[0].id + '&popup=1&relative_url=1', 'FileManager', params);
+                    window.open(opts.browser + '?type=' + type + '&popup=1&relative_url=1&field_id=' + $element[0].id + dir, 'FileManager', params);
                 },
 
                 groupUpdated: function($list) {
