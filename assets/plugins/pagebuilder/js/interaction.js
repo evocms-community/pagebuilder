@@ -134,9 +134,9 @@
                         switch (conf[field].type) {
                             case 'richtext': {
                                 var f = $field.children('textarea').get(0);
-
-                                if (typeof tinymce != 'undefined' && f.id && tinymce.editors[f.id]) {
-                                    values[field] = tinymce.editors[f.id].getContent();
+                                // Получение нужного редактора. tinymce.get() - работает на всех редакторах
+                                if (typeof tinymce != 'undefined' && f.id && tinymce.get(`${f.id}`)) {
+                                    values[field] = tinymce.get(`${f.id}`).getContent();
                                 } else {
                                     values[field] = $(f).val();
                                 }
@@ -377,8 +377,8 @@
                     var $rich = $block.find('textarea.richtext');
 
                     $rich.each(function() {
-                        if (typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id]) {
-                            tinymce.editors[this.id].destroy();
+                        if (typeof tinymce != 'undefined' && this.id && tinymce.get(`${this.id}`)) {
+                            tinymce.get(`${this.id}`).destroy();
                         }
                     });
 
@@ -495,15 +495,15 @@
                         handle: '> .handle',
                         start: function(e, ui) {
                             ui.item.find('textarea.richtext').each(function() {
-                                if (typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id]) {
-                                    tinymce.editors[this.id].save();
+                                if (typeof tinymce != 'undefined' && this.id && tinymce.get(`${this.id}`)) {
+                                    tinymce.get(`${this.id}`).save();
                                 }
                             });
                         },
                         stop: function(e, ui) {
                             ui.item.find('textarea.richtext').each(function() {
-                                if (typeof tinymce != 'undefined' && this.id && tinymce.editors[this.id]) {
-                                    tinymce.editors[this.id].destroy();
+                                if (typeof tinymce != 'undefined' && this.id && tinymce.get(`${this.id}`)) {
+                                    tinymce.get(`${this.id}`).destroy();
                                 }
                                 ContentBlock.initializeRichField($(this));
                             });
@@ -524,9 +524,8 @@
                     $textarea.get(0).id = 'rich' + ContentBlock.randomString();
 
                     if (typeof tinymce !== 'undefined') {
-                        var conf = theme != undefined ? window['config_tinymce4_' + theme] : window[ modxRTEbridge_tinymce4.default ];
+                        var conf = theme != undefined ? window[`config_${opts.editor}_` + theme] : window[ window[`modxRTEbridge_${opts.editor}`].default ];
                         conf = $.extend({}, conf, options ? options : {});
-
                         conf.selector = '#' + $textarea.attr('id');
                         tinymce.init(conf);
                     }

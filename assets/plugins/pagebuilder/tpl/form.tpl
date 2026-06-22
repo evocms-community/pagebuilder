@@ -45,6 +45,7 @@
 			lang: <?= !empty($l) ? json_encode( $l, JSON_UNESCAPED_UNICODE ) : "{}" ?>,
 			browser: "<?= $browseurl ?>",
 			thumbsDir: "<?= $thumbsDir ?>",
+			editor: "<?= strtolower($editor) ?>",
 			picker: {
 				yearOffset: <?= $picker['yearOffset'] ?>,
 				format: '<?= $picker['format'] ?>',
