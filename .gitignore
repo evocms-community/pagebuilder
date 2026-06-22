@@ -11,3 +11,5 @@
 !/assets/tvs
 /assets/tvs/*
 !/assets/tvs/pagebuilder
+!/index.js
+!/package.json

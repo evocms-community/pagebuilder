@@ -394,6 +394,7 @@ class PageBuilder
             'blocks'     => $this->data,
             'adminlang'  => $_lang,
             'thumbsDir'  => $this->modx->getConfig('thumbsDir'),
+            'editor'     => $this->richeditor,
             'picker'     => [
                 'yearOffset' => $this->modx->getConfig('datepicker_offset'),
                 'format'     => $this->modx->getConfig('datetime_format') . ' hh:mm:00',
@@ -810,7 +811,8 @@ class PageBuilder
 
             case 'richtext': {
 				$params['layout'] = $field['layout'] ?? 'col-12';
-                if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
+                // Проверяем, чтобы richeditor не был равен none
+                if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && $this->richeditor != "none") {
                     $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
                         'editor'  => $this->richeditor,
                         'options' => [ 'theme' => $field['theme'] ],
