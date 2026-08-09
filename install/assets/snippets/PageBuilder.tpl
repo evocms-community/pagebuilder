@@ -4,7 +4,7 @@
  * 
  * output content sections for current page
  * 
- * @version     1.3.16
+ * @version     1.3.17
  * @author      mnoskov
  * @category    snippet
  * @internal    @properties
@@ -14,4 +14,3 @@
  
 include_once MODX_BASE_PATH . 'assets/plugins/pagebuilder/pagebuilder.php';
 return (new PageBuilder($modx))->render($params);
-

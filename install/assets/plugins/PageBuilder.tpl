@@ -5,9 +5,9 @@
  * Creates form for manage content sections
  *
  * @category    plugin
- * @version     1.3.16
+ * @version     1.3.17
  * @author      mnoskov
- * @internal    @properties &tabName=Tab name;text;Page Builder &addType=Add type;menu;dropdown,icons,images;dropdown &placement=Placement;menu;content,tab;tab &order=Default container ordering;text;0
+ * @internal    @properties &tabName=Tab name;text;Page Builder &addType=Add type;menu;dropdown,icons,images;dropdown &placement=Placement;menu;content,tab;tab &order=Default container ordering;text;0 &config_path=Path to config files;text;assets/plugins/pagebuilder/config/;assets/plugins/pagebuilder/config/;with tailing /
  * @internal    @events OnWebPageInit,OnManagerPageInit,OnDocFormRender,OnDocFormSave,OnBeforeEmptyTrash,OnDocDuplicate 
  * @internal    @modx_category Manager and Admin
  * @internal    @installset base,sample

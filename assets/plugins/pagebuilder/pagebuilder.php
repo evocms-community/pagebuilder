@@ -4,12 +4,12 @@ use Illuminate\Support\Facades\View;
 
 class PageBuilder
 {
-    const version = '1.3.16';
+    const version = '1.3.17';
 
     private $modx;
     private $data;
-    private $conf   = [];
-    private $themes = [];
+    private $conf       = [];
+    private $themes     = [];
     private $containers = [];
     private $path;
     private $params;
@@ -41,7 +41,7 @@ class PageBuilder
         'ru' => 'russian-UTF8',
         'es' => 'spanish-utf8',
         'sv' => 'svenska-utf8',
-        'uk' => 'ukrainian'
+        'uk' => 'ukrainian',
     ];
 
     public function __construct($modx, $params = null)
@@ -49,12 +49,21 @@ class PageBuilder
         $this->modx = $modx;
 
         $this->richeditor = $modx->getConfig('which_editor');
-        $this->browser    = $modx->getConfig('which_browser');
-        $this->table      = $modx->getFullTableName('pagebuilder');
-        $this->path       = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
-        $this->params     = is_null($params) ? $modx->event->params : $params;
-        $this->isBackend  = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
-        $this->isTV       = isset($this->params['tv']);
+        $this->browser = $modx->getConfig('which_browser');
+        $this->table = $modx->getFullTableName('pagebuilder');
+        $this->params = is_null($params) ? $modx->event->params : $params;
+        $this->isBackend = defined('IN_MANAGER_MODE') && IN_MANAGER_MODE == 'true';
+        $this->isTV = isset($this->params['tv']);
+
+        $table = $modx->getFullTableName('site_plugins');
+        $result = $modx->db->select('properties', $table, 'name="PageBuilder" AND disabled=0');
+        $result = $modx->db->getValue($result);
+        $properties = json_decode($result, true);
+        $config_path = $properties['config_path'][0]['value'];
+
+        $this->path = MODX_BASE_PATH . $config_path;
+        // $this->path       = MODX_BASE_PATH . 'assets/plugins/pagebuilder/config/';
+        // $this->path = EVO_CORE_PATH . 'custom/pagebuilder/';
 
         if (empty($this->params['id'])) {
             $this->params['id'] = 0;
@@ -89,7 +98,7 @@ class PageBuilder
     private function parseTemplate($template, $data)
     {
         if (!function_exists('ParseCommand')) {
-            require_once(MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php');
+            require_once MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php';
         }
 
         $binding = ParseCommand($template);
@@ -98,21 +107,21 @@ class PageBuilder
             list($command, $source) = $binding;
 
             switch ($command) {
-                case 'CHUNK': {
-                    $template = $this->modx->getChunk(trim($source));
-                    break;
-                }
+                case 'CHUNK':{
+                        $template = $this->modx->getChunk(trim($source));
+                        break;
+                    }
 
-                case 'FILE': {
-                    $template = $this->modx->atBindFileContent($template);
-                    break;
-                }
+                case 'FILE':{
+                        $template = $this->modx->atBindFileContent($template);
+                        break;
+                    }
             }
         }
 
         $template = $this->modx->mergeSettingsContent($template);
 
-        return $this->modx->parseText($template , $data);
+        return $this->modx->parseText($template, $data);
     }
 
     private function renderFieldsList($templates, $template, $config, $values, $set = '')
@@ -133,7 +142,7 @@ class PageBuilder
                         $fieldTemplates = $templates[$field];
 
                         if (!is_array($fieldTemplates)) {
-                            $fieldTemplates = [ $fieldTemplates ];
+                            $fieldTemplates = [$fieldTemplates];
                         }
 
                         foreach ($fieldTemplates as $name => $tpl) {
@@ -141,7 +150,7 @@ class PageBuilder
                             $data[$key] = '';
 
                             foreach ($values[$field] as $index => $value) {
-                                $this->iterations["{$field}_index"]     = $index;
+                                $this->iterations["{$field}_index"] = $index;
                                 $this->iterations["{$field}_iteration"] = $index + 1;
 
                                 $data[$key] .= $this->parseTemplate($tpl, array_merge($this->iterations, [
@@ -168,7 +177,7 @@ class PageBuilder
                 $fieldTemplates = $templates[$field];
 
                 if (!is_array($fieldTemplates)) {
-                    $fieldTemplates = [ $fieldTemplates ];
+                    $fieldTemplates = [$fieldTemplates];
                 }
 
                 foreach ($fieldTemplates as $name => $tpl) {
@@ -176,7 +185,7 @@ class PageBuilder
                     $data[$key] = '';
 
                     foreach ($values[$field] as $index => $value) {
-                        $this->iterations["{$field}_index"]     = $index;
+                        $this->iterations["{$field}_index"] = $index;
                         $this->iterations["{$field}_iteration"] = $index + 1;
 
                         $data[$key] .= $this->renderFieldsList($templates, $tpl, $options, $value);
@@ -188,7 +197,7 @@ class PageBuilder
         $result = $this->parseTemplate($template, array_merge($this->iterations, $values, $data));
 
         if (preg_match('/\[\+(.+?)\/(.+?)\+\]/', $result, $matches)) {
-            $set   = $matches[1];
+            $set = $matches[1];
             $field = $matches[2];
 
             if (isset($values[$field]) && isset($templates[$set])) {
@@ -209,13 +218,13 @@ class PageBuilder
     public function render($params)
     {
         $params = array_merge([
-            'docid'     => $this->modx->documentIdentifier,
+            'docid' => $this->modx->documentIdentifier,
             'container' => 'default',
-            'blocks'    => '*',
+            'blocks' => '*',
             'templates' => '',
-            'offset'    => 0,
-            'limit'     => 0,
-            'renderTo'  => 'templates',
+            'offset' => 0,
+            'limit' => 0,
+            'renderTo' => 'templates',
         ], $params);
 
         if ($params['blocks'] != '*') {
@@ -226,16 +235,16 @@ class PageBuilder
 
         $this->fetch($params['docid'], $params['container']);
 
-        $out   = '';
-        $idx   = -1;
+        $out = '';
+        $idx = -1;
         $total = 0;
-        $data  = [];
+        $data = [];
 
         $bladeTemplate = false;
 
         $container = [];
-        if (isset($this->containers[ $params['container'] ])) {
-            $container = $this->containers[ $params['container'] ];
+        if (isset($this->containers[$params['container']])) {
+            $container = $this->containers[$params['container']];
         }
 
         if ($params['renderTo'] == 'templates' && empty($params['wrapTpl']) && isset($container['blade_template'])) {
@@ -253,7 +262,7 @@ class PageBuilder
 
             $idx++;
 
-            $this->iterations['index']     = $idx;
+            $this->iterations['index'] = $idx;
             $this->iterations['iteration'] = $idx + 1;
 
             if ($idx < $params['offset']) {
@@ -264,13 +273,13 @@ class PageBuilder
                 break;
             }
 
-            $conf = $this->conf[ $row['config'] ];
+            $conf = $this->conf[$row['config']];
 
             $values = $this->prepareData($conf, $row['values']);
 
             if ($params['renderTo'] == 'structure' || $bladeTemplate) {
                 $values['pb'] = [
-                    'name'   => $row['config'],
+                    'name' => $row['config'],
                     'config' => $conf,
                 ];
                 $data[] = $values;
@@ -281,12 +290,12 @@ class PageBuilder
                 $templates = $conf['templates'];
 
                 if (!empty($params['templates'])) {
-                    if (!isset($templates[ $params['templates'] ])) {
+                    if (!isset($templates[$params['templates']])) {
                         $out .= "<div>Templates set '" . $params['templates'] . "' not defined</div>";
                         continue;
                     }
 
-                    $templates = $templates[ $params['templates'] ];
+                    $templates = $templates[$params['templates']];
                 }
 
                 if (!isset($templates['owner'])) {
@@ -313,8 +322,8 @@ class PageBuilder
                 if (!empty($out)) {
                     if (isset($params['wrapTpl'])) {
                         $wrapper = $this->modx->getChunk($params['wrapTpl']);
-                    } else if (!empty($params['templates']) && isset($container['templates'][ $params['templates'] ]['owner'])) {
-                        $wrapper = $container['templates'][ $params['templates'] ]['owner'];
+                    } else if (!empty($params['templates']) && isset($container['templates'][$params['templates']]['owner'])) {
+                        $wrapper = $container['templates'][$params['templates']]['owner'];
                     } else if (!empty($container['templates']['owner'])) {
                         $wrapper = $container['templates']['owner'];
                     }
@@ -356,7 +365,7 @@ class PageBuilder
         extract($data);
 
         ob_start();
-        include(__DIR__ . '/' . $template);
+        include __DIR__ . '/' . $template;
         $output = ob_get_contents();
         ob_end_clean();
 
@@ -387,16 +396,16 @@ class PageBuilder
         }
 
         return $this->renderTpl('tpl/form.tpl', [
-            'version'    => self::version,
-            'browseurl'  => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
+            'version' => self::version,
+            'browseurl' => MODX_MANAGER_URL . 'media/browser/' . $this->browser . '/browse.php',
             'containers' => $this->containers,
-            'configs'    => $this->conf,
-            'blocks'     => $this->data,
-            'adminlang'  => $_lang,
-            'thumbsDir'  => $this->modx->getConfig('thumbsDir'),
-            'picker'     => [
+            'configs' => $this->conf,
+            'blocks' => $this->data,
+            'adminlang' => $_lang,
+            'thumbsDir' => $this->modx->getConfig('thumbsDir'),
+            'picker' => [
                 'yearOffset' => $this->modx->getConfig('datepicker_offset'),
-                'format'     => $this->modx->getConfig('datetime_format') . ' hh:mm:00',
+                'format' => $this->modx->getConfig('datetime_format') . ' hh:mm:00',
             ],
         ]);
     }
@@ -413,7 +422,7 @@ class PageBuilder
         if (isset($options['prepare'])) {
             $params = [
                 'options' => &$options,
-                'values'  => &$values,
+                'values' => &$values,
             ];
 
             if (is_callable($options['prepare'])) {
@@ -448,9 +457,9 @@ class PageBuilder
             }
         }
 
-        foreach ([ 'show_in_templates', 'show_in_docs', 'hide_in_docs' ] as $opt) {
+        foreach (['show_in_templates', 'show_in_docs', 'hide_in_docs'] as $opt) {
             if (isset($block[$opt]) && !is_array($block[$opt])) {
-                $block[$opt] = [ $block[$opt] ];
+                $block[$opt] = [$block[$opt]];
             }
         }
 
@@ -507,10 +516,10 @@ class PageBuilder
     private function fetch($docid, $containerName = null)
     {
         $this->containers['default'] = [
-            'title'     => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
-            'addType'   => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
+            'title' => !empty($this->params['tabName']) ? $this->params['tabName'] : 'Page Builder',
+            'addType' => !empty($this->params['addType']) ? $this->params['addType'] : 'dropdown',
             'placement' => !empty($this->params['placement']) ? $this->params['placement'] : 'content',
-            'order'     => !empty($this->params['order']) ? $this->params['order'] : '0',
+            'order' => !empty($this->params['order']) ? $this->params['order'] : '0',
         ];
 
         // If there's tv placement and tv name is not 'default',
@@ -523,17 +532,21 @@ class PageBuilder
         $this->data = [];
 
         if (!isset($this->params['template'])) {
-            if ($docid == $this->modx->documentIdentifier) {
-                $this->params['template'] = $this->modx->documentObject['template'];
-            } else {
-                $doc = $this->modx->getDocument($docid, 'template', 'all');
-                $this->params['template'] = $doc['template'];
+            $this->params['template'] = '';
+
+            if ($docid) {
+                if ($docid == $this->modx->documentIdentifier) {
+                    $this->params['template'] = $this->modx->documentObject['template'];
+                } else {
+                    $doc = $this->modx->getDocument($docid, 'template', 'all');
+                    $this->params['template'] = $doc['template'];
+                }
             }
         }
 
         // Loading all config files, complied with filters
         foreach ($this->getConfig() as $name) {
-            $block = include($this->path . $name . '.php');
+            $block = include $this->path . $name . '.php';
 
             $block['isContainer'] = strpos($name, 'container.') !== false;
             $block['name'] = $name = str_replace('container.', '', $name);
@@ -578,14 +591,14 @@ class PageBuilder
             }
         }
 
-        uasort($this->conf, function($a, $b) {
+        uasort($this->conf, function ($a, $b) {
             if ($a['order'] == $b['order']) {
                 return $a['title'] < $b['title'] ? -1 : 1;
             }
             return ($a['order'] < $b['order']) ? -1 : 1;
         });
 
-        $this->containers = array_filter($this->containers, function($container) {
+        $this->containers = array_filter($this->containers, function ($container) {
             $isTVContainer = isset($container['placement']) && $container['placement'] = 'tv';
             if ($this->isTV && !$isTVContainer) {
                 return false;
@@ -594,7 +607,7 @@ class PageBuilder
             return !empty($container['sections']);
         });
 
-        $this->conf = array_filter($this->conf, function($conf) {
+        $this->conf = array_filter($this->conf, function ($conf) {
             $containers = isset($conf['container']) ? $conf['container'] : ['default'];
 
             if (!is_array($containers)) {
@@ -610,7 +623,7 @@ class PageBuilder
             return false;
         });
 
-        $this->containers = array_map(function($item) {
+        $this->containers = array_map(function ($item) {
             $item['sections'] = array_unique($item['sections']);
             return $item;
         }, $this->containers);
@@ -624,7 +637,7 @@ class PageBuilder
                 $this->containers = [];
             }
         } else {
-            uasort($this->containers, function($a, $b) {
+            uasort($this->containers, function ($a, $b) {
                 if ($a['order'] == $b['order']) {
                     return 0;
                 }
@@ -637,7 +650,7 @@ class PageBuilder
         while ($row = $this->modx->db->getRow($query)) {
             $row['config'] = str_replace('.php', '', $row['config']);
 
-            if (isset($this->conf[ $row['config'] ])) {
+            if (isset($this->conf[$row['config']])) {
                 $row['values'] = json_decode($row['values'], true);
                 $this->data[] = $row;
             }
@@ -665,13 +678,13 @@ class PageBuilder
                         }
 
                         $this->data[] = [
-                            'id'          => 0,
+                            'id' => 0,
                             'document_id' => $docid,
-                            'container'   => $name,
-                            'config'      => $block['block'],
-                            'values'      => $block['values'],
-                            'visible'     => 1,
-                            'index'       => $index,
+                            'container' => $name,
+                            'config' => $block['block'],
+                            'values' => $block['values'],
+                            'visible' => 1,
+                            'index' => $index,
                         ];
                     }
                 }
@@ -685,11 +698,11 @@ class PageBuilder
     public function save()
     {
         if (isset($_POST['contentblocks'])) {
-            $docid  = !empty($this->params['id']) ? $this->params['id'] : 0;
+            $docid = !empty($this->params['id']) ? $this->params['id'] : 0;
 
             foreach ($_POST['contentblocks'] as $container => $blocks) {
                 if (is_array($blocks)) {
-                    $exists = array_map(function($element) {
+                    $exists = array_map(function ($element) {
                         return $element['id'];
                     }, $blocks);
 
@@ -698,11 +711,11 @@ class PageBuilder
                     foreach ($blocks as $index => $row) {
                         $data = [
                             'container' => $this->modx->db->escape($container),
-                            'config'    => $this->modx->db->escape($row['config']),
-                            'values'    => $this->modx->db->escape($row['values']),
-                            'visible'   => $row['visible'] > 0 ? 1 : 0,
-                            'index'     => $index,
-                            'title'     => ''
+                            'config' => $this->modx->db->escape($row['config']),
+                            'values' => $this->modx->db->escape($row['values']),
+                            'visible' => $row['visible'] > 0 ? 1 : 0,
+                            'index' => $index,
+                            'title' => '',
                         ];
 
                         if (!empty($row['id'])) {
@@ -731,17 +744,17 @@ class PageBuilder
     private function parseValues($input)
     {
         if (!function_exists('ParseIntputOptions')) {
-            require_once(MODX_MANAGER_PATH . 'includes/tmplvars.inc.php');
+            require_once MODX_MANAGER_PATH . 'includes/tmplvars.inc.php';
         }
 
         if (!function_exists('ProcessTVCommand')) {
-            require_once(MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php');
+            require_once MODX_MANAGER_PATH . 'includes/tmplvars.commands.inc.php';
         }
 
         if (!is_string($input)) {
             return $input;
         } else {
-            $values   = [];
+            $values = [];
             $elements = ParseIntputOptions(ProcessTVCommand($input, '', '', 'tvform', $tv = []));
 
             if (!empty($elements)) {
@@ -787,71 +800,71 @@ class PageBuilder
         }
 
         $params = [
-            'name'     => $name,
-            'field'    => $field,
-            'value'    => is_null($value) ? $default : $value,
+            'name' => $name,
+            'field' => $field,
+            'value' => is_null($value) ? $default : $value,
             'elements' => [
                 '' => $this->lang['No variants provided'],
             ],
         ];
 
         switch ($field['type']) {
-            case 'group': {
-                if (!is_array($value)) {
-                    $value = [ [] ];
-                } else {
-                    array_unshift($value, []);
-                }
-
-                return $this->renderTpl('tpl/field_group.tpl', array_merge($params, [
-                    'values' => $value,
-                ]));
-            }
-
-            case 'richtext': {
-				$params['layout'] = $field['layout'] ?? 'col-12';
-                if (isset($field['theme']) && !isset($this->themes[ $field['theme'] ]) && in_array($this->richeditor, [ 'TinyMCE4' ])) {
-                    $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
-                        'editor'  => $this->richeditor,
-                        'options' => [ 'theme' => $field['theme'] ],
-                    ]);
-
-                    if (is_array($result)) {
-                        $result = implode('', $result);
+            case 'group':{
+                    if (!is_array($value)) {
+                        $value = [[]];
+                    } else {
+                        array_unshift($value, []);
                     }
 
-                    $this->themes[ $field['theme'] ] = $result;
+                    return $this->renderTpl('tpl/field_group.tpl', array_merge($params, [
+                        'values' => $value,
+                    ]));
                 }
 
-                return $this->renderTpl('tpl/field_richtext.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
-            }
+            case 'richtext':{
+                    $params['layout'] = $field['layout'] ?? 'col-12';
+                    if (isset($field['theme']) && !isset($this->themes[$field['theme']]) && in_array($this->richeditor, ['TinyMCE4'])) {
+                        $result = $this->modx->invokeEvent('OnRichTextEditorInit', [
+                            'editor' => $this->richeditor,
+                            'options' => ['theme' => $field['theme']],
+                        ]);
+
+                        if (is_array($result)) {
+                            $result = implode('', $result);
+                        }
+
+                        $this->themes[$field['theme']] = $result;
+                    }
+
+                    return $this->renderTpl('tpl/field_richtext.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
+                }
 
             case 'dropdown_multiple':
             case 'imagecheckbox':
-            case 'checkbox': {
-                if (!is_array($params['value'])) {
-                    $params['value'] = [ $params['value'] ];
+            case 'checkbox':{
+                    if (!is_array($params['value'])) {
+                        $params['value'] = [$params['value']];
+                    }
                 }
-            }
 
             case 'imageradio':
-            case 'radio': {
-                $params['layout'] = 'vertical';
-                if (isset($field['layout']) && in_array($field['layout'], [ 'horizontal', 'vertical' ])) {
-                    $params['layout'] = $field['layout'];
+            case 'radio':{
+                    $params['layout'] = 'vertical';
+                    if (isset($field['layout']) && in_array($field['layout'], ['horizontal', 'vertical'])) {
+                        $params['layout'] = $field['layout'];
+                    }
                 }
-            }
 
-            case 'dropdown': {
-                if (!empty($field['elements'])) {
-                    $params['elements'] = $this->parseValues($field['elements']);
+            case 'dropdown':{
+                    if (!empty($field['elements'])) {
+                        $params['elements'] = $this->parseValues($field['elements']);
+                    }
                 }
-            }
 
             default: {
-				$params['layout'] = $field['layout'] ?? 'col-12';
-                return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
-            }
+                    $params['layout'] = $field['layout'] ?? 'col-12';
+                    return $this->renderTpl('tpl/field_' . $field['type'] . '.tpl', $params) . $this->trigger('OnPBFieldRender', $params);
+                }
         }
 
         return '';
@@ -887,8 +900,8 @@ class PageBuilder
 
             if (!$this->modx->db->getRecordCount($query)) {
                 $this->modx->db->insert([
-                    'name'      => $event,
-                    'service'   => 6,
+                    'name' => $event,
+                    'service' => 6,
                     'groupname' => 'PageBuilder',
                 ], $table);
             }
@@ -902,23 +915,23 @@ class PageBuilder
      *
     public function getSearchableContent()
     {
-        $output = '';
+    $output = '';
 
-        if (!empty($this->params['id'])) {
-            $query = $this->modx->db->select('*', $this->table, "`document_id` = '" . intval($this->params['id']) . "'", "`index` ASC");
+    if (!empty($this->params['id'])) {
+    $query = $this->modx->db->select('*', $this->table, "`document_id` = '" . intval($this->params['id']) . "'", "`index` ASC");
 
-            while ($row = $this->modx->db->getRow($query)) {
-                $values = json_decode($row['values'], true);
+    while ($row = $this->modx->db->getRow($query)) {
+    $values = json_decode($row['values'], true);
 
-                if (is_array($values)) {
-                    array_walk_recursive($values, function($value, $key) use (&$output) {
-                        $output .= ' ' . $value;
-                    });
-                }
-            }
-        }
+    if (is_array($values)) {
+    array_walk_recursive($values, function($value, $key) use (&$output) {
+    $output .= ' ' . $value;
+    });
+    }
+    }
+    }
 
-        return trim($output);
+    return trim($output);
     }*/
 
     /**
@@ -932,11 +945,11 @@ class PageBuilder
             while ($row = $this->modx->db->getRow($query)) {
                 $this->modx->db->insert([
                     'document_id' => $this->params['new_id'],
-                    'container'   => $this->modx->db->escape($row['container']),
-                    'config'      => $this->modx->db->escape($row['config']),
-                    'values'      => $this->modx->db->escape($row['values']),
-                    'visible'     => $row['visible'] > 0 ? 1 : 0,
-                    'index'       => $row['index'],
+                    'container' => $this->modx->db->escape($row['container']),
+                    'config' => $this->modx->db->escape($row['config']),
+                    'values' => $this->modx->db->escape($row['values']),
+                    'visible' => $row['visible'] > 0 ? 1 : 0,
+                    'index' => $row['index'],
                 ], $this->table);
             }
         }
